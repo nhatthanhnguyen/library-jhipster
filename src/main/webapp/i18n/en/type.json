@@ -1,0 +1,9 @@
+{
+  "libraryApp": {
+    "Type": {
+      "null": "",
+      "AVAILABLE": "AVAILABLE",
+      "RETURN": "RETURN"
+    }
+  }
+}

@@ -81,6 +81,25 @@ public class CacheConfiguration {
             createCache(cm, com.thanh.library.domain.User.class.getName(), jcacheConfiguration);
             createCache(cm, com.thanh.library.domain.Authority.class.getName(), jcacheConfiguration);
             createCache(cm, com.thanh.library.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Book.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Book.class.getName() + ".bookCopies", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Book.class.getName() + ".queues", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Book.class.getName() + ".authors", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Book.class.getName() + ".categories", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Author.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Author.class.getName() + ".books", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Category.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Category.class.getName() + ".books", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Publisher.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Publisher.class.getName() + ".books", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.BookCopy.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.BookCopy.class.getName() + ".checkouts", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.BookCopy.class.getName() + ".reservations", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.BookCopy.class.getName() + ".notifications", jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Checkout.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Reservation.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Notification.class.getName(), jcacheConfiguration);
+            createCache(cm, com.thanh.library.domain.Queue.class.getName(), jcacheConfiguration);
             // jhipster-needle-redis-add-entry
         };
     }

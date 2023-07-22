@@ -1,0 +1,73 @@
+entity Book {
+    title String required,
+    isDeleted Boolean,
+}
+
+entity Author {
+    firstName String required,
+    lastName String required,
+    isDeleted Boolean,
+}
+
+entity Category {
+    name String required,
+    isDeleted Boolean,
+}
+
+entity Publisher {
+    name String required,
+    isDeleted Boolean,
+}
+
+entity BookCopy {
+    yearPublished Integer required,
+    isDeleted Boolean,
+}
+
+entity Checkout {
+    startTime Instant,
+    endTime Instant,
+    isReturned Boolean,
+}
+
+entity Reservation {
+    startTime Instant,
+    endTime Instant,
+}
+
+enum Type {
+    AVAILABLE,
+    RETURN
+}
+
+entity Notification {
+    sentAt Instant,
+    type Type,
+}
+
+entity Queue {
+    createdAt Instant,
+}
+
+relationship ManyToMany {
+    Book{author} to Author{book}
+    Book{category} to Category{book}
+}
+
+relationship OneToMany {
+    Publisher to Book{publisher(name)},
+    Book to BookCopy{book(title)},
+    Book to Queue{book(title)},
+    BookCopy to Checkout{bookCopy},
+    BookCopy to Reservation{bookCopy},
+    BookCopy to Notification{bookCopy},
+}
+
+relationship ManyToOne {
+    Checkout{user(login)} to User,
+    Reservation{user(login)} to User,
+    Notification{user(login)} to User,
+    Queue{user(login)} to User,
+}
+
+use mapstruct, serviceImpl, pagination for all

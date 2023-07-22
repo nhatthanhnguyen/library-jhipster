@@ -1,0 +1,26 @@
+{
+  "libraryApp": {
+    "queue": {
+      "home": {
+        "title": "Queues",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Queue",
+        "createOrEditLabel": "Create or edit a Queue",
+        "notFound": "No Queues found"
+      },
+      "created": "A new Queue is created with identifier {{ param }}",
+      "updated": "A Queue is updated with identifier {{ param }}",
+      "deleted": "A Queue is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Queue {{ id }}?"
+      },
+      "detail": {
+        "title": "Queue"
+      },
+      "id": "ID",
+      "createdAt": "Created At",
+      "user": "User",
+      "book": "Book"
+    }
+  }
+}

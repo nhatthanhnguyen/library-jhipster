@@ -1,0 +1,26 @@
+{
+  "libraryApp": {
+    "queue": {
+      "home": {
+        "title": "Queues",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Queue",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Queue",
+        "notFound": "No Queues found"
+      },
+      "created": "Một Queue mới được tạo với định danh {{ param }}",
+      "updated": "Một Queue cập nhật với định danh {{ param }}",
+      "deleted": "Một Queue đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Queue {{ id }}?"
+      },
+      "detail": {
+        "title": "Queue"
+      },
+      "id": "ID",
+      "createdAt": "Created At",
+      "user": "User",
+      "book": "Book"
+    }
+  }
+}

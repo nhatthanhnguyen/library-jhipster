@@ -1,0 +1,59 @@
+{
+  "applications": "*",
+  "changelogDate": "20230722083919",
+  "dto": "mapstruct",
+  "embedded": false,
+  "entityTableName": "book",
+  "fields": [
+    {
+      "fieldName": "title",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "isDeleted",
+      "fieldType": "Boolean"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "Book",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "bookCopy",
+      "otherEntityRelationshipName": "book",
+      "relationshipName": "bookCopy",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "queue",
+      "otherEntityRelationshipName": "book",
+      "relationshipName": "queue",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "author",
+      "otherEntityRelationshipName": "book",
+      "ownerSide": true,
+      "relationshipName": "author",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityName": "category",
+      "otherEntityRelationshipName": "book",
+      "ownerSide": true,
+      "relationshipName": "category",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "publisher",
+      "otherEntityRelationshipName": "book",
+      "relationshipName": "publisher",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

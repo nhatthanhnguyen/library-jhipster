@@ -1,0 +1,51 @@
+{
+  "applications": "*",
+  "changelogDate": "20230722083923",
+  "dto": "mapstruct",
+  "embedded": false,
+  "entityTableName": "book_copy",
+  "fields": [
+    {
+      "fieldName": "yearPublished",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "isDeleted",
+      "fieldType": "Boolean"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "BookCopy",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "checkout",
+      "otherEntityRelationshipName": "bookCopy",
+      "relationshipName": "checkout",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "reservation",
+      "otherEntityRelationshipName": "bookCopy",
+      "relationshipName": "reservation",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "notification",
+      "otherEntityRelationshipName": "bookCopy",
+      "relationshipName": "notification",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "book",
+      "otherEntityRelationshipName": "bookCopy",
+      "relationshipName": "book",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

@@ -2,6 +2,7 @@ package com.thanh.library.service;
 
 import com.thanh.library.service.dto.CheckoutDTO;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -42,17 +43,25 @@ public interface CheckoutService {
     Page<CheckoutDTO> findAll(Pageable pageable);
 
     /**
+     * Get all the checkouts with eager load of many-to-many relationships.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<CheckoutDTO> findAllWithEagerRelationships(Pageable pageable);
+
+    /**
      * Get the "id" checkout.
      *
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<CheckoutDTO> findOne(Long id);
+    Optional<CheckoutDTO> findOne(UUID id);
 
     /**
      * Delete the "id" checkout.
      *
      * @param id the id of the entity.
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

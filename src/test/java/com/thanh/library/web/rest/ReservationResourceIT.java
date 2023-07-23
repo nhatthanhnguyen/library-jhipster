@@ -2,24 +2,32 @@ package com.thanh.library.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.thanh.library.IntegrationTest;
 import com.thanh.library.domain.Reservation;
 import com.thanh.library.repository.ReservationRepository;
+import com.thanh.library.service.ReservationService;
 import com.thanh.library.service.dto.ReservationDTO;
 import com.thanh.library.service.mapper.ReservationMapper;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link ReservationResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class ReservationResourceIT {
@@ -42,14 +51,17 @@ class ReservationResourceIT {
     private static final String ENTITY_API_URL = "/api/reservations";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
-
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Mock
+    private ReservationRepository reservationRepositoryMock;
+
     @Autowired
     private ReservationMapper reservationMapper;
+
+    @Mock
+    private ReservationService reservationServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -110,7 +122,7 @@ class ReservationResourceIT {
     @Transactional
     void createReservationWithExistingId() throws Exception {
         // Create the Reservation with an existing ID
-        reservation.setId(1L);
+        reservationRepository.saveAndFlush(reservation);
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
 
         int databaseSizeBeforeCreate = reservationRepository.findAll().size();
@@ -138,9 +150,26 @@ class ReservationResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().toString())))
             .andExpect(jsonPath("$.[*].startTime").value(hasItem(DEFAULT_START_TIME.toString())))
             .andExpect(jsonPath("$.[*].endTime").value(hasItem(DEFAULT_END_TIME.toString())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllReservationsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(reservationServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restReservationMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(reservationServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllReservationsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(reservationServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restReservationMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(reservationRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -154,7 +183,7 @@ class ReservationResourceIT {
             .perform(get(ENTITY_API_URL_ID, reservation.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(reservation.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(reservation.getId().toString()))
             .andExpect(jsonPath("$.startTime").value(DEFAULT_START_TIME.toString()))
             .andExpect(jsonPath("$.endTime").value(DEFAULT_END_TIME.toString()));
     }
@@ -163,7 +192,7 @@ class ReservationResourceIT {
     @Transactional
     void getNonExistingReservation() throws Exception {
         // Get the reservation
-        restReservationMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restReservationMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -201,7 +230,7 @@ class ReservationResourceIT {
     @Transactional
     void putNonExistingReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(count.incrementAndGet());
+        reservation.setId(UUID.randomUUID());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -224,7 +253,7 @@ class ReservationResourceIT {
     @Transactional
     void putWithIdMismatchReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(count.incrementAndGet());
+        reservation.setId(UUID.randomUUID());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -232,7 +261,7 @@ class ReservationResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restReservationMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(reservationDTO))
             )
@@ -247,7 +276,7 @@ class ReservationResourceIT {
     @Transactional
     void putWithMissingIdPathParamReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(count.incrementAndGet());
+        reservation.setId(UUID.randomUUID());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -324,7 +353,7 @@ class ReservationResourceIT {
     @Transactional
     void patchNonExistingReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(count.incrementAndGet());
+        reservation.setId(UUID.randomUUID());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -347,7 +376,7 @@ class ReservationResourceIT {
     @Transactional
     void patchWithIdMismatchReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(count.incrementAndGet());
+        reservation.setId(UUID.randomUUID());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -355,7 +384,7 @@ class ReservationResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restReservationMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(reservationDTO))
             )
@@ -370,7 +399,7 @@ class ReservationResourceIT {
     @Transactional
     void patchWithMissingIdPathParamReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(count.incrementAndGet());
+        reservation.setId(UUID.randomUUID());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -397,7 +426,7 @@ class ReservationResourceIT {
 
         // Delete the reservation
         restReservationMockMvc
-            .perform(delete(ENTITY_API_URL_ID, reservation.getId()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, reservation.getId().toString()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

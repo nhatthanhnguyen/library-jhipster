@@ -6,6 +6,10 @@
   "entityTableName": "book_copy",
   "fields": [
     {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
       "fieldName": "yearPublished",
       "fieldType": "Integer",
       "fieldValidateRules": ["required"]
@@ -22,27 +26,8 @@
   "readOnly": false,
   "relationships": [
     {
-      "otherEntityName": "checkout",
-      "otherEntityRelationshipName": "bookCopy",
-      "relationshipName": "checkout",
-      "relationshipType": "one-to-many"
-    },
-    {
-      "otherEntityName": "reservation",
-      "otherEntityRelationshipName": "bookCopy",
-      "relationshipName": "reservation",
-      "relationshipType": "one-to-many"
-    },
-    {
-      "otherEntityName": "notification",
-      "otherEntityRelationshipName": "bookCopy",
-      "relationshipName": "notification",
-      "relationshipType": "one-to-many"
-    },
-    {
       "otherEntityField": "title",
       "otherEntityName": "book",
-      "otherEntityRelationshipName": "bookCopy",
       "relationshipName": "book",
       "relationshipType": "many-to-one"
     }

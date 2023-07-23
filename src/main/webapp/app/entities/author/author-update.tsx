@@ -88,7 +88,7 @@ export const AuthorUpdate = () => {
                   required
                   readOnly
                   id="author-id"
-                  label={translate('global.field.id')}
+                  label={translate('libraryApp.author.id')}
                   validate={{ required: true }}
                 />
               ) : null}

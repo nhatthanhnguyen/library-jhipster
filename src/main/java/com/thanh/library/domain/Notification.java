@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.thanh.library.domain.enumeration.Type;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.UUID;
 import javax.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -15,15 +16,14 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "notification")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Notification implements Serializable {
+public class Notification extends AbstractAuditingEntity<UUID> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue
     @Column(name = "id")
-    private Long id;
+    private UUID id;
 
     @Column(name = "sent_at")
     private Instant sentAt;
@@ -36,21 +36,21 @@ public class Notification implements Serializable {
     private User user;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "checkouts", "reservations", "notifications", "book" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "book" }, allowSetters = true)
     private BookCopy bookCopy;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public UUID getId() {
         return this.id;
     }
 
-    public Notification id(Long id) {
+    public Notification id(UUID id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

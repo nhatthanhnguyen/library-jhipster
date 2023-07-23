@@ -8,6 +8,12 @@
     -->
     <changeSet id="20230722083919-2" author="jhipster">
 
+        <addForeignKeyConstraint baseColumnNames="publisher_id"
+                                 baseTableName="book"
+                                 constraintName="fk_book__publisher_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="publisher"/>
+
         <addForeignKeyConstraint baseColumnNames="book_id"
                                  baseTableName="rel_book__author"
                                  constraintName="fk_rel_book__author__book_id"
@@ -31,11 +37,5 @@
                                  constraintName="fk_rel_book__category__category_id"
                                  referencedColumnNames="id"
                                  referencedTableName="category"/>
-
-        <addForeignKeyConstraint baseColumnNames="publisher_id"
-                                 baseTableName="book"
-                                 constraintName="fk_book__publisher_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="publisher"/>
     </changeSet>
 </databaseChangeLog>

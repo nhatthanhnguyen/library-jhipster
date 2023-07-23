@@ -28,7 +28,7 @@ export const NotificationDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="global.field.id">ID</Translate>
+              <Translate contentKey="libraryApp.notification.id">Id</Translate>
             </span>
           </dt>
           <dd>{notificationEntity.id}</dd>
@@ -49,7 +49,7 @@ export const NotificationDetail = () => {
           <dt>
             <Translate contentKey="libraryApp.notification.user">User</Translate>
           </dt>
-          <dd>{notificationEntity.user ? notificationEntity.user.id : ''}</dd>
+          <dd>{notificationEntity.user ? notificationEntity.user.login : ''}</dd>
           <dt>
             <Translate contentKey="libraryApp.notification.bookCopy">Book Copy</Translate>
           </dt>

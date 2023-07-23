@@ -4,6 +4,7 @@ import com.thanh.library.domain.enumeration.Type;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the {@link com.thanh.library.domain.Notification} entity.
@@ -11,7 +12,7 @@ import java.util.Objects;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class NotificationDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     private Instant sentAt;
 
@@ -21,11 +22,11 @@ public class NotificationDTO implements Serializable {
 
     private BookCopyDTO bookCopy;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -86,7 +87,7 @@ public class NotificationDTO implements Serializable {
     @Override
     public String toString() {
         return "NotificationDTO{" +
-            "id=" + getId() +
+            "id='" + getId() + "'" +
             ", sentAt='" + getSentAt() + "'" +
             ", type='" + getType() + "'" +
             ", user=" + getUser() +

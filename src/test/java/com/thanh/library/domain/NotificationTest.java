@@ -3,6 +3,7 @@ package com.thanh.library.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.thanh.library.web.rest.TestUtil;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class NotificationTest {
@@ -11,11 +12,11 @@ class NotificationTest {
     void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Notification.class);
         Notification notification1 = new Notification();
-        notification1.setId(1L);
+        notification1.setId(UUID.randomUUID());
         Notification notification2 = new Notification();
         notification2.setId(notification1.getId());
         assertThat(notification1).isEqualTo(notification2);
-        notification2.setId(2L);
+        notification2.setId(UUID.randomUUID());
         assertThat(notification1).isNotEqualTo(notification2);
         notification1.setId(null);
         assertThat(notification1).isNotEqualTo(notification2);

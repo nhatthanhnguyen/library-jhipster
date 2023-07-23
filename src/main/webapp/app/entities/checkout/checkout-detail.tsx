@@ -28,7 +28,7 @@ export const CheckoutDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="global.field.id">ID</Translate>
+              <Translate contentKey="libraryApp.checkout.id">Id</Translate>
             </span>
           </dt>
           <dd>{checkoutEntity.id}</dd>
@@ -53,7 +53,7 @@ export const CheckoutDetail = () => {
           <dt>
             <Translate contentKey="libraryApp.checkout.user">User</Translate>
           </dt>
-          <dd>{checkoutEntity.user ? checkoutEntity.user.id : ''}</dd>
+          <dd>{checkoutEntity.user ? checkoutEntity.user.login : ''}</dd>
           <dt>
             <Translate contentKey="libraryApp.checkout.bookCopy">Book Copy</Translate>
           </dt>

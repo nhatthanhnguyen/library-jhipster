@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class BookResource {
      */
     @PutMapping("/books/{id}")
     public ResponseEntity<BookDTO> updateBook(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody BookDTO bookDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Book : {}, {}", id, bookDTO);
@@ -115,7 +116,7 @@ public class BookResource {
      */
     @PatchMapping(value = "/books/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<BookDTO> partialUpdateBook(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody BookDTO bookDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Book partially : {}, {}", id, bookDTO);
@@ -168,7 +169,7 @@ public class BookResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bookDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/books/{id}")
-    public ResponseEntity<BookDTO> getBook(@PathVariable Long id) {
+    public ResponseEntity<BookDTO> getBook(@PathVariable UUID id) {
         log.debug("REST request to get Book : {}", id);
         Optional<BookDTO> bookDTO = bookService.findOne(id);
         return ResponseUtil.wrapOrNotFound(bookDTO);
@@ -181,7 +182,7 @@ public class BookResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/books/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable UUID id) {
         log.debug("REST request to delete Book : {}", id);
         bookService.delete(id);
         return ResponseEntity

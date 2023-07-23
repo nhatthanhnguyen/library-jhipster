@@ -2,24 +2,32 @@ package com.thanh.library.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.thanh.library.IntegrationTest;
 import com.thanh.library.domain.Checkout;
 import com.thanh.library.repository.CheckoutRepository;
+import com.thanh.library.service.CheckoutService;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.mapper.CheckoutMapper;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link CheckoutResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class CheckoutResourceIT {
@@ -45,14 +54,17 @@ class CheckoutResourceIT {
     private static final String ENTITY_API_URL = "/api/checkouts";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
-
     @Autowired
     private CheckoutRepository checkoutRepository;
 
+    @Mock
+    private CheckoutRepository checkoutRepositoryMock;
+
     @Autowired
     private CheckoutMapper checkoutMapper;
+
+    @Mock
+    private CheckoutService checkoutServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -112,7 +124,7 @@ class CheckoutResourceIT {
     @Transactional
     void createCheckoutWithExistingId() throws Exception {
         // Create the Checkout with an existing ID
-        checkout.setId(1L);
+        checkoutRepository.saveAndFlush(checkout);
         CheckoutDTO checkoutDTO = checkoutMapper.toDto(checkout);
 
         int databaseSizeBeforeCreate = checkoutRepository.findAll().size();
@@ -138,10 +150,27 @@ class CheckoutResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(checkout.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(checkout.getId().toString())))
             .andExpect(jsonPath("$.[*].startTime").value(hasItem(DEFAULT_START_TIME.toString())))
             .andExpect(jsonPath("$.[*].endTime").value(hasItem(DEFAULT_END_TIME.toString())))
             .andExpect(jsonPath("$.[*].isReturned").value(hasItem(DEFAULT_IS_RETURNED.booleanValue())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCheckoutsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(checkoutServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCheckoutMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(checkoutServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCheckoutsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(checkoutServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCheckoutMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(checkoutRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -155,7 +184,7 @@ class CheckoutResourceIT {
             .perform(get(ENTITY_API_URL_ID, checkout.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(checkout.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(checkout.getId().toString()))
             .andExpect(jsonPath("$.startTime").value(DEFAULT_START_TIME.toString()))
             .andExpect(jsonPath("$.endTime").value(DEFAULT_END_TIME.toString()))
             .andExpect(jsonPath("$.isReturned").value(DEFAULT_IS_RETURNED.booleanValue()));
@@ -165,7 +194,7 @@ class CheckoutResourceIT {
     @Transactional
     void getNonExistingCheckout() throws Exception {
         // Get the checkout
-        restCheckoutMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restCheckoutMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -204,7 +233,7 @@ class CheckoutResourceIT {
     @Transactional
     void putNonExistingCheckout() throws Exception {
         int databaseSizeBeforeUpdate = checkoutRepository.findAll().size();
-        checkout.setId(count.incrementAndGet());
+        checkout.setId(UUID.randomUUID());
 
         // Create the Checkout
         CheckoutDTO checkoutDTO = checkoutMapper.toDto(checkout);
@@ -227,7 +256,7 @@ class CheckoutResourceIT {
     @Transactional
     void putWithIdMismatchCheckout() throws Exception {
         int databaseSizeBeforeUpdate = checkoutRepository.findAll().size();
-        checkout.setId(count.incrementAndGet());
+        checkout.setId(UUID.randomUUID());
 
         // Create the Checkout
         CheckoutDTO checkoutDTO = checkoutMapper.toDto(checkout);
@@ -235,7 +264,7 @@ class CheckoutResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCheckoutMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(checkoutDTO))
             )
@@ -250,7 +279,7 @@ class CheckoutResourceIT {
     @Transactional
     void putWithMissingIdPathParamCheckout() throws Exception {
         int databaseSizeBeforeUpdate = checkoutRepository.findAll().size();
-        checkout.setId(count.incrementAndGet());
+        checkout.setId(UUID.randomUUID());
 
         // Create the Checkout
         CheckoutDTO checkoutDTO = checkoutMapper.toDto(checkout);
@@ -331,7 +360,7 @@ class CheckoutResourceIT {
     @Transactional
     void patchNonExistingCheckout() throws Exception {
         int databaseSizeBeforeUpdate = checkoutRepository.findAll().size();
-        checkout.setId(count.incrementAndGet());
+        checkout.setId(UUID.randomUUID());
 
         // Create the Checkout
         CheckoutDTO checkoutDTO = checkoutMapper.toDto(checkout);
@@ -354,7 +383,7 @@ class CheckoutResourceIT {
     @Transactional
     void patchWithIdMismatchCheckout() throws Exception {
         int databaseSizeBeforeUpdate = checkoutRepository.findAll().size();
-        checkout.setId(count.incrementAndGet());
+        checkout.setId(UUID.randomUUID());
 
         // Create the Checkout
         CheckoutDTO checkoutDTO = checkoutMapper.toDto(checkout);
@@ -362,7 +391,7 @@ class CheckoutResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCheckoutMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(checkoutDTO))
             )
@@ -377,7 +406,7 @@ class CheckoutResourceIT {
     @Transactional
     void patchWithMissingIdPathParamCheckout() throws Exception {
         int databaseSizeBeforeUpdate = checkoutRepository.findAll().size();
-        checkout.setId(count.incrementAndGet());
+        checkout.setId(UUID.randomUUID());
 
         // Create the Checkout
         CheckoutDTO checkoutDTO = checkoutMapper.toDto(checkout);
@@ -404,7 +433,7 @@ class CheckoutResourceIT {
 
         // Delete the checkout
         restCheckoutMockMvc
-            .perform(delete(ENTITY_API_URL_ID, checkout.getId()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, checkout.getId().toString()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

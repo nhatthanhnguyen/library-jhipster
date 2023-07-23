@@ -6,6 +6,7 @@ import com.thanh.library.service.CategoryService;
 import com.thanh.library.service.dto.CategoryDTO;
 import com.thanh.library.service.mapper.CategoryMapper;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -71,13 +72,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CategoryDTO> findOne(Long id) {
+    public Optional<CategoryDTO> findOne(UUID id) {
         log.debug("Request to get Category : {}", id);
         return categoryRepository.findById(id).map(categoryMapper::toDto);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Category : {}", id);
         categoryRepository.deleteById(id);
     }

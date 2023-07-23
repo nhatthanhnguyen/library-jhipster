@@ -17,14 +17,20 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface BookMapper extends EntityMapper<BookDTO, Book> {
+    @Mapping(target = "publisher", source = "publisher", qualifiedByName = "publisherName")
     @Mapping(target = "authors", source = "authors", qualifiedByName = "authorIdSet")
     @Mapping(target = "categories", source = "categories", qualifiedByName = "categoryIdSet")
-    @Mapping(target = "publisher", source = "publisher", qualifiedByName = "publisherName")
     BookDTO toDto(Book s);
 
     @Mapping(target = "removeAuthor", ignore = true)
     @Mapping(target = "removeCategory", ignore = true)
     Book toEntity(BookDTO bookDTO);
+
+    @Named("publisherName")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
+    PublisherDTO toDtoPublisherName(Publisher publisher);
 
     @Named("authorId")
     @BeanMapping(ignoreByDefault = true)
@@ -45,10 +51,4 @@ public interface BookMapper extends EntityMapper<BookDTO, Book> {
     default Set<CategoryDTO> toDtoCategoryIdSet(Set<Category> category) {
         return category.stream().map(this::toDtoCategoryId).collect(Collectors.toSet());
     }
-
-    @Named("publisherName")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "name", source = "name")
-    PublisherDTO toDtoPublisherName(Publisher publisher);
 }

@@ -17,12 +17,9 @@
       "detail": {
         "title": "Book Copy"
       },
-      "id": "ID",
+      "id": "Id",
       "yearPublished": "Year Published",
       "isDeleted": "Is Deleted",
-      "checkout": "Checkout",
-      "reservation": "Reservation",
-      "notification": "Notification",
       "book": "Book"
     }
   }

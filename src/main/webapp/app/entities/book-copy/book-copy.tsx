@@ -103,7 +103,7 @@ export const BookCopy = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.bookCopy.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.bookCopy.id">Id</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('yearPublished')}>
                   <Translate contentKey="libraryApp.bookCopy.yearPublished">Year Published</Translate> <FontAwesomeIcon icon="sort" />

@@ -6,6 +6,7 @@ import com.thanh.library.service.BookService;
 import com.thanh.library.service.dto.BookDTO;
 import com.thanh.library.service.mapper.BookMapper;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -75,13 +76,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<BookDTO> findOne(Long id) {
+    public Optional<BookDTO> findOne(UUID id) {
         log.debug("Request to get Book : {}", id);
         return bookRepository.findOneWithEagerRelationships(id).map(bookMapper::toDto);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Book : {}", id);
         bookRepository.deleteById(id);
     }

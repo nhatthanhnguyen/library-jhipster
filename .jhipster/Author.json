@@ -6,6 +6,10 @@
   "entityTableName": "author",
   "fields": [
     {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
       "fieldName": "firstName",
       "fieldType": "String",
       "fieldValidateRules": ["required"]

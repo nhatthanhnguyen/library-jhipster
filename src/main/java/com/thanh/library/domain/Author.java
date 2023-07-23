@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -16,15 +17,14 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "author")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Author implements Serializable {
+public class Author extends AbstractAuditingEntity<UUID> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue
     @Column(name = "id")
-    private Long id;
+    private UUID id;
 
     @NotNull
     @Column(name = "first_name", nullable = false)
@@ -39,21 +39,21 @@ public class Author implements Serializable {
 
     @ManyToMany(mappedBy = "authors")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "bookCopies", "queues", "authors", "categories", "publisher" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "publisher", "authors", "categories" }, allowSetters = true)
     private Set<Book> books = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public UUID getId() {
         return this.id;
     }
 
-    public Author id(Long id) {
+    public Author id(UUID id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

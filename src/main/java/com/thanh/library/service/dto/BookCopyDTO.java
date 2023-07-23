@@ -2,6 +2,7 @@ package com.thanh.library.service.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 import javax.validation.constraints.*;
 
 /**
@@ -10,7 +11,7 @@ import javax.validation.constraints.*;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class BookCopyDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private Integer yearPublished;
@@ -19,11 +20,11 @@ public class BookCopyDTO implements Serializable {
 
     private BookDTO book;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -76,7 +77,7 @@ public class BookCopyDTO implements Serializable {
     @Override
     public String toString() {
         return "BookCopyDTO{" +
-            "id=" + getId() +
+            "id='" + getId() + "'" +
             ", yearPublished=" + getYearPublished() +
             ", isDeleted='" + getIsDeleted() + "'" +
             ", book=" + getBook() +

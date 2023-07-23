@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,7 +79,7 @@ public class ReservationResource {
      */
     @PutMapping("/reservations/{id}")
     public ResponseEntity<ReservationDTO> updateReservation(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @RequestBody ReservationDTO reservationDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Reservation : {}, {}", id, reservationDTO);
@@ -113,7 +114,7 @@ public class ReservationResource {
      */
     @PatchMapping(value = "/reservations/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ReservationDTO> partialUpdateReservation(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @RequestBody ReservationDTO reservationDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Reservation partially : {}, {}", id, reservationDTO);
@@ -140,12 +141,21 @@ public class ReservationResource {
      * {@code GET  /reservations} : get all the reservations.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of reservations in body.
      */
     @GetMapping("/reservations")
-    public ResponseEntity<List<ReservationDTO>> getAllReservations(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ReservationDTO>> getAllReservations(
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+    ) {
         log.debug("REST request to get a page of Reservations");
-        Page<ReservationDTO> page = reservationService.findAll(pageable);
+        Page<ReservationDTO> page;
+        if (eagerload) {
+            page = reservationService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = reservationService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -157,7 +167,7 @@ public class ReservationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reservationDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/reservations/{id}")
-    public ResponseEntity<ReservationDTO> getReservation(@PathVariable Long id) {
+    public ResponseEntity<ReservationDTO> getReservation(@PathVariable UUID id) {
         log.debug("REST request to get Reservation : {}", id);
         Optional<ReservationDTO> reservationDTO = reservationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(reservationDTO);
@@ -170,7 +180,7 @@ public class ReservationResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/reservations/{id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReservation(@PathVariable UUID id) {
         log.debug("REST request to delete Reservation : {}", id);
         reservationService.delete(id);
         return ResponseEntity

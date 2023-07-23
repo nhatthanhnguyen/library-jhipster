@@ -28,7 +28,7 @@ export const AuthorDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="global.field.id">ID</Translate>
+              <Translate contentKey="libraryApp.author.id">Id</Translate>
             </span>
           </dt>
           <dd>{authorEntity.id}</dd>

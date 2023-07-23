@@ -17,7 +17,7 @@
       "detail": {
         "title": "Notification"
       },
-      "id": "ID",
+      "id": "Id",
       "sentAt": "Sent At",
       "type": "Type",
       "user": "User",

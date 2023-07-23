@@ -2,6 +2,7 @@ package com.thanh.library.service;
 
 import com.thanh.library.service.dto.PublisherDTO;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -47,12 +48,12 @@ public interface PublisherService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<PublisherDTO> findOne(Long id);
+    Optional<PublisherDTO> findOne(UUID id);
 
     /**
      * Delete the "id" publisher.
      *
      * @param id the id of the entity.
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

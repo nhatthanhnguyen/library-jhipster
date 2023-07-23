@@ -17,7 +17,7 @@
       "detail": {
         "title": "Checkout"
       },
-      "id": "ID",
+      "id": "Id",
       "startTime": "Start Time",
       "endTime": "End Time",
       "isReturned": "Is Returned",

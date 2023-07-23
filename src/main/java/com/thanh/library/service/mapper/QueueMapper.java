@@ -13,14 +13,15 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring")
 public interface QueueMapper extends EntityMapper<QueueDTO, Queue> {
-    @Mapping(target = "user", source = "user", qualifiedByName = "userId")
+    @Mapping(target = "user", source = "user", qualifiedByName = "userLogin")
     @Mapping(target = "book", source = "book", qualifiedByName = "bookTitle")
     QueueDTO toDto(Queue s);
 
-    @Named("userId")
+    @Named("userLogin")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    UserDTO toDtoUserId(User user);
+    @Mapping(target = "login", source = "login")
+    UserDTO toDtoUserLogin(User user);
 
     @Named("bookTitle")
     @BeanMapping(ignoreByDefault = true)

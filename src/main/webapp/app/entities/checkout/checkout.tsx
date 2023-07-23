@@ -103,7 +103,7 @@ export const Checkout = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.checkout.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.checkout.id">Id</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('startTime')}>
                   <Translate contentKey="libraryApp.checkout.startTime">Start Time</Translate> <FontAwesomeIcon icon="sort" />
@@ -134,7 +134,7 @@ export const Checkout = () => {
                   <td>{checkout.startTime ? <TextFormat type="date" value={checkout.startTime} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{checkout.endTime ? <TextFormat type="date" value={checkout.endTime} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{checkout.isReturned ? 'true' : 'false'}</td>
-                  <td>{checkout.user ? checkout.user.id : ''}</td>
+                  <td>{checkout.user ? checkout.user.login : ''}</td>
                   <td>{checkout.bookCopy ? <Link to={`/book-copy/${checkout.bookCopy.id}`}>{checkout.bookCopy.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

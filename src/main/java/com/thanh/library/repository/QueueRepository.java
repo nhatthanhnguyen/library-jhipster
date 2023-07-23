@@ -30,14 +30,14 @@ public interface QueueRepository extends JpaRepository<Queue, Long> {
     }
 
     @Query(
-        value = "select distinct queue from Queue queue left join fetch queue.book",
+        value = "select distinct queue from Queue queue left join fetch queue.user left join fetch queue.book",
         countQuery = "select count(distinct queue) from Queue queue"
     )
     Page<Queue> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select distinct queue from Queue queue left join fetch queue.book")
+    @Query("select distinct queue from Queue queue left join fetch queue.user left join fetch queue.book")
     List<Queue> findAllWithToOneRelationships();
 
-    @Query("select queue from Queue queue left join fetch queue.book where queue.id =:id")
+    @Query("select queue from Queue queue left join fetch queue.user left join fetch queue.book where queue.id =:id")
     Optional<Queue> findOneWithToOneRelationships(@Param("id") Long id);
 }

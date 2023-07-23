@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import javax.validation.constraints.*;
 
 /**
@@ -12,24 +13,24 @@ import javax.validation.constraints.*;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class BookDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String title;
 
     private Boolean isDeleted;
 
+    private PublisherDTO publisher;
+
     private Set<AuthorDTO> authors = new HashSet<>();
 
     private Set<CategoryDTO> categories = new HashSet<>();
 
-    private PublisherDTO publisher;
-
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -49,6 +50,14 @@ public class BookDTO implements Serializable {
         this.isDeleted = isDeleted;
     }
 
+    public PublisherDTO getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(PublisherDTO publisher) {
+        this.publisher = publisher;
+    }
+
     public Set<AuthorDTO> getAuthors() {
         return authors;
     }
@@ -63,14 +72,6 @@ public class BookDTO implements Serializable {
 
     public void setCategories(Set<CategoryDTO> categories) {
         this.categories = categories;
-    }
-
-    public PublisherDTO getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(PublisherDTO publisher) {
-        this.publisher = publisher;
     }
 
     @Override
@@ -98,12 +99,12 @@ public class BookDTO implements Serializable {
     @Override
     public String toString() {
         return "BookDTO{" +
-            "id=" + getId() +
+            "id='" + getId() + "'" +
             ", title='" + getTitle() + "'" +
             ", isDeleted='" + getIsDeleted() + "'" +
+            ", publisher=" + getPublisher() +
             ", authors=" + getAuthors() +
             ", categories=" + getCategories() +
-            ", publisher=" + getPublisher() +
             "}";
     }
 }

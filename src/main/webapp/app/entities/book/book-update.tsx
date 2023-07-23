@@ -8,12 +8,12 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
+import { IPublisher } from 'app/shared/model/publisher.model';
+import { getEntities as getPublishers } from 'app/entities/publisher/publisher.reducer';
 import { IAuthor } from 'app/shared/model/author.model';
 import { getEntities as getAuthors } from 'app/entities/author/author.reducer';
 import { ICategory } from 'app/shared/model/category.model';
 import { getEntities as getCategories } from 'app/entities/category/category.reducer';
-import { IPublisher } from 'app/shared/model/publisher.model';
-import { getEntities as getPublishers } from 'app/entities/publisher/publisher.reducer';
 import { IBook } from 'app/shared/model/book.model';
 import { getEntity, updateEntity, createEntity, reset } from './book.reducer';
 
@@ -25,9 +25,9 @@ export const BookUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
+  const publishers = useAppSelector(state => state.publisher.entities);
   const authors = useAppSelector(state => state.author.entities);
   const categories = useAppSelector(state => state.category.entities);
-  const publishers = useAppSelector(state => state.publisher.entities);
   const bookEntity = useAppSelector(state => state.book.entity);
   const loading = useAppSelector(state => state.book.loading);
   const updating = useAppSelector(state => state.book.updating);
@@ -44,9 +44,9 @@ export const BookUpdate = () => {
       dispatch(getEntity(id));
     }
 
+    dispatch(getPublishers({}));
     dispatch(getAuthors({}));
     dispatch(getCategories({}));
-    dispatch(getPublishers({}));
   }, []);
 
   useEffect(() => {
@@ -76,9 +76,9 @@ export const BookUpdate = () => {
       ? {}
       : {
           ...bookEntity,
+          publisher: bookEntity?.publisher?.id,
           authors: bookEntity?.authors?.map(e => e.id.toString()),
           categories: bookEntity?.categories?.map(e => e.id.toString()),
-          publisher: bookEntity?.publisher?.id,
         };
 
   return (
@@ -102,7 +102,7 @@ export const BookUpdate = () => {
                   required
                   readOnly
                   id="book-id"
-                  label={translate('global.field.id')}
+                  label={translate('libraryApp.book.id')}
                   validate={{ required: true }}
                 />
               ) : null}
@@ -124,6 +124,22 @@ export const BookUpdate = () => {
                 check
                 type="checkbox"
               />
+              <ValidatedField
+                id="book-publisher"
+                name="publisher"
+                data-cy="publisher"
+                label={translate('libraryApp.book.publisher')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {publishers
+                  ? publishers.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.name}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <ValidatedField
                 label={translate('libraryApp.book.author')}
                 id="book-author"
@@ -154,22 +170,6 @@ export const BookUpdate = () => {
                   ? categories.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <ValidatedField
-                id="book-publisher"
-                name="publisher"
-                data-cy="publisher"
-                label={translate('libraryApp.book.publisher')}
-                type="select"
-              >
-                <option value="" key="0" />
-                {publishers
-                  ? publishers.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.name}
                       </option>
                     ))
                   : null}

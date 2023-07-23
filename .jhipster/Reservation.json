@@ -6,6 +6,10 @@
   "entityTableName": "reservation",
   "fields": [
     {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
       "fieldName": "startTime",
       "fieldType": "Instant"
     },
@@ -21,13 +25,13 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityField": "login",
       "otherEntityName": "user",
       "relationshipName": "user",
       "relationshipType": "many-to-one"
     },
     {
       "otherEntityName": "bookCopy",
-      "otherEntityRelationshipName": "reservation",
       "relationshipName": "bookCopy",
       "relationshipType": "many-to-one"
     }

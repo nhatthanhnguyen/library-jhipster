@@ -104,7 +104,7 @@ export const ReservationUpdate = () => {
                   required
                   readOnly
                   id="reservation-id"
-                  label={translate('global.field.id')}
+                  label={translate('libraryApp.reservation.id')}
                   validate={{ required: true }}
                 />
               ) : null}
@@ -135,7 +135,7 @@ export const ReservationUpdate = () => {
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.login}
                       </option>
                     ))
                   : null}

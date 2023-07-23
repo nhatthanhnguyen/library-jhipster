@@ -17,14 +17,12 @@
       "detail": {
         "title": "Book"
       },
-      "id": "ID",
+      "id": "Id",
       "title": "Title",
       "isDeleted": "Is Deleted",
-      "bookCopy": "Book Copy",
-      "queue": "Queue",
+      "publisher": "Publisher",
       "author": "Author",
-      "category": "Category",
-      "publisher": "Publisher"
+      "category": "Category"
     }
   }
 }

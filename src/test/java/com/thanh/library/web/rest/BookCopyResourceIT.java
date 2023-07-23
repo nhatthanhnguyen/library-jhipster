@@ -14,8 +14,7 @@ import com.thanh.library.service.dto.BookCopyDTO;
 import com.thanh.library.service.mapper.BookCopyMapper;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,9 +48,6 @@ class BookCopyResourceIT {
 
     private static final String ENTITY_API_URL = "/api/book-copies";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private BookCopyRepository bookCopyRepository;
@@ -122,7 +118,7 @@ class BookCopyResourceIT {
     @Transactional
     void createBookCopyWithExistingId() throws Exception {
         // Create the BookCopy with an existing ID
-        bookCopy.setId(1L);
+        bookCopyRepository.saveAndFlush(bookCopy);
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
 
         int databaseSizeBeforeCreate = bookCopyRepository.findAll().size();
@@ -166,7 +162,7 @@ class BookCopyResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(bookCopy.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(bookCopy.getId().toString())))
             .andExpect(jsonPath("$.[*].yearPublished").value(hasItem(DEFAULT_YEAR_PUBLISHED)))
             .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED.booleanValue())));
     }
@@ -199,7 +195,7 @@ class BookCopyResourceIT {
             .perform(get(ENTITY_API_URL_ID, bookCopy.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(bookCopy.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(bookCopy.getId().toString()))
             .andExpect(jsonPath("$.yearPublished").value(DEFAULT_YEAR_PUBLISHED))
             .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED.booleanValue()));
     }
@@ -208,7 +204,7 @@ class BookCopyResourceIT {
     @Transactional
     void getNonExistingBookCopy() throws Exception {
         // Get the bookCopy
-        restBookCopyMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restBookCopyMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -246,7 +242,7 @@ class BookCopyResourceIT {
     @Transactional
     void putNonExistingBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(count.incrementAndGet());
+        bookCopy.setId(UUID.randomUUID());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -269,7 +265,7 @@ class BookCopyResourceIT {
     @Transactional
     void putWithIdMismatchBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(count.incrementAndGet());
+        bookCopy.setId(UUID.randomUUID());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -277,7 +273,7 @@ class BookCopyResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBookCopyMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(bookCopyDTO))
             )
@@ -292,7 +288,7 @@ class BookCopyResourceIT {
     @Transactional
     void putWithMissingIdPathParamBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(count.incrementAndGet());
+        bookCopy.setId(UUID.randomUUID());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -371,7 +367,7 @@ class BookCopyResourceIT {
     @Transactional
     void patchNonExistingBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(count.incrementAndGet());
+        bookCopy.setId(UUID.randomUUID());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -394,7 +390,7 @@ class BookCopyResourceIT {
     @Transactional
     void patchWithIdMismatchBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(count.incrementAndGet());
+        bookCopy.setId(UUID.randomUUID());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -402,7 +398,7 @@ class BookCopyResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBookCopyMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(bookCopyDTO))
             )
@@ -417,7 +413,7 @@ class BookCopyResourceIT {
     @Transactional
     void patchWithMissingIdPathParamBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(count.incrementAndGet());
+        bookCopy.setId(UUID.randomUUID());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -444,7 +440,7 @@ class BookCopyResourceIT {
 
         // Delete the bookCopy
         restBookCopyMockMvc
-            .perform(delete(ENTITY_API_URL_ID, bookCopy.getId()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, bookCopy.getId().toString()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

@@ -6,6 +6,10 @@
   "entityTableName": "notification",
   "fields": [
     {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
       "fieldName": "sentAt",
       "fieldType": "Instant"
     },
@@ -22,13 +26,13 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityField": "login",
       "otherEntityName": "user",
       "relationshipName": "user",
       "relationshipType": "many-to-one"
     },
     {
       "otherEntityName": "bookCopy",
-      "otherEntityRelationshipName": "notification",
       "relationshipName": "bookCopy",
       "relationshipType": "many-to-one"
     }

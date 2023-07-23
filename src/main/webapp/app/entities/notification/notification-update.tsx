@@ -104,7 +104,7 @@ export const NotificationUpdate = () => {
                   required
                   readOnly
                   id="notification-id"
-                  label={translate('global.field.id')}
+                  label={translate('libraryApp.notification.id')}
                   validate={{ required: true }}
                 />
               ) : null}
@@ -140,7 +140,7 @@ export const NotificationUpdate = () => {
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.login}
                       </option>
                     ))
                   : null}

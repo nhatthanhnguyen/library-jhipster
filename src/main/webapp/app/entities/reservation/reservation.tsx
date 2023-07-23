@@ -103,7 +103,7 @@ export const Reservation = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.reservation.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.reservation.id">Id</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('startTime')}>
                   <Translate contentKey="libraryApp.reservation.startTime">Start Time</Translate> <FontAwesomeIcon icon="sort" />
@@ -132,7 +132,7 @@ export const Reservation = () => {
                     {reservation.startTime ? <TextFormat type="date" value={reservation.startTime} format={APP_DATE_FORMAT} /> : null}
                   </td>
                   <td>{reservation.endTime ? <TextFormat type="date" value={reservation.endTime} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{reservation.user ? reservation.user.id : ''}</td>
+                  <td>{reservation.user ? reservation.user.login : ''}</td>
                   <td>{reservation.bookCopy ? <Link to={`/book-copy/${reservation.bookCopy.id}`}>{reservation.bookCopy.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

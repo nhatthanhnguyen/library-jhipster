@@ -28,7 +28,7 @@ export const ReservationDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="global.field.id">ID</Translate>
+              <Translate contentKey="libraryApp.reservation.id">Id</Translate>
             </span>
           </dt>
           <dd>{reservationEntity.id}</dd>
@@ -51,7 +51,7 @@ export const ReservationDetail = () => {
           <dt>
             <Translate contentKey="libraryApp.reservation.user">User</Translate>
           </dt>
-          <dd>{reservationEntity.user ? reservationEntity.user.id : ''}</dd>
+          <dd>{reservationEntity.user ? reservationEntity.user.login : ''}</dd>
           <dt>
             <Translate contentKey="libraryApp.reservation.bookCopy">Book Copy</Translate>
           </dt>

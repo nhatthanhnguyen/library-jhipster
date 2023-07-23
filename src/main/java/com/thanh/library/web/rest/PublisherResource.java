@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class PublisherResource {
      */
     @PutMapping("/publishers/{id}")
     public ResponseEntity<PublisherDTO> updatePublisher(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody PublisherDTO publisherDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Publisher : {}, {}", id, publisherDTO);
@@ -115,7 +116,7 @@ public class PublisherResource {
      */
     @PatchMapping(value = "/publishers/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<PublisherDTO> partialUpdatePublisher(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody PublisherDTO publisherDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Publisher partially : {}, {}", id, publisherDTO);
@@ -159,7 +160,7 @@ public class PublisherResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the publisherDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/publishers/{id}")
-    public ResponseEntity<PublisherDTO> getPublisher(@PathVariable Long id) {
+    public ResponseEntity<PublisherDTO> getPublisher(@PathVariable UUID id) {
         log.debug("REST request to get Publisher : {}", id);
         Optional<PublisherDTO> publisherDTO = publisherService.findOne(id);
         return ResponseUtil.wrapOrNotFound(publisherDTO);
@@ -172,7 +173,7 @@ public class PublisherResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/publishers/{id}")
-    public ResponseEntity<Void> deletePublisher(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePublisher(@PathVariable UUID id) {
         log.debug("REST request to delete Publisher : {}", id);
         publisherService.delete(id);
         return ResponseEntity

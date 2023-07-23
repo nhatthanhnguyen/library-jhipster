@@ -17,10 +17,9 @@
       "detail": {
         "title": "Publisher"
       },
-      "id": "ID",
+      "id": "Id",
       "name": "Name",
-      "isDeleted": "Is Deleted",
-      "book": "Book"
+      "isDeleted": "Is Deleted"
     }
   }
 }

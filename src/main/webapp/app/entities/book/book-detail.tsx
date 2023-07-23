@@ -28,7 +28,7 @@ export const BookDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="global.field.id">ID</Translate>
+              <Translate contentKey="libraryApp.book.id">Id</Translate>
             </span>
           </dt>
           <dd>{bookEntity.id}</dd>
@@ -44,6 +44,10 @@ export const BookDetail = () => {
             </span>
           </dt>
           <dd>{bookEntity.isDeleted ? 'true' : 'false'}</dd>
+          <dt>
+            <Translate contentKey="libraryApp.book.publisher">Publisher</Translate>
+          </dt>
+          <dd>{bookEntity.publisher ? bookEntity.publisher.name : ''}</dd>
           <dt>
             <Translate contentKey="libraryApp.book.author">Author</Translate>
           </dt>
@@ -70,10 +74,6 @@ export const BookDetail = () => {
                 ))
               : null}
           </dd>
-          <dt>
-            <Translate contentKey="libraryApp.book.publisher">Publisher</Translate>
-          </dt>
-          <dd>{bookEntity.publisher ? bookEntity.publisher.name : ''}</dd>
         </dl>
         <Button tag={Link} to="/book" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

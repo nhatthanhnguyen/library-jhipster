@@ -90,7 +90,7 @@ export const BookCopyUpdate = () => {
                   required
                   readOnly
                   id="book-copy-id"
-                  label={translate('global.field.id')}
+                  label={translate('libraryApp.bookCopy.id')}
                   validate={{ required: true }}
                 />
               ) : null}

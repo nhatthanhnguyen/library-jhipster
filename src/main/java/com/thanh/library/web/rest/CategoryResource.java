@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class CategoryResource {
      */
     @PutMapping("/categories/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody CategoryDTO categoryDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Category : {}, {}", id, categoryDTO);
@@ -115,7 +116,7 @@ public class CategoryResource {
      */
     @PatchMapping(value = "/categories/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CategoryDTO> partialUpdateCategory(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody CategoryDTO categoryDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Category partially : {}, {}", id, categoryDTO);
@@ -159,7 +160,7 @@ public class CategoryResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the categoryDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/categories/{id}")
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable Long id) {
+    public ResponseEntity<CategoryDTO> getCategory(@PathVariable UUID id) {
         log.debug("REST request to get Category : {}", id);
         Optional<CategoryDTO> categoryDTO = categoryService.findOne(id);
         return ResponseUtil.wrapOrNotFound(categoryDTO);
@@ -172,7 +173,7 @@ public class CategoryResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/categories/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
         log.debug("REST request to delete Category : {}", id);
         categoryService.delete(id);
         return ResponseEntity

@@ -103,7 +103,7 @@ export const Notification = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.notification.id">ID</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.notification.id">Id</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('sentAt')}>
                   <Translate contentKey="libraryApp.notification.sentAt">Sent At</Translate> <FontAwesomeIcon icon="sort" />
@@ -132,7 +132,7 @@ export const Notification = () => {
                   <td>
                     <Translate contentKey={`libraryApp.Type.${notification.type}`} />
                   </td>
-                  <td>{notification.user ? notification.user.id : ''}</td>
+                  <td>{notification.user ? notification.user.login : ''}</td>
                   <td>
                     {notification.bookCopy ? <Link to={`/book-copy/${notification.bookCopy.id}`}>{notification.bookCopy.id}</Link> : ''}
                   </td>

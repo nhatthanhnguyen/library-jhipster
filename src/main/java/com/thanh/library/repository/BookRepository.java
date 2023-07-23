@@ -3,6 +3,7 @@ package com.thanh.library.repository;
 import com.thanh.library.domain.Book;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -16,8 +17,8 @@ import org.springframework.stereotype.Repository;
  * For more information refer to https://github.com/jhipster/generator-jhipster/issues/17990.
  */
 @Repository
-public interface BookRepository extends BookRepositoryWithBagRelationships, JpaRepository<Book, Long> {
-    default Optional<Book> findOneWithEagerRelationships(Long id) {
+public interface BookRepository extends BookRepositoryWithBagRelationships, JpaRepository<Book, UUID> {
+    default Optional<Book> findOneWithEagerRelationships(UUID id) {
         return this.fetchBagRelationships(this.findOneWithToOneRelationships(id));
     }
 
@@ -39,5 +40,5 @@ public interface BookRepository extends BookRepositoryWithBagRelationships, JpaR
     List<Book> findAllWithToOneRelationships();
 
     @Query("select book from Book book left join fetch book.publisher where book.id =:id")
-    Optional<Book> findOneWithToOneRelationships(@Param("id") Long id);
+    Optional<Book> findOneWithToOneRelationships(@Param("id") UUID id);
 }

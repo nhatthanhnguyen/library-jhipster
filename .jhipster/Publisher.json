@@ -6,6 +6,10 @@
   "entityTableName": "publisher",
   "fields": [
     {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
       "fieldName": "name",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
@@ -20,13 +24,6 @@
   "name": "Publisher",
   "pagination": "pagination",
   "readOnly": false,
-  "relationships": [
-    {
-      "otherEntityName": "book",
-      "otherEntityRelationshipName": "publisher",
-      "relationshipName": "book",
-      "relationshipType": "one-to-many"
-    }
-  ],
+  "relationships": [],
   "service": "serviceImpl"
 }

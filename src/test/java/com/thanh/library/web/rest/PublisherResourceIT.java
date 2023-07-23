@@ -11,8 +11,7 @@ import com.thanh.library.repository.PublisherRepository;
 import com.thanh.library.service.dto.PublisherDTO;
 import com.thanh.library.service.mapper.PublisherMapper;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,9 +38,6 @@ class PublisherResourceIT {
 
     private static final String ENTITY_API_URL = "/api/publishers";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private PublisherRepository publisherRepository;
@@ -106,7 +102,7 @@ class PublisherResourceIT {
     @Transactional
     void createPublisherWithExistingId() throws Exception {
         // Create the Publisher with an existing ID
-        publisher.setId(1L);
+        publisherRepository.saveAndFlush(publisher);
         PublisherDTO publisherDTO = publisherMapper.toDto(publisher);
 
         int databaseSizeBeforeCreate = publisherRepository.findAll().size();
@@ -150,7 +146,7 @@ class PublisherResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(publisher.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(publisher.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED.booleanValue())));
     }
@@ -166,7 +162,7 @@ class PublisherResourceIT {
             .perform(get(ENTITY_API_URL_ID, publisher.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(publisher.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(publisher.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED.booleanValue()));
     }
@@ -175,7 +171,7 @@ class PublisherResourceIT {
     @Transactional
     void getNonExistingPublisher() throws Exception {
         // Get the publisher
-        restPublisherMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restPublisherMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -213,7 +209,7 @@ class PublisherResourceIT {
     @Transactional
     void putNonExistingPublisher() throws Exception {
         int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
-        publisher.setId(count.incrementAndGet());
+        publisher.setId(UUID.randomUUID());
 
         // Create the Publisher
         PublisherDTO publisherDTO = publisherMapper.toDto(publisher);
@@ -236,7 +232,7 @@ class PublisherResourceIT {
     @Transactional
     void putWithIdMismatchPublisher() throws Exception {
         int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
-        publisher.setId(count.incrementAndGet());
+        publisher.setId(UUID.randomUUID());
 
         // Create the Publisher
         PublisherDTO publisherDTO = publisherMapper.toDto(publisher);
@@ -244,7 +240,7 @@ class PublisherResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPublisherMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(publisherDTO))
             )
@@ -259,7 +255,7 @@ class PublisherResourceIT {
     @Transactional
     void putWithMissingIdPathParamPublisher() throws Exception {
         int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
-        publisher.setId(count.incrementAndGet());
+        publisher.setId(UUID.randomUUID());
 
         // Create the Publisher
         PublisherDTO publisherDTO = publisherMapper.toDto(publisher);
@@ -336,7 +332,7 @@ class PublisherResourceIT {
     @Transactional
     void patchNonExistingPublisher() throws Exception {
         int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
-        publisher.setId(count.incrementAndGet());
+        publisher.setId(UUID.randomUUID());
 
         // Create the Publisher
         PublisherDTO publisherDTO = publisherMapper.toDto(publisher);
@@ -359,7 +355,7 @@ class PublisherResourceIT {
     @Transactional
     void patchWithIdMismatchPublisher() throws Exception {
         int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
-        publisher.setId(count.incrementAndGet());
+        publisher.setId(UUID.randomUUID());
 
         // Create the Publisher
         PublisherDTO publisherDTO = publisherMapper.toDto(publisher);
@@ -367,7 +363,7 @@ class PublisherResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPublisherMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(publisherDTO))
             )
@@ -382,7 +378,7 @@ class PublisherResourceIT {
     @Transactional
     void patchWithMissingIdPathParamPublisher() throws Exception {
         int databaseSizeBeforeUpdate = publisherRepository.findAll().size();
-        publisher.setId(count.incrementAndGet());
+        publisher.setId(UUID.randomUUID());
 
         // Create the Publisher
         PublisherDTO publisherDTO = publisherMapper.toDto(publisher);
@@ -409,7 +405,7 @@ class PublisherResourceIT {
 
         // Delete the publisher
         restPublisherMockMvc
-            .perform(delete(ENTITY_API_URL_ID, publisher.getId()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, publisher.getId().toString()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

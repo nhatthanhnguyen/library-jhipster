@@ -6,6 +6,10 @@
   "entityTableName": "book",
   "fields": [
     {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
       "fieldName": "title",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
@@ -22,16 +26,10 @@
   "readOnly": false,
   "relationships": [
     {
-      "otherEntityName": "bookCopy",
-      "otherEntityRelationshipName": "book",
-      "relationshipName": "bookCopy",
-      "relationshipType": "one-to-many"
-    },
-    {
-      "otherEntityName": "queue",
-      "otherEntityRelationshipName": "book",
-      "relationshipName": "queue",
-      "relationshipType": "one-to-many"
+      "otherEntityField": "name",
+      "otherEntityName": "publisher",
+      "relationshipName": "publisher",
+      "relationshipType": "many-to-one"
     },
     {
       "otherEntityName": "author",
@@ -46,13 +44,6 @@
       "ownerSide": true,
       "relationshipName": "category",
       "relationshipType": "many-to-many"
-    },
-    {
-      "otherEntityField": "name",
-      "otherEntityName": "publisher",
-      "otherEntityRelationshipName": "book",
-      "relationshipName": "publisher",
-      "relationshipType": "many-to-one"
     }
   ],
   "service": "serviceImpl"

@@ -2,6 +2,7 @@ package com.thanh.library.service;
 
 import com.thanh.library.service.dto.AuthorDTO;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -47,12 +48,12 @@ public interface AuthorService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<AuthorDTO> findOne(Long id);
+    Optional<AuthorDTO> findOne(UUID id);
 
     /**
      * Delete the "id" author.
      *
      * @param id the id of the entity.
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

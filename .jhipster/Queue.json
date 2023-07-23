@@ -17,6 +17,7 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityField": "login",
       "otherEntityName": "user",
       "relationshipName": "user",
       "relationshipType": "many-to-one"
@@ -24,7 +25,6 @@
     {
       "otherEntityField": "title",
       "otherEntityName": "book",
-      "otherEntityRelationshipName": "queue",
       "relationshipName": "book",
       "relationshipType": "many-to-one"
     }

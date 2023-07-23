@@ -6,6 +6,7 @@ import com.thanh.library.service.AuthorService;
 import com.thanh.library.service.dto.AuthorDTO;
 import com.thanh.library.service.mapper.AuthorMapper;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -71,13 +72,13 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AuthorDTO> findOne(Long id) {
+    public Optional<AuthorDTO> findOne(UUID id) {
         log.debug("Request to get Author : {}", id);
         return authorRepository.findById(id).map(authorMapper::toDto);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Author : {}", id);
         authorRepository.deleteById(id);
     }

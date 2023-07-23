@@ -41,7 +41,7 @@ export const QueueDetail = () => {
           <dt>
             <Translate contentKey="libraryApp.queue.user">User</Translate>
           </dt>
-          <dd>{queueEntity.user ? queueEntity.user.id : ''}</dd>
+          <dd>{queueEntity.user ? queueEntity.user.login : ''}</dd>
           <dt>
             <Translate contentKey="libraryApp.queue.book">Book</Translate>
           </dt>

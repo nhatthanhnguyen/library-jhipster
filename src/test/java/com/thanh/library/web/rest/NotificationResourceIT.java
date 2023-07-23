@@ -2,6 +2,7 @@ package com.thanh.library.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -9,18 +10,25 @@ import com.thanh.library.IntegrationTest;
 import com.thanh.library.domain.Notification;
 import com.thanh.library.domain.enumeration.Type;
 import com.thanh.library.repository.NotificationRepository;
+import com.thanh.library.service.NotificationService;
 import com.thanh.library.service.dto.NotificationDTO;
 import com.thanh.library.service.mapper.NotificationMapper;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link NotificationResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class NotificationResourceIT {
@@ -43,14 +52,17 @@ class NotificationResourceIT {
     private static final String ENTITY_API_URL = "/api/notifications";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
-
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Mock
+    private NotificationRepository notificationRepositoryMock;
+
     @Autowired
     private NotificationMapper notificationMapper;
+
+    @Mock
+    private NotificationService notificationServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -111,7 +123,7 @@ class NotificationResourceIT {
     @Transactional
     void createNotificationWithExistingId() throws Exception {
         // Create the Notification with an existing ID
-        notification.setId(1L);
+        notificationRepository.saveAndFlush(notification);
         NotificationDTO notificationDTO = notificationMapper.toDto(notification);
 
         int databaseSizeBeforeCreate = notificationRepository.findAll().size();
@@ -139,9 +151,26 @@ class NotificationResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(notification.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(notification.getId().toString())))
             .andExpect(jsonPath("$.[*].sentAt").value(hasItem(DEFAULT_SENT_AT.toString())))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllNotificationsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(notificationServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restNotificationMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(notificationServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllNotificationsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(notificationServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restNotificationMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(notificationRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -155,7 +184,7 @@ class NotificationResourceIT {
             .perform(get(ENTITY_API_URL_ID, notification.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(notification.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(notification.getId().toString()))
             .andExpect(jsonPath("$.sentAt").value(DEFAULT_SENT_AT.toString()))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()));
     }
@@ -164,7 +193,7 @@ class NotificationResourceIT {
     @Transactional
     void getNonExistingNotification() throws Exception {
         // Get the notification
-        restNotificationMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restNotificationMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
     }
 
     @Test
@@ -202,7 +231,7 @@ class NotificationResourceIT {
     @Transactional
     void putNonExistingNotification() throws Exception {
         int databaseSizeBeforeUpdate = notificationRepository.findAll().size();
-        notification.setId(count.incrementAndGet());
+        notification.setId(UUID.randomUUID());
 
         // Create the Notification
         NotificationDTO notificationDTO = notificationMapper.toDto(notification);
@@ -225,7 +254,7 @@ class NotificationResourceIT {
     @Transactional
     void putWithIdMismatchNotification() throws Exception {
         int databaseSizeBeforeUpdate = notificationRepository.findAll().size();
-        notification.setId(count.incrementAndGet());
+        notification.setId(UUID.randomUUID());
 
         // Create the Notification
         NotificationDTO notificationDTO = notificationMapper.toDto(notification);
@@ -233,7 +262,7 @@ class NotificationResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restNotificationMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(notificationDTO))
             )
@@ -248,7 +277,7 @@ class NotificationResourceIT {
     @Transactional
     void putWithMissingIdPathParamNotification() throws Exception {
         int databaseSizeBeforeUpdate = notificationRepository.findAll().size();
-        notification.setId(count.incrementAndGet());
+        notification.setId(UUID.randomUUID());
 
         // Create the Notification
         NotificationDTO notificationDTO = notificationMapper.toDto(notification);
@@ -327,7 +356,7 @@ class NotificationResourceIT {
     @Transactional
     void patchNonExistingNotification() throws Exception {
         int databaseSizeBeforeUpdate = notificationRepository.findAll().size();
-        notification.setId(count.incrementAndGet());
+        notification.setId(UUID.randomUUID());
 
         // Create the Notification
         NotificationDTO notificationDTO = notificationMapper.toDto(notification);
@@ -350,7 +379,7 @@ class NotificationResourceIT {
     @Transactional
     void patchWithIdMismatchNotification() throws Exception {
         int databaseSizeBeforeUpdate = notificationRepository.findAll().size();
-        notification.setId(count.incrementAndGet());
+        notification.setId(UUID.randomUUID());
 
         // Create the Notification
         NotificationDTO notificationDTO = notificationMapper.toDto(notification);
@@ -358,7 +387,7 @@ class NotificationResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restNotificationMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, UUID.randomUUID())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(notificationDTO))
             )
@@ -373,7 +402,7 @@ class NotificationResourceIT {
     @Transactional
     void patchWithMissingIdPathParamNotification() throws Exception {
         int databaseSizeBeforeUpdate = notificationRepository.findAll().size();
-        notification.setId(count.incrementAndGet());
+        notification.setId(UUID.randomUUID());
 
         // Create the Notification
         NotificationDTO notificationDTO = notificationMapper.toDto(notification);
@@ -402,7 +431,7 @@ class NotificationResourceIT {
 
         // Delete the notification
         restNotificationMockMvc
-            .perform(delete(ENTITY_API_URL_ID, notification.getId()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, notification.getId().toString()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

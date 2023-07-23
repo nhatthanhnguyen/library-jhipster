@@ -104,7 +104,7 @@ export const CheckoutUpdate = () => {
                   required
                   readOnly
                   id="checkout-id"
-                  label={translate('global.field.id')}
+                  label={translate('libraryApp.checkout.id')}
                   validate={{ required: true }}
                 />
               ) : null}
@@ -137,7 +137,7 @@ export const CheckoutUpdate = () => {
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.login}
                       </option>
                     ))
                   : null}

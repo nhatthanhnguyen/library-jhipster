@@ -126,7 +126,7 @@ export const Queue = () => {
                     </Button>
                   </td>
                   <td>{queue.createdAt ? <TextFormat type="date" value={queue.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{queue.user ? queue.user.id : ''}</td>
+                  <td>{queue.user ? queue.user.login : ''}</td>
                   <td>{queue.book ? <Link to={`/book/${queue.book.id}`}>{queue.book.title}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

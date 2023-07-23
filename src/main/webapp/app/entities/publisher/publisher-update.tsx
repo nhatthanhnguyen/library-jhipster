@@ -83,7 +83,7 @@ export const PublisherUpdate = () => {
                   required
                   readOnly
                   id="publisher-id"
-                  label={translate('global.field.id')}
+                  label={translate('libraryApp.publisher.id')}
                   validate={{ required: true }}
                 />
               ) : null}

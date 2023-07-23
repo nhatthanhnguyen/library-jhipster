@@ -3,6 +3,7 @@ package com.thanh.library.service.dto;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.thanh.library.web.rest.TestUtil;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class NotificationDTOTest {
@@ -11,12 +12,12 @@ class NotificationDTOTest {
     void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(NotificationDTO.class);
         NotificationDTO notificationDTO1 = new NotificationDTO();
-        notificationDTO1.setId(1L);
+        notificationDTO1.setId(UUID.randomUUID());
         NotificationDTO notificationDTO2 = new NotificationDTO();
         assertThat(notificationDTO1).isNotEqualTo(notificationDTO2);
         notificationDTO2.setId(notificationDTO1.getId());
         assertThat(notificationDTO1).isEqualTo(notificationDTO2);
-        notificationDTO2.setId(2L);
+        notificationDTO2.setId(UUID.randomUUID());
         assertThat(notificationDTO1).isNotEqualTo(notificationDTO2);
         notificationDTO1.setId(null);
         assertThat(notificationDTO1).isNotEqualTo(notificationDTO2);

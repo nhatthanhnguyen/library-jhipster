@@ -2,6 +2,7 @@ package com.thanh.library.service;
 
 import com.thanh.library.service.dto.BookCopyDTO;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -55,12 +56,12 @@ public interface BookCopyService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<BookCopyDTO> findOne(Long id);
+    Optional<BookCopyDTO> findOne(UUID id);
 
     /**
      * Delete the "id" bookCopy.
      *
      * @param id the id of the entity.
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

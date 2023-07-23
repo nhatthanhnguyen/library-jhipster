@@ -1,7 +1,7 @@
 import { IBook } from 'app/shared/model/book.model';
 
 export interface IAuthor {
-  id?: number;
+  id?: string;
   firstName?: string;
   lastName?: string;
   isDeleted?: boolean | null;

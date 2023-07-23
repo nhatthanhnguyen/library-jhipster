@@ -3,6 +3,7 @@ package com.thanh.library.repository;
 import com.thanh.library.domain.Book;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 public interface BookRepositoryWithBagRelationships {

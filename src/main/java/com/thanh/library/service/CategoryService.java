@@ -2,7 +2,6 @@ package com.thanh.library.service;
 
 import com.thanh.library.service.dto.CategoryDTO;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -48,12 +47,12 @@ public interface CategoryService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<CategoryDTO> findOne(UUID id);
+    Optional<CategoryDTO> findOne(Long id);
 
     /**
      * Delete the "id" category.
      *
      * @param id the id of the entity.
      */
-    void delete(UUID id);
+    void delete(Long id);
 }

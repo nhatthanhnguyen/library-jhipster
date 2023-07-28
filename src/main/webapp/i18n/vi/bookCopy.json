@@ -17,8 +17,7 @@
       "detail": {
         "title": "Book Copy"
       },
-      "id": "Id",
-      "yearPublished": "Year Published",
+      "id": "ID",
       "isDeleted": "Is Deleted",
       "book": "Book"
     }

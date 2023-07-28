@@ -28,7 +28,7 @@ export const ReservationDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="libraryApp.reservation.id">Id</Translate>
+              <Translate contentKey="global.field.id">ID</Translate>
             </span>
           </dt>
           <dd>{reservationEntity.id}</dd>

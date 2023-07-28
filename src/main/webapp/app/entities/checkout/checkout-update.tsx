@@ -104,7 +104,7 @@ export const CheckoutUpdate = () => {
                   required
                   readOnly
                   id="checkout-id"
-                  label={translate('libraryApp.checkout.id')}
+                  label={translate('global.field.id')}
                   validate={{ required: true }}
                 />
               ) : null}

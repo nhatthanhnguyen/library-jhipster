@@ -3,7 +3,6 @@ package com.thanh.library.service.dto;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * A DTO for the {@link com.thanh.library.domain.Checkout} entity.
@@ -11,7 +10,7 @@ import java.util.UUID;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CheckoutDTO implements Serializable {
 
-    private UUID id;
+    private Long id;
 
     private Instant startTime;
 
@@ -23,11 +22,11 @@ public class CheckoutDTO implements Serializable {
 
     private BookCopyDTO bookCopy;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -96,7 +95,7 @@ public class CheckoutDTO implements Serializable {
     @Override
     public String toString() {
         return "CheckoutDTO{" +
-            "id='" + getId() + "'" +
+            "id=" + getId() +
             ", startTime='" + getStartTime() + "'" +
             ", endTime='" + getEndTime() + "'" +
             ", isReturned='" + getIsReturned() + "'" +

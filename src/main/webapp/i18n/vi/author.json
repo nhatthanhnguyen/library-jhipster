@@ -17,7 +17,7 @@
       "detail": {
         "title": "Author"
       },
-      "id": "Id",
+      "id": "ID",
       "firstName": "First Name",
       "lastName": "Last Name",
       "isDeleted": "Is Deleted",

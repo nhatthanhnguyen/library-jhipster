@@ -17,7 +17,7 @@
       "detail": {
         "title": "Category"
       },
-      "id": "Id",
+      "id": "ID",
       "name": "Name",
       "isDeleted": "Is Deleted",
       "book": "Book"

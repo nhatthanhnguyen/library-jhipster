@@ -103,7 +103,7 @@ export const Checkout = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.checkout.id">Id</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.checkout.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('startTime')}>
                   <Translate contentKey="libraryApp.checkout.startTime">Start Time</Translate> <FontAwesomeIcon icon="sort" />

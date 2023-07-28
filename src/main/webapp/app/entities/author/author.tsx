@@ -103,7 +103,7 @@ export const Author = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.author.id">Id</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.author.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('firstName')}>
                   <Translate contentKey="libraryApp.author.firstName">First Name</Translate> <FontAwesomeIcon icon="sort" />

@@ -103,7 +103,7 @@ export const Category = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.category.id">Id</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.category.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('name')}>
                   <Translate contentKey="libraryApp.category.name">Name</Translate> <FontAwesomeIcon icon="sort" />

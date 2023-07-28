@@ -14,7 +14,8 @@ import com.thanh.library.service.dto.BookDTO;
 import com.thanh.library.service.mapper.BookMapper;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,9 @@ class BookResourceIT {
 
     private static final String ENTITY_API_URL = "/api/books";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private BookRepository bookRepository;
@@ -118,7 +122,7 @@ class BookResourceIT {
     @Transactional
     void createBookWithExistingId() throws Exception {
         // Create the Book with an existing ID
-        bookRepository.saveAndFlush(book);
+        book.setId(1L);
         BookDTO bookDTO = bookMapper.toDto(book);
 
         int databaseSizeBeforeCreate = bookRepository.findAll().size();
@@ -162,7 +166,7 @@ class BookResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(book.getId().toString())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(book.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
             .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED.booleanValue())));
     }
@@ -195,7 +199,7 @@ class BookResourceIT {
             .perform(get(ENTITY_API_URL_ID, book.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(book.getId().toString()))
+            .andExpect(jsonPath("$.id").value(book.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
             .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED.booleanValue()));
     }
@@ -204,7 +208,7 @@ class BookResourceIT {
     @Transactional
     void getNonExistingBook() throws Exception {
         // Get the book
-        restBookMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
+        restBookMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -242,7 +246,7 @@ class BookResourceIT {
     @Transactional
     void putNonExistingBook() throws Exception {
         int databaseSizeBeforeUpdate = bookRepository.findAll().size();
-        book.setId(UUID.randomUUID());
+        book.setId(count.incrementAndGet());
 
         // Create the Book
         BookDTO bookDTO = bookMapper.toDto(book);
@@ -265,7 +269,7 @@ class BookResourceIT {
     @Transactional
     void putWithIdMismatchBook() throws Exception {
         int databaseSizeBeforeUpdate = bookRepository.findAll().size();
-        book.setId(UUID.randomUUID());
+        book.setId(count.incrementAndGet());
 
         // Create the Book
         BookDTO bookDTO = bookMapper.toDto(book);
@@ -273,7 +277,7 @@ class BookResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBookMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, UUID.randomUUID())
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(bookDTO))
             )
@@ -288,7 +292,7 @@ class BookResourceIT {
     @Transactional
     void putWithMissingIdPathParamBook() throws Exception {
         int databaseSizeBeforeUpdate = bookRepository.findAll().size();
-        book.setId(UUID.randomUUID());
+        book.setId(count.incrementAndGet());
 
         // Create the Book
         BookDTO bookDTO = bookMapper.toDto(book);
@@ -365,7 +369,7 @@ class BookResourceIT {
     @Transactional
     void patchNonExistingBook() throws Exception {
         int databaseSizeBeforeUpdate = bookRepository.findAll().size();
-        book.setId(UUID.randomUUID());
+        book.setId(count.incrementAndGet());
 
         // Create the Book
         BookDTO bookDTO = bookMapper.toDto(book);
@@ -388,7 +392,7 @@ class BookResourceIT {
     @Transactional
     void patchWithIdMismatchBook() throws Exception {
         int databaseSizeBeforeUpdate = bookRepository.findAll().size();
-        book.setId(UUID.randomUUID());
+        book.setId(count.incrementAndGet());
 
         // Create the Book
         BookDTO bookDTO = bookMapper.toDto(book);
@@ -396,7 +400,7 @@ class BookResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBookMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, UUID.randomUUID())
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(bookDTO))
             )
@@ -411,7 +415,7 @@ class BookResourceIT {
     @Transactional
     void patchWithMissingIdPathParamBook() throws Exception {
         int databaseSizeBeforeUpdate = bookRepository.findAll().size();
-        book.setId(UUID.randomUUID());
+        book.setId(count.incrementAndGet());
 
         // Create the Book
         BookDTO bookDTO = bookMapper.toDto(book);
@@ -436,7 +440,7 @@ class BookResourceIT {
 
         // Delete the book
         restBookMockMvc
-            .perform(delete(ENTITY_API_URL_ID, book.getId().toString()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, book.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

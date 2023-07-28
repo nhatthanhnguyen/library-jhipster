@@ -6,15 +6,6 @@
   "entityTableName": "book_copy",
   "fields": [
     {
-      "fieldName": "id",
-      "fieldType": "UUID"
-    },
-    {
-      "fieldName": "yearPublished",
-      "fieldType": "Integer",
-      "fieldValidateRules": ["required"]
-    },
-    {
       "fieldName": "isDeleted",
       "fieldType": "Boolean"
     }

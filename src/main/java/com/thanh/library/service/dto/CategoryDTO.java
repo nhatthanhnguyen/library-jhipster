@@ -2,7 +2,6 @@ package com.thanh.library.service.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 import javax.validation.constraints.*;
 
 /**
@@ -11,18 +10,18 @@ import javax.validation.constraints.*;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CategoryDTO implements Serializable {
 
-    private UUID id;
+    private Long id;
 
     @NotNull
     private String name;
 
     private Boolean isDeleted;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -67,7 +66,7 @@ public class CategoryDTO implements Serializable {
     @Override
     public String toString() {
         return "CategoryDTO{" +
-            "id='" + getId() + "'" +
+            "id=" + getId() +
             ", name='" + getName() + "'" +
             ", isDeleted='" + getIsDeleted() + "'" +
             "}";

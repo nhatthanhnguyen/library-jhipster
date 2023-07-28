@@ -28,7 +28,7 @@ export const NotificationDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="libraryApp.notification.id">Id</Translate>
+              <Translate contentKey="global.field.id">ID</Translate>
             </span>
           </dt>
           <dd>{notificationEntity.id}</dd>

@@ -17,7 +17,7 @@
       "detail": {
         "title": "Reservation"
       },
-      "id": "Id",
+      "id": "ID",
       "startTime": "Start Time",
       "endTime": "End Time",
       "user": "User",

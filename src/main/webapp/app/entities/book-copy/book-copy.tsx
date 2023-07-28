@@ -103,10 +103,7 @@ export const BookCopy = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.bookCopy.id">Id</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('yearPublished')}>
-                  <Translate contentKey="libraryApp.bookCopy.yearPublished">Year Published</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.bookCopy.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('isDeleted')}>
                   <Translate contentKey="libraryApp.bookCopy.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
@@ -125,7 +122,6 @@ export const BookCopy = () => {
                       {bookCopy.id}
                     </Button>
                   </td>
-                  <td>{bookCopy.yearPublished}</td>
                   <td>{bookCopy.isDeleted ? 'true' : 'false'}</td>
                   <td>{bookCopy.book ? <Link to={`/book/${bookCopy.book.id}`}>{bookCopy.book.title}</Link> : ''}</td>
                   <td className="text-end">

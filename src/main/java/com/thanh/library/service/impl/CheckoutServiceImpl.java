@@ -6,7 +6,6 @@ import com.thanh.library.service.CheckoutService;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.mapper.CheckoutMapper;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -76,13 +75,13 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CheckoutDTO> findOne(UUID id) {
+    public Optional<CheckoutDTO> findOne(Long id) {
         log.debug("Request to get Checkout : {}", id);
         return checkoutRepository.findOneWithEagerRelationships(id).map(checkoutMapper::toDto);
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(Long id) {
         log.debug("Request to delete Checkout : {}", id);
         checkoutRepository.deleteById(id);
     }

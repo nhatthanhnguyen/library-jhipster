@@ -3,7 +3,6 @@ package com.thanh.library.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.thanh.library.web.rest.TestUtil;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class BookCopyTest {
@@ -12,11 +11,11 @@ class BookCopyTest {
     void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(BookCopy.class);
         BookCopy bookCopy1 = new BookCopy();
-        bookCopy1.setId(UUID.randomUUID());
+        bookCopy1.setId(1L);
         BookCopy bookCopy2 = new BookCopy();
         bookCopy2.setId(bookCopy1.getId());
         assertThat(bookCopy1).isEqualTo(bookCopy2);
-        bookCopy2.setId(UUID.randomUUID());
+        bookCopy2.setId(2L);
         assertThat(bookCopy1).isNotEqualTo(bookCopy2);
         bookCopy1.setId(null);
         assertThat(bookCopy1).isNotEqualTo(bookCopy2);

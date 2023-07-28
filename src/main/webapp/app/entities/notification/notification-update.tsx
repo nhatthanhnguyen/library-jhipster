@@ -104,7 +104,7 @@ export const NotificationUpdate = () => {
                   required
                   readOnly
                   id="notification-id"
-                  label={translate('libraryApp.notification.id')}
+                  label={translate('global.field.id')}
                   validate={{ required: true }}
                 />
               ) : null}

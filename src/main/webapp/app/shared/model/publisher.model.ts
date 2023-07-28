@@ -1,5 +1,5 @@
 export interface IPublisher {
-  id?: string;
+  id?: number;
   name?: string;
   isDeleted?: boolean | null;
 }

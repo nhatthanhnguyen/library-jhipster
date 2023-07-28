@@ -3,7 +3,6 @@ package com.thanh.library.repository;
 import com.thanh.library.domain.Checkout;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -14,11 +13,11 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the Checkout entity.
  */
 @Repository
-public interface CheckoutRepository extends JpaRepository<Checkout, UUID> {
+public interface CheckoutRepository extends JpaRepository<Checkout, Long> {
     @Query("select checkout from Checkout checkout where checkout.user.login = ?#{principal.username}")
     List<Checkout> findByUserIsCurrentUser();
 
-    default Optional<Checkout> findOneWithEagerRelationships(UUID id) {
+    default Optional<Checkout> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
 
@@ -40,5 +39,5 @@ public interface CheckoutRepository extends JpaRepository<Checkout, UUID> {
     List<Checkout> findAllWithToOneRelationships();
 
     @Query("select checkout from Checkout checkout left join fetch checkout.user where checkout.id =:id")
-    Optional<Checkout> findOneWithToOneRelationships(@Param("id") UUID id);
+    Optional<Checkout> findOneWithToOneRelationships(@Param("id") Long id);
 }

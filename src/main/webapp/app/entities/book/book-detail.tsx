@@ -28,7 +28,7 @@ export const BookDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="libraryApp.book.id">Id</Translate>
+              <Translate contentKey="global.field.id">ID</Translate>
             </span>
           </dt>
           <dd>{bookEntity.id}</dd>
@@ -55,7 +55,7 @@ export const BookDetail = () => {
             {bookEntity.authors
               ? bookEntity.authors.map((val, i) => (
                   <span key={val.id}>
-                    <a>{val.id}</a>
+                    <a>{`${val.firstName}`}</a>
                     {bookEntity.authors && i === bookEntity.authors.length - 1 ? '' : ', '}
                   </span>
                 ))
@@ -68,7 +68,7 @@ export const BookDetail = () => {
             {bookEntity.categories
               ? bookEntity.categories.map((val, i) => (
                   <span key={val.id}>
-                    <a>{val.id}</a>
+                    <a>{val.name}</a>
                     {bookEntity.categories && i === bookEntity.categories.length - 1 ? '' : ', '}
                   </span>
                 ))

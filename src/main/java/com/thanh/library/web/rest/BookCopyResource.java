@@ -9,9 +9,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +54,7 @@ public class BookCopyResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/book-copies")
-    public ResponseEntity<BookCopyDTO> createBookCopy(@Valid @RequestBody BookCopyDTO bookCopyDTO) throws URISyntaxException {
+    public ResponseEntity<BookCopyDTO> createBookCopy(@RequestBody BookCopyDTO bookCopyDTO) throws URISyntaxException {
         log.debug("REST request to save BookCopy : {}", bookCopyDTO);
         if (bookCopyDTO.getId() != null) {
             throw new BadRequestAlertException("A new bookCopy cannot already have an ID", ENTITY_NAME, "idexists");
@@ -81,8 +78,8 @@ public class BookCopyResource {
      */
     @PutMapping("/book-copies/{id}")
     public ResponseEntity<BookCopyDTO> updateBookCopy(
-        @PathVariable(value = "id", required = false) final UUID id,
-        @Valid @RequestBody BookCopyDTO bookCopyDTO
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody BookCopyDTO bookCopyDTO
     ) throws URISyntaxException {
         log.debug("REST request to update BookCopy : {}, {}", id, bookCopyDTO);
         if (bookCopyDTO.getId() == null) {
@@ -116,8 +113,8 @@ public class BookCopyResource {
      */
     @PatchMapping(value = "/book-copies/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<BookCopyDTO> partialUpdateBookCopy(
-        @PathVariable(value = "id", required = false) final UUID id,
-        @NotNull @RequestBody BookCopyDTO bookCopyDTO
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody BookCopyDTO bookCopyDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update BookCopy partially : {}, {}", id, bookCopyDTO);
         if (bookCopyDTO.getId() == null) {
@@ -169,7 +166,7 @@ public class BookCopyResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bookCopyDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/book-copies/{id}")
-    public ResponseEntity<BookCopyDTO> getBookCopy(@PathVariable UUID id) {
+    public ResponseEntity<BookCopyDTO> getBookCopy(@PathVariable Long id) {
         log.debug("REST request to get BookCopy : {}", id);
         Optional<BookCopyDTO> bookCopyDTO = bookCopyService.findOne(id);
         return ResponseUtil.wrapOrNotFound(bookCopyDTO);
@@ -182,7 +179,7 @@ public class BookCopyResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/book-copies/{id}")
-    public ResponseEntity<Void> deleteBookCopy(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteBookCopy(@PathVariable Long id) {
         log.debug("REST request to delete BookCopy : {}", id);
         bookCopyService.delete(id);
         return ResponseEntity

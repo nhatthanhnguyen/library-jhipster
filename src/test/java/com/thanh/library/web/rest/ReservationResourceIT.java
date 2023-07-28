@@ -16,7 +16,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,9 @@ class ReservationResourceIT {
 
     private static final String ENTITY_API_URL = "/api/reservations";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -122,7 +126,7 @@ class ReservationResourceIT {
     @Transactional
     void createReservationWithExistingId() throws Exception {
         // Create the Reservation with an existing ID
-        reservationRepository.saveAndFlush(reservation);
+        reservation.setId(1L);
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
 
         int databaseSizeBeforeCreate = reservationRepository.findAll().size();
@@ -150,7 +154,7 @@ class ReservationResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().toString())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().intValue())))
             .andExpect(jsonPath("$.[*].startTime").value(hasItem(DEFAULT_START_TIME.toString())))
             .andExpect(jsonPath("$.[*].endTime").value(hasItem(DEFAULT_END_TIME.toString())));
     }
@@ -183,7 +187,7 @@ class ReservationResourceIT {
             .perform(get(ENTITY_API_URL_ID, reservation.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(reservation.getId().toString()))
+            .andExpect(jsonPath("$.id").value(reservation.getId().intValue()))
             .andExpect(jsonPath("$.startTime").value(DEFAULT_START_TIME.toString()))
             .andExpect(jsonPath("$.endTime").value(DEFAULT_END_TIME.toString()));
     }
@@ -192,7 +196,7 @@ class ReservationResourceIT {
     @Transactional
     void getNonExistingReservation() throws Exception {
         // Get the reservation
-        restReservationMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
+        restReservationMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -230,7 +234,7 @@ class ReservationResourceIT {
     @Transactional
     void putNonExistingReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(UUID.randomUUID());
+        reservation.setId(count.incrementAndGet());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -253,7 +257,7 @@ class ReservationResourceIT {
     @Transactional
     void putWithIdMismatchReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(UUID.randomUUID());
+        reservation.setId(count.incrementAndGet());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -261,7 +265,7 @@ class ReservationResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restReservationMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, UUID.randomUUID())
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(reservationDTO))
             )
@@ -276,7 +280,7 @@ class ReservationResourceIT {
     @Transactional
     void putWithMissingIdPathParamReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(UUID.randomUUID());
+        reservation.setId(count.incrementAndGet());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -353,7 +357,7 @@ class ReservationResourceIT {
     @Transactional
     void patchNonExistingReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(UUID.randomUUID());
+        reservation.setId(count.incrementAndGet());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -376,7 +380,7 @@ class ReservationResourceIT {
     @Transactional
     void patchWithIdMismatchReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(UUID.randomUUID());
+        reservation.setId(count.incrementAndGet());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -384,7 +388,7 @@ class ReservationResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restReservationMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, UUID.randomUUID())
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(reservationDTO))
             )
@@ -399,7 +403,7 @@ class ReservationResourceIT {
     @Transactional
     void patchWithMissingIdPathParamReservation() throws Exception {
         int databaseSizeBeforeUpdate = reservationRepository.findAll().size();
-        reservation.setId(UUID.randomUUID());
+        reservation.setId(count.incrementAndGet());
 
         // Create the Reservation
         ReservationDTO reservationDTO = reservationMapper.toDto(reservation);
@@ -426,7 +430,7 @@ class ReservationResourceIT {
 
         // Delete the reservation
         restReservationMockMvc
-            .perform(delete(ENTITY_API_URL_ID, reservation.getId().toString()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, reservation.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

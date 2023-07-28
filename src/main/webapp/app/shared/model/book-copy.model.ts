@@ -1,8 +1,7 @@
 import { IBook } from 'app/shared/model/book.model';
 
 export interface IBookCopy {
-  id?: string;
-  yearPublished?: number;
+  id?: number;
   isDeleted?: boolean | null;
   book?: IBook | null;
 }

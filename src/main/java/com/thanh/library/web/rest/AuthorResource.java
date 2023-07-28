@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -81,7 +80,7 @@ public class AuthorResource {
      */
     @PutMapping("/authors/{id}")
     public ResponseEntity<AuthorDTO> updateAuthor(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody AuthorDTO authorDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Author : {}, {}", id, authorDTO);
@@ -116,7 +115,7 @@ public class AuthorResource {
      */
     @PatchMapping(value = "/authors/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<AuthorDTO> partialUpdateAuthor(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody AuthorDTO authorDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Author partially : {}, {}", id, authorDTO);
@@ -160,7 +159,7 @@ public class AuthorResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the authorDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/authors/{id}")
-    public ResponseEntity<AuthorDTO> getAuthor(@PathVariable UUID id) {
+    public ResponseEntity<AuthorDTO> getAuthor(@PathVariable Long id) {
         log.debug("REST request to get Author : {}", id);
         Optional<AuthorDTO> authorDTO = authorService.findOne(id);
         return ResponseUtil.wrapOrNotFound(authorDTO);
@@ -173,7 +172,7 @@ public class AuthorResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/authors/{id}")
-    public ResponseEntity<Void> deleteAuthor(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         log.debug("REST request to delete Author : {}", id);
         authorService.delete(id);
         return ResponseEntity

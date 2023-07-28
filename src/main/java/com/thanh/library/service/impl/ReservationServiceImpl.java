@@ -6,7 +6,6 @@ import com.thanh.library.service.ReservationService;
 import com.thanh.library.service.dto.ReservationDTO;
 import com.thanh.library.service.mapper.ReservationMapper;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -76,13 +75,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ReservationDTO> findOne(UUID id) {
+    public Optional<ReservationDTO> findOne(Long id) {
         log.debug("Request to get Reservation : {}", id);
         return reservationRepository.findOneWithEagerRelationships(id).map(reservationMapper::toDto);
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(Long id) {
         log.debug("Request to delete Reservation : {}", id);
         reservationRepository.deleteById(id);
     }

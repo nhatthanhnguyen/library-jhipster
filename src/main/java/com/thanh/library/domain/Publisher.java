@@ -1,7 +1,6 @@
 package com.thanh.library.domain;
 
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -14,14 +13,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "publisher")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Publisher extends AbstractAuditingEntity<UUID> implements Serializable {
+public class Publisher implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
-    private UUID id;
+    private Long id;
 
     @NotNull
     @Column(name = "name", nullable = false)
@@ -32,16 +32,16 @@ public class Publisher extends AbstractAuditingEntity<UUID> implements Serializa
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public UUID getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public Publisher id(UUID id) {
+    public Publisher id(Long id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

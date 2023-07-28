@@ -3,7 +3,6 @@ package com.thanh.library.repository;
 import com.thanh.library.domain.Notification;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -14,11 +13,11 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the Notification entity.
  */
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, UUID> {
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
     @Query("select notification from Notification notification where notification.user.login = ?#{principal.username}")
     List<Notification> findByUserIsCurrentUser();
 
-    default Optional<Notification> findOneWithEagerRelationships(UUID id) {
+    default Optional<Notification> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
 
@@ -40,5 +39,5 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     List<Notification> findAllWithToOneRelationships();
 
     @Query("select notification from Notification notification left join fetch notification.user where notification.id =:id")
-    Optional<Notification> findOneWithToOneRelationships(@Param("id") UUID id);
+    Optional<Notification> findOneWithToOneRelationships(@Param("id") Long id);
 }

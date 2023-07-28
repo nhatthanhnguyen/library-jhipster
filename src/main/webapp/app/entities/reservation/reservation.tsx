@@ -103,7 +103,7 @@ export const Reservation = () => {
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.reservation.id">Id</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="libraryApp.reservation.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('startTime')}>
                   <Translate contentKey="libraryApp.reservation.startTime">Start Time</Translate> <FontAwesomeIcon icon="sort" />

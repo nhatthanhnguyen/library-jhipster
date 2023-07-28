@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.thanh.library.domain.enumeration.Type;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.UUID;
 import javax.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -16,14 +15,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "notification")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Notification extends AbstractAuditingEntity<UUID> implements Serializable {
+public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
-    private UUID id;
+    private Long id;
 
     @Column(name = "sent_at")
     private Instant sentAt;
@@ -41,16 +41,16 @@ public class Notification extends AbstractAuditingEntity<UUID> implements Serial
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public UUID getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public Notification id(UUID id) {
+    public Notification id(Long id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

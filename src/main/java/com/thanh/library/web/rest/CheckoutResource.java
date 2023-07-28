@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,7 +78,7 @@ public class CheckoutResource {
      */
     @PutMapping("/checkouts/{id}")
     public ResponseEntity<CheckoutDTO> updateCheckout(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @RequestBody CheckoutDTO checkoutDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Checkout : {}, {}", id, checkoutDTO);
@@ -114,7 +113,7 @@ public class CheckoutResource {
      */
     @PatchMapping(value = "/checkouts/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CheckoutDTO> partialUpdateCheckout(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @RequestBody CheckoutDTO checkoutDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Checkout partially : {}, {}", id, checkoutDTO);
@@ -167,7 +166,7 @@ public class CheckoutResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the checkoutDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/checkouts/{id}")
-    public ResponseEntity<CheckoutDTO> getCheckout(@PathVariable UUID id) {
+    public ResponseEntity<CheckoutDTO> getCheckout(@PathVariable Long id) {
         log.debug("REST request to get Checkout : {}", id);
         Optional<CheckoutDTO> checkoutDTO = checkoutService.findOne(id);
         return ResponseUtil.wrapOrNotFound(checkoutDTO);
@@ -180,7 +179,7 @@ public class CheckoutResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/checkouts/{id}")
-    public ResponseEntity<Void> deleteCheckout(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteCheckout(@PathVariable Long id) {
         log.debug("REST request to delete Checkout : {}", id);
         checkoutService.delete(id);
         return ResponseEntity

@@ -6,10 +6,6 @@
   "entityTableName": "checkout",
   "fields": [
     {
-      "fieldName": "id",
-      "fieldType": "UUID"
-    },
-    {
       "fieldName": "startTime",
       "fieldType": "Instant"
     },

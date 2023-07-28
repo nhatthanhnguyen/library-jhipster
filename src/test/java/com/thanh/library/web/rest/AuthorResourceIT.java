@@ -11,7 +11,8 @@ import com.thanh.library.repository.AuthorRepository;
 import com.thanh.library.service.dto.AuthorDTO;
 import com.thanh.library.service.mapper.AuthorMapper;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,9 @@ class AuthorResourceIT {
 
     private static final String ENTITY_API_URL = "/api/authors";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private AuthorRepository authorRepository;
@@ -106,7 +110,7 @@ class AuthorResourceIT {
     @Transactional
     void createAuthorWithExistingId() throws Exception {
         // Create the Author with an existing ID
-        authorRepository.saveAndFlush(author);
+        author.setId(1L);
         AuthorDTO authorDTO = authorMapper.toDto(author);
 
         int databaseSizeBeforeCreate = authorRepository.findAll().size();
@@ -168,7 +172,7 @@ class AuthorResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(author.getId().toString())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(author.getId().intValue())))
             .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
             .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
             .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED.booleanValue())));
@@ -185,7 +189,7 @@ class AuthorResourceIT {
             .perform(get(ENTITY_API_URL_ID, author.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(author.getId().toString()))
+            .andExpect(jsonPath("$.id").value(author.getId().intValue()))
             .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME))
             .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME))
             .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED.booleanValue()));
@@ -195,7 +199,7 @@ class AuthorResourceIT {
     @Transactional
     void getNonExistingAuthor() throws Exception {
         // Get the author
-        restAuthorMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
+        restAuthorMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -234,7 +238,7 @@ class AuthorResourceIT {
     @Transactional
     void putNonExistingAuthor() throws Exception {
         int databaseSizeBeforeUpdate = authorRepository.findAll().size();
-        author.setId(UUID.randomUUID());
+        author.setId(count.incrementAndGet());
 
         // Create the Author
         AuthorDTO authorDTO = authorMapper.toDto(author);
@@ -257,7 +261,7 @@ class AuthorResourceIT {
     @Transactional
     void putWithIdMismatchAuthor() throws Exception {
         int databaseSizeBeforeUpdate = authorRepository.findAll().size();
-        author.setId(UUID.randomUUID());
+        author.setId(count.incrementAndGet());
 
         // Create the Author
         AuthorDTO authorDTO = authorMapper.toDto(author);
@@ -265,7 +269,7 @@ class AuthorResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAuthorMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, UUID.randomUUID())
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(authorDTO))
             )
@@ -280,7 +284,7 @@ class AuthorResourceIT {
     @Transactional
     void putWithMissingIdPathParamAuthor() throws Exception {
         int databaseSizeBeforeUpdate = authorRepository.findAll().size();
-        author.setId(UUID.randomUUID());
+        author.setId(count.incrementAndGet());
 
         // Create the Author
         AuthorDTO authorDTO = authorMapper.toDto(author);
@@ -361,7 +365,7 @@ class AuthorResourceIT {
     @Transactional
     void patchNonExistingAuthor() throws Exception {
         int databaseSizeBeforeUpdate = authorRepository.findAll().size();
-        author.setId(UUID.randomUUID());
+        author.setId(count.incrementAndGet());
 
         // Create the Author
         AuthorDTO authorDTO = authorMapper.toDto(author);
@@ -384,7 +388,7 @@ class AuthorResourceIT {
     @Transactional
     void patchWithIdMismatchAuthor() throws Exception {
         int databaseSizeBeforeUpdate = authorRepository.findAll().size();
-        author.setId(UUID.randomUUID());
+        author.setId(count.incrementAndGet());
 
         // Create the Author
         AuthorDTO authorDTO = authorMapper.toDto(author);
@@ -392,7 +396,7 @@ class AuthorResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAuthorMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, UUID.randomUUID())
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(authorDTO))
             )
@@ -407,7 +411,7 @@ class AuthorResourceIT {
     @Transactional
     void patchWithMissingIdPathParamAuthor() throws Exception {
         int databaseSizeBeforeUpdate = authorRepository.findAll().size();
-        author.setId(UUID.randomUUID());
+        author.setId(count.incrementAndGet());
 
         // Create the Author
         AuthorDTO authorDTO = authorMapper.toDto(author);
@@ -434,7 +438,7 @@ class AuthorResourceIT {
 
         // Delete the author
         restAuthorMockMvc
-            .perform(delete(ENTITY_API_URL_ID, author.getId().toString()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, author.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

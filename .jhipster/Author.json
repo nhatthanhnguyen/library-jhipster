@@ -6,10 +6,6 @@
   "entityTableName": "author",
   "fields": [
     {
-      "fieldName": "id",
-      "fieldType": "UUID"
-    },
-    {
       "fieldName": "firstName",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
@@ -31,6 +27,7 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityField": "title",
       "otherEntityName": "book",
       "otherEntityRelationshipName": "author",
       "ownerSide": false,

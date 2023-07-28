@@ -14,7 +14,8 @@ import com.thanh.library.service.dto.BookCopyDTO;
 import com.thanh.library.service.mapper.BookCopyMapper;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,14 +41,14 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class BookCopyResourceIT {
 
-    private static final Integer DEFAULT_YEAR_PUBLISHED = 1;
-    private static final Integer UPDATED_YEAR_PUBLISHED = 2;
-
     private static final Boolean DEFAULT_IS_DELETED = false;
     private static final Boolean UPDATED_IS_DELETED = true;
 
     private static final String ENTITY_API_URL = "/api/book-copies";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private BookCopyRepository bookCopyRepository;
@@ -76,7 +77,7 @@ class BookCopyResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static BookCopy createEntity(EntityManager em) {
-        BookCopy bookCopy = new BookCopy().yearPublished(DEFAULT_YEAR_PUBLISHED).isDeleted(DEFAULT_IS_DELETED);
+        BookCopy bookCopy = new BookCopy().isDeleted(DEFAULT_IS_DELETED);
         return bookCopy;
     }
 
@@ -87,7 +88,7 @@ class BookCopyResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static BookCopy createUpdatedEntity(EntityManager em) {
-        BookCopy bookCopy = new BookCopy().yearPublished(UPDATED_YEAR_PUBLISHED).isDeleted(UPDATED_IS_DELETED);
+        BookCopy bookCopy = new BookCopy().isDeleted(UPDATED_IS_DELETED);
         return bookCopy;
     }
 
@@ -110,7 +111,6 @@ class BookCopyResourceIT {
         List<BookCopy> bookCopyList = bookCopyRepository.findAll();
         assertThat(bookCopyList).hasSize(databaseSizeBeforeCreate + 1);
         BookCopy testBookCopy = bookCopyList.get(bookCopyList.size() - 1);
-        assertThat(testBookCopy.getYearPublished()).isEqualTo(DEFAULT_YEAR_PUBLISHED);
         assertThat(testBookCopy.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
@@ -118,7 +118,7 @@ class BookCopyResourceIT {
     @Transactional
     void createBookCopyWithExistingId() throws Exception {
         // Create the BookCopy with an existing ID
-        bookCopyRepository.saveAndFlush(bookCopy);
+        bookCopy.setId(1L);
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
 
         int databaseSizeBeforeCreate = bookCopyRepository.findAll().size();
@@ -135,24 +135,6 @@ class BookCopyResourceIT {
 
     @Test
     @Transactional
-    void checkYearPublishedIsRequired() throws Exception {
-        int databaseSizeBeforeTest = bookCopyRepository.findAll().size();
-        // set the field null
-        bookCopy.setYearPublished(null);
-
-        // Create the BookCopy, which fails.
-        BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
-
-        restBookCopyMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(bookCopyDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<BookCopy> bookCopyList = bookCopyRepository.findAll();
-        assertThat(bookCopyList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     void getAllBookCopies() throws Exception {
         // Initialize the database
         bookCopyRepository.saveAndFlush(bookCopy);
@@ -162,8 +144,7 @@ class BookCopyResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(bookCopy.getId().toString())))
-            .andExpect(jsonPath("$.[*].yearPublished").value(hasItem(DEFAULT_YEAR_PUBLISHED)))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(bookCopy.getId().intValue())))
             .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED.booleanValue())));
     }
 
@@ -195,8 +176,7 @@ class BookCopyResourceIT {
             .perform(get(ENTITY_API_URL_ID, bookCopy.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(bookCopy.getId().toString()))
-            .andExpect(jsonPath("$.yearPublished").value(DEFAULT_YEAR_PUBLISHED))
+            .andExpect(jsonPath("$.id").value(bookCopy.getId().intValue()))
             .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED.booleanValue()));
     }
 
@@ -204,7 +184,7 @@ class BookCopyResourceIT {
     @Transactional
     void getNonExistingBookCopy() throws Exception {
         // Get the bookCopy
-        restBookCopyMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
+        restBookCopyMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -219,7 +199,7 @@ class BookCopyResourceIT {
         BookCopy updatedBookCopy = bookCopyRepository.findById(bookCopy.getId()).get();
         // Disconnect from session so that the updates on updatedBookCopy are not directly saved in db
         em.detach(updatedBookCopy);
-        updatedBookCopy.yearPublished(UPDATED_YEAR_PUBLISHED).isDeleted(UPDATED_IS_DELETED);
+        updatedBookCopy.isDeleted(UPDATED_IS_DELETED);
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(updatedBookCopy);
 
         restBookCopyMockMvc
@@ -234,7 +214,6 @@ class BookCopyResourceIT {
         List<BookCopy> bookCopyList = bookCopyRepository.findAll();
         assertThat(bookCopyList).hasSize(databaseSizeBeforeUpdate);
         BookCopy testBookCopy = bookCopyList.get(bookCopyList.size() - 1);
-        assertThat(testBookCopy.getYearPublished()).isEqualTo(UPDATED_YEAR_PUBLISHED);
         assertThat(testBookCopy.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
@@ -242,7 +221,7 @@ class BookCopyResourceIT {
     @Transactional
     void putNonExistingBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(UUID.randomUUID());
+        bookCopy.setId(count.incrementAndGet());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -265,7 +244,7 @@ class BookCopyResourceIT {
     @Transactional
     void putWithIdMismatchBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(UUID.randomUUID());
+        bookCopy.setId(count.incrementAndGet());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -273,7 +252,7 @@ class BookCopyResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBookCopyMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, UUID.randomUUID())
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(bookCopyDTO))
             )
@@ -288,7 +267,7 @@ class BookCopyResourceIT {
     @Transactional
     void putWithMissingIdPathParamBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(UUID.randomUUID());
+        bookCopy.setId(count.incrementAndGet());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -315,8 +294,6 @@ class BookCopyResourceIT {
         BookCopy partialUpdatedBookCopy = new BookCopy();
         partialUpdatedBookCopy.setId(bookCopy.getId());
 
-        partialUpdatedBookCopy.isDeleted(UPDATED_IS_DELETED);
-
         restBookCopyMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedBookCopy.getId())
@@ -329,8 +306,7 @@ class BookCopyResourceIT {
         List<BookCopy> bookCopyList = bookCopyRepository.findAll();
         assertThat(bookCopyList).hasSize(databaseSizeBeforeUpdate);
         BookCopy testBookCopy = bookCopyList.get(bookCopyList.size() - 1);
-        assertThat(testBookCopy.getYearPublished()).isEqualTo(DEFAULT_YEAR_PUBLISHED);
-        assertThat(testBookCopy.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
+        assertThat(testBookCopy.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
     @Test
@@ -345,7 +321,7 @@ class BookCopyResourceIT {
         BookCopy partialUpdatedBookCopy = new BookCopy();
         partialUpdatedBookCopy.setId(bookCopy.getId());
 
-        partialUpdatedBookCopy.yearPublished(UPDATED_YEAR_PUBLISHED).isDeleted(UPDATED_IS_DELETED);
+        partialUpdatedBookCopy.isDeleted(UPDATED_IS_DELETED);
 
         restBookCopyMockMvc
             .perform(
@@ -359,7 +335,6 @@ class BookCopyResourceIT {
         List<BookCopy> bookCopyList = bookCopyRepository.findAll();
         assertThat(bookCopyList).hasSize(databaseSizeBeforeUpdate);
         BookCopy testBookCopy = bookCopyList.get(bookCopyList.size() - 1);
-        assertThat(testBookCopy.getYearPublished()).isEqualTo(UPDATED_YEAR_PUBLISHED);
         assertThat(testBookCopy.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
@@ -367,7 +342,7 @@ class BookCopyResourceIT {
     @Transactional
     void patchNonExistingBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(UUID.randomUUID());
+        bookCopy.setId(count.incrementAndGet());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -390,7 +365,7 @@ class BookCopyResourceIT {
     @Transactional
     void patchWithIdMismatchBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(UUID.randomUUID());
+        bookCopy.setId(count.incrementAndGet());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -398,7 +373,7 @@ class BookCopyResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBookCopyMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, UUID.randomUUID())
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(bookCopyDTO))
             )
@@ -413,7 +388,7 @@ class BookCopyResourceIT {
     @Transactional
     void patchWithMissingIdPathParamBookCopy() throws Exception {
         int databaseSizeBeforeUpdate = bookCopyRepository.findAll().size();
-        bookCopy.setId(UUID.randomUUID());
+        bookCopy.setId(count.incrementAndGet());
 
         // Create the BookCopy
         BookCopyDTO bookCopyDTO = bookCopyMapper.toDto(bookCopy);
@@ -440,7 +415,7 @@ class BookCopyResourceIT {
 
         // Delete the bookCopy
         restBookCopyMockMvc
-            .perform(delete(ENTITY_API_URL_ID, bookCopy.getId().toString()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, bookCopy.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

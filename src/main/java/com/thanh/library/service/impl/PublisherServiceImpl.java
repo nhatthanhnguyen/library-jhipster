@@ -6,7 +6,6 @@ import com.thanh.library.service.PublisherService;
 import com.thanh.library.service.dto.PublisherDTO;
 import com.thanh.library.service.mapper.PublisherMapper;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -72,13 +71,13 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PublisherDTO> findOne(UUID id) {
+    public Optional<PublisherDTO> findOne(Long id) {
         log.debug("Request to get Publisher : {}", id);
         return publisherRepository.findById(id).map(publisherMapper::toDto);
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(Long id) {
         log.debug("Request to delete Publisher : {}", id);
         publisherRepository.deleteById(id);
     }

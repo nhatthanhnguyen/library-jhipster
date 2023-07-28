@@ -28,16 +28,10 @@ export const BookCopyDetail = () => {
         <dl className="jh-entity-details">
           <dt>
             <span id="id">
-              <Translate contentKey="libraryApp.bookCopy.id">Id</Translate>
+              <Translate contentKey="global.field.id">ID</Translate>
             </span>
           </dt>
           <dd>{bookCopyEntity.id}</dd>
-          <dt>
-            <span id="yearPublished">
-              <Translate contentKey="libraryApp.bookCopy.yearPublished">Year Published</Translate>
-            </span>
-          </dt>
-          <dd>{bookCopyEntity.yearPublished}</dd>
           <dt>
             <span id="isDeleted">
               <Translate contentKey="libraryApp.bookCopy.isDeleted">Is Deleted</Translate>

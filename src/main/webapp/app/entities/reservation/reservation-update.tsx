@@ -104,7 +104,7 @@ export const ReservationUpdate = () => {
                   required
                   readOnly
                   id="reservation-id"
-                  label={translate('libraryApp.reservation.id')}
+                  label={translate('global.field.id')}
                   validate={{ required: true }}
                 />
               ) : null}

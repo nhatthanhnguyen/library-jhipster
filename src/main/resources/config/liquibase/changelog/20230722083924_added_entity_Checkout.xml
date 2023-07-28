@@ -11,7 +11,7 @@
     -->
     <changeSet id="20230722083924-1" author="jhipster">
         <createTable tableName="checkout">
-            <column name="id" type="${uuidType}">
+            <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="start_time" type="${datetimeType}">
@@ -26,7 +26,7 @@
             <column name="user_id" type="bigint">
                 <constraints nullable="true" />
             </column>
-            <column name="book_copy_id" type="${uuidType}">
+            <column name="book_copy_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
@@ -51,7 +51,7 @@
                   separator=";"
                   tableName="checkout"
                   usePreparedStatements="true">
-            <column name="id" type="${uuidType}"/>
+            <column name="id" type="numeric"/>
             <column name="start_time" type="date"/>
             <column name="end_time" type="date"/>
             <column name="is_returned" type="boolean"/>

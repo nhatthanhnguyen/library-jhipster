@@ -102,7 +102,7 @@ export const BookUpdate = () => {
                   required
                   readOnly
                   id="book-id"
-                  label={translate('libraryApp.book.id')}
+                  label={translate('global.field.id')}
                   validate={{ required: true }}
                 />
               ) : null}
@@ -152,7 +152,7 @@ export const BookUpdate = () => {
                 {authors
                   ? authors.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.firstName}
                       </option>
                     ))
                   : null}
@@ -169,7 +169,7 @@ export const BookUpdate = () => {
                 {categories
                   ? categories.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.name}
                       </option>
                     ))
                   : null}

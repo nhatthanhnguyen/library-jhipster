@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,7 +78,7 @@ public class ReservationResource {
      */
     @PutMapping("/reservations/{id}")
     public ResponseEntity<ReservationDTO> updateReservation(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @RequestBody ReservationDTO reservationDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Reservation : {}, {}", id, reservationDTO);
@@ -114,7 +113,7 @@ public class ReservationResource {
      */
     @PatchMapping(value = "/reservations/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ReservationDTO> partialUpdateReservation(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @RequestBody ReservationDTO reservationDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Reservation partially : {}, {}", id, reservationDTO);
@@ -167,7 +166,7 @@ public class ReservationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the reservationDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/reservations/{id}")
-    public ResponseEntity<ReservationDTO> getReservation(@PathVariable UUID id) {
+    public ResponseEntity<ReservationDTO> getReservation(@PathVariable Long id) {
         log.debug("REST request to get Reservation : {}", id);
         Optional<ReservationDTO> reservationDTO = reservationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(reservationDTO);
@@ -180,7 +179,7 @@ public class ReservationResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/reservations/{id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
         log.debug("REST request to delete Reservation : {}", id);
         reservationService.delete(id);
         return ResponseEntity

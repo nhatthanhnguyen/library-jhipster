@@ -6,7 +6,6 @@ import com.thanh.library.service.NotificationService;
 import com.thanh.library.service.dto.NotificationDTO;
 import com.thanh.library.service.mapper.NotificationMapper;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -76,13 +75,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<NotificationDTO> findOne(UUID id) {
+    public Optional<NotificationDTO> findOne(Long id) {
         log.debug("Request to get Notification : {}", id);
         return notificationRepository.findOneWithEagerRelationships(id).map(notificationMapper::toDto);
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(Long id) {
         log.debug("Request to delete Notification : {}", id);
         notificationRepository.deleteById(id);
     }

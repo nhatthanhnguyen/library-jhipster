@@ -1,43 +1,35 @@
 entity Book {
-    id UUID,
     title String required,
     isDeleted Boolean,
 }
 
 entity Author {
-    id UUID,
     firstName String required,
     lastName String required,
     isDeleted Boolean,
 }
 
 entity Category {
-    id UUID,
     name String required,
     isDeleted Boolean,
 }
 
 entity Publisher {
-    id UUID,
     name String required,
     isDeleted Boolean,
 }
 
 entity BookCopy {
-    id UUID,
-    yearPublished Integer required,
     isDeleted Boolean,
 }
 
 entity Checkout {
-    id UUID,
     startTime Instant,
     endTime Instant,
     isReturned Boolean,
 }
 
 entity Reservation {
-    id UUID,
     startTime Instant,
     endTime Instant,
 }
@@ -48,7 +40,6 @@ enum Type {
 }
 
 entity Notification {
-    id UUID,
     sentAt Instant,
     type Type,
 }
@@ -58,21 +49,21 @@ entity Queue {
 }
 
 relationship ManyToMany {
-    Book{author} to Author{book}
-    Book{category} to Category{book}
+    Book{author(firstName)} to Author{book(title)}
+    Book{category(name)} to Category{book(title)}
 }
 
 relationship ManyToOne {
     Checkout{user(login)} to User,
+    Checkout{bookCopy} to BookCopy,
     Reservation{user(login)} to User,
+    Reservation{bookCopy} to BookCopy,
     Notification{user(login)} to User,
+    Notification{bookCopy} to BookCopy,
     Queue{user(login)} to User,
     Queue{book(title)} to Book,
     BookCopy{book(title)} to Book,
     Book{publisher(name)} to Publisher,
-    Checkout{bookCopy} to BookCopy,
-    Reservation{bookCopy} to BookCopy,
-    Notification{bookCopy} to BookCopy,
 }
 
 use mapstruct, serviceImpl, pagination for all

@@ -6,10 +6,6 @@
   "entityTableName": "notification",
   "fields": [
     {
-      "fieldName": "id",
-      "fieldType": "UUID"
-    },
-    {
       "fieldName": "sentAt",
       "fieldType": "Instant"
     },

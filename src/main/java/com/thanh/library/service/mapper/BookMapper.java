@@ -18,8 +18,8 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface BookMapper extends EntityMapper<BookDTO, Book> {
     @Mapping(target = "publisher", source = "publisher", qualifiedByName = "publisherName")
-    @Mapping(target = "authors", source = "authors", qualifiedByName = "authorIdSet")
-    @Mapping(target = "categories", source = "categories", qualifiedByName = "categoryIdSet")
+    @Mapping(target = "authors", source = "authors", qualifiedByName = "authorFirstNameSet")
+    @Mapping(target = "categories", source = "categories", qualifiedByName = "categoryNameSet")
     BookDTO toDto(Book s);
 
     @Mapping(target = "removeAuthor", ignore = true)
@@ -32,23 +32,25 @@ public interface BookMapper extends EntityMapper<BookDTO, Book> {
     @Mapping(target = "name", source = "name")
     PublisherDTO toDtoPublisherName(Publisher publisher);
 
-    @Named("authorId")
+    @Named("authorFirstName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    AuthorDTO toDtoAuthorId(Author author);
+    @Mapping(target = "firstName", source = "firstName")
+    AuthorDTO toDtoAuthorFirstName(Author author);
 
-    @Named("authorIdSet")
-    default Set<AuthorDTO> toDtoAuthorIdSet(Set<Author> author) {
-        return author.stream().map(this::toDtoAuthorId).collect(Collectors.toSet());
+    @Named("authorFirstNameSet")
+    default Set<AuthorDTO> toDtoAuthorFirstNameSet(Set<Author> author) {
+        return author.stream().map(this::toDtoAuthorFirstName).collect(Collectors.toSet());
     }
 
-    @Named("categoryId")
+    @Named("categoryName")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
-    CategoryDTO toDtoCategoryId(Category category);
+    @Mapping(target = "name", source = "name")
+    CategoryDTO toDtoCategoryName(Category category);
 
-    @Named("categoryIdSet")
-    default Set<CategoryDTO> toDtoCategoryIdSet(Set<Category> category) {
-        return category.stream().map(this::toDtoCategoryId).collect(Collectors.toSet());
+    @Named("categoryNameSet")
+    default Set<CategoryDTO> toDtoCategoryNameSet(Set<Category> category) {
+        return category.stream().map(this::toDtoCategoryName).collect(Collectors.toSet());
     }
 }

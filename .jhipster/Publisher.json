@@ -6,10 +6,6 @@
   "entityTableName": "publisher",
   "fields": [
     {
-      "fieldName": "id",
-      "fieldType": "UUID"
-    },
-    {
       "fieldName": "name",
       "fieldType": "String",
       "fieldValidateRules": ["required"]

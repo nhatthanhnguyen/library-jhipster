@@ -88,7 +88,7 @@ export const CategoryUpdate = () => {
                   required
                   readOnly
                   id="category-id"
-                  label={translate('libraryApp.category.id')}
+                  label={translate('global.field.id')}
                   validate={{ required: true }}
                 />
               ) : null}

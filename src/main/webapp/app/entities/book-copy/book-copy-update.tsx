@@ -90,21 +90,10 @@ export const BookCopyUpdate = () => {
                   required
                   readOnly
                   id="book-copy-id"
-                  label={translate('libraryApp.bookCopy.id')}
+                  label={translate('global.field.id')}
                   validate={{ required: true }}
                 />
               ) : null}
-              <ValidatedField
-                label={translate('libraryApp.bookCopy.yearPublished')}
-                id="book-copy-yearPublished"
-                name="yearPublished"
-                data-cy="yearPublished"
-                type="text"
-                validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
-                  validate: v => isNumber(v) || translate('entity.validation.number'),
-                }}
-              />
               <ValidatedField
                 label={translate('libraryApp.bookCopy.isDeleted')}
                 id="book-copy-isDeleted"

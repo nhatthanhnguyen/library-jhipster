@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import javax.validation.constraints.*;
 
 /**
@@ -13,7 +12,7 @@ import javax.validation.constraints.*;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class BookDTO implements Serializable {
 
-    private UUID id;
+    private Long id;
 
     @NotNull
     private String title;
@@ -26,11 +25,11 @@ public class BookDTO implements Serializable {
 
     private Set<CategoryDTO> categories = new HashSet<>();
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -99,7 +98,7 @@ public class BookDTO implements Serializable {
     @Override
     public String toString() {
         return "BookDTO{" +
-            "id='" + getId() + "'" +
+            "id=" + getId() +
             ", title='" + getTitle() + "'" +
             ", isDeleted='" + getIsDeleted() + "'" +
             ", publisher=" + getPublisher() +

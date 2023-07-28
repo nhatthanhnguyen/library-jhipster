@@ -3,7 +3,6 @@ package com.thanh.library.repository;
 import com.thanh.library.domain.BookCopy;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -14,8 +13,8 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the BookCopy entity.
  */
 @Repository
-public interface BookCopyRepository extends JpaRepository<BookCopy, UUID> {
-    default Optional<BookCopy> findOneWithEagerRelationships(UUID id) {
+public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
+    default Optional<BookCopy> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
 
@@ -37,5 +36,5 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, UUID> {
     List<BookCopy> findAllWithToOneRelationships();
 
     @Query("select bookCopy from BookCopy bookCopy left join fetch bookCopy.book where bookCopy.id =:id")
-    Optional<BookCopy> findOneWithToOneRelationships(@Param("id") UUID id);
+    Optional<BookCopy> findOneWithToOneRelationships(@Param("id") Long id);
 }

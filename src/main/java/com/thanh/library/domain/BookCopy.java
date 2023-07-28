@@ -2,9 +2,7 @@ package com.thanh.library.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import java.util.UUID;
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -15,18 +13,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "book_copy")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class BookCopy extends AbstractAuditingEntity<UUID> implements Serializable {
+public class BookCopy implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
-    private UUID id;
-
-    @NotNull
-    @Column(name = "year_published", nullable = false)
-    private Integer yearPublished;
+    private Long id;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
@@ -37,30 +32,17 @@ public class BookCopy extends AbstractAuditingEntity<UUID> implements Serializab
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public UUID getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public BookCopy id(UUID id) {
+    public BookCopy id(Long id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getYearPublished() {
-        return this.yearPublished;
-    }
-
-    public BookCopy yearPublished(Integer yearPublished) {
-        this.setYearPublished(yearPublished);
-        return this;
-    }
-
-    public void setYearPublished(Integer yearPublished) {
-        this.yearPublished = yearPublished;
     }
 
     public Boolean getIsDeleted() {
@@ -113,7 +95,6 @@ public class BookCopy extends AbstractAuditingEntity<UUID> implements Serializab
     public String toString() {
         return "BookCopy{" +
             "id=" + getId() +
-            ", yearPublished=" + getYearPublished() +
             ", isDeleted='" + getIsDeleted() + "'" +
             "}";
     }

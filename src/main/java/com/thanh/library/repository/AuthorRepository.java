@@ -1,7 +1,6 @@
 package com.thanh.library.repository;
 
 import com.thanh.library.domain.Author;
-import java.util.UUID;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +9,4 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AuthorRepository extends JpaRepository<Author, UUID> {}
+public interface AuthorRepository extends JpaRepository<Author, Long> {}

@@ -6,10 +6,6 @@
   "entityTableName": "category",
   "fields": [
     {
-      "fieldName": "id",
-      "fieldType": "UUID"
-    },
-    {
       "fieldName": "name",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
@@ -26,6 +22,7 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityField": "title",
       "otherEntityName": "book",
       "otherEntityRelationshipName": "category",
       "ownerSide": false,

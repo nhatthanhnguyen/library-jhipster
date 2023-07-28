@@ -11,7 +11,8 @@ import com.thanh.library.repository.CategoryRepository;
 import com.thanh.library.service.dto.CategoryDTO;
 import com.thanh.library.service.mapper.CategoryMapper;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ class CategoryResourceIT {
 
     private static final String ENTITY_API_URL = "/api/categories";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -102,7 +106,7 @@ class CategoryResourceIT {
     @Transactional
     void createCategoryWithExistingId() throws Exception {
         // Create the Category with an existing ID
-        categoryRepository.saveAndFlush(category);
+        category.setId(1L);
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
 
         int databaseSizeBeforeCreate = categoryRepository.findAll().size();
@@ -146,7 +150,7 @@ class CategoryResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId().toString())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED.booleanValue())));
     }
@@ -162,7 +166,7 @@ class CategoryResourceIT {
             .perform(get(ENTITY_API_URL_ID, category.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(category.getId().toString()))
+            .andExpect(jsonPath("$.id").value(category.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED.booleanValue()));
     }
@@ -171,7 +175,7 @@ class CategoryResourceIT {
     @Transactional
     void getNonExistingCategory() throws Exception {
         // Get the category
-        restCategoryMockMvc.perform(get(ENTITY_API_URL_ID, UUID.randomUUID().toString())).andExpect(status().isNotFound());
+        restCategoryMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -209,7 +213,7 @@ class CategoryResourceIT {
     @Transactional
     void putNonExistingCategory() throws Exception {
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
-        category.setId(UUID.randomUUID());
+        category.setId(count.incrementAndGet());
 
         // Create the Category
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
@@ -232,7 +236,7 @@ class CategoryResourceIT {
     @Transactional
     void putWithIdMismatchCategory() throws Exception {
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
-        category.setId(UUID.randomUUID());
+        category.setId(count.incrementAndGet());
 
         // Create the Category
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
@@ -240,7 +244,7 @@ class CategoryResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCategoryMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, UUID.randomUUID())
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(TestUtil.convertObjectToJsonBytes(categoryDTO))
             )
@@ -255,7 +259,7 @@ class CategoryResourceIT {
     @Transactional
     void putWithMissingIdPathParamCategory() throws Exception {
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
-        category.setId(UUID.randomUUID());
+        category.setId(count.incrementAndGet());
 
         // Create the Category
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
@@ -334,7 +338,7 @@ class CategoryResourceIT {
     @Transactional
     void patchNonExistingCategory() throws Exception {
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
-        category.setId(UUID.randomUUID());
+        category.setId(count.incrementAndGet());
 
         // Create the Category
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
@@ -357,7 +361,7 @@ class CategoryResourceIT {
     @Transactional
     void patchWithIdMismatchCategory() throws Exception {
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
-        category.setId(UUID.randomUUID());
+        category.setId(count.incrementAndGet());
 
         // Create the Category
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
@@ -365,7 +369,7 @@ class CategoryResourceIT {
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCategoryMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, UUID.randomUUID())
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(TestUtil.convertObjectToJsonBytes(categoryDTO))
             )
@@ -380,7 +384,7 @@ class CategoryResourceIT {
     @Transactional
     void patchWithMissingIdPathParamCategory() throws Exception {
         int databaseSizeBeforeUpdate = categoryRepository.findAll().size();
-        category.setId(UUID.randomUUID());
+        category.setId(count.incrementAndGet());
 
         // Create the Category
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
@@ -407,7 +411,7 @@ class CategoryResourceIT {
 
         // Delete the category
         restCategoryMockMvc
-            .perform(delete(ENTITY_API_URL_ID, category.getId().toString()).accept(MediaType.APPLICATION_JSON))
+            .perform(delete(ENTITY_API_URL_ID, category.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

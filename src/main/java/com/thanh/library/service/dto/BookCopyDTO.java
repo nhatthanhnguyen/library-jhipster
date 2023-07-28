@@ -2,8 +2,6 @@ package com.thanh.library.service.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
-import javax.validation.constraints.*;
 
 /**
  * A DTO for the {@link com.thanh.library.domain.BookCopy} entity.
@@ -11,29 +9,18 @@ import javax.validation.constraints.*;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class BookCopyDTO implements Serializable {
 
-    private UUID id;
-
-    @NotNull
-    private Integer yearPublished;
+    private Long id;
 
     private Boolean isDeleted;
 
     private BookDTO book;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getYearPublished() {
-        return yearPublished;
-    }
-
-    public void setYearPublished(Integer yearPublished) {
-        this.yearPublished = yearPublished;
     }
 
     public Boolean getIsDeleted() {
@@ -77,8 +64,7 @@ public class BookCopyDTO implements Serializable {
     @Override
     public String toString() {
         return "BookCopyDTO{" +
-            "id='" + getId() + "'" +
-            ", yearPublished=" + getYearPublished() +
+            "id=" + getId() +
             ", isDeleted='" + getIsDeleted() + "'" +
             ", book=" + getBook() +
             "}";

@@ -3,7 +3,6 @@ package com.thanh.library.repository;
 import com.thanh.library.domain.Reservation;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -14,11 +13,11 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the Reservation entity.
  */
 @Repository
-public interface ReservationRepository extends JpaRepository<Reservation, UUID> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     @Query("select reservation from Reservation reservation where reservation.user.login = ?#{principal.username}")
     List<Reservation> findByUserIsCurrentUser();
 
-    default Optional<Reservation> findOneWithEagerRelationships(UUID id) {
+    default Optional<Reservation> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
 
@@ -40,5 +39,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     List<Reservation> findAllWithToOneRelationships();
 
     @Query("select reservation from Reservation reservation left join fetch reservation.user where reservation.id =:id")
-    Optional<Reservation> findOneWithToOneRelationships(@Param("id") UUID id);
+    Optional<Reservation> findOneWithToOneRelationships(@Param("id") Long id);
 }

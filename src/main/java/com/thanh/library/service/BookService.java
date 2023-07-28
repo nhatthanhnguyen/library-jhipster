@@ -2,7 +2,6 @@ package com.thanh.library.service;
 
 import com.thanh.library.service.dto.BookDTO;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -56,12 +55,12 @@ public interface BookService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<BookDTO> findOne(UUID id);
+    Optional<BookDTO> findOne(Long id);
 
     /**
      * Delete the "id" book.
      *
      * @param id the id of the entity.
      */
-    void delete(UUID id);
+    void delete(Long id);
 }

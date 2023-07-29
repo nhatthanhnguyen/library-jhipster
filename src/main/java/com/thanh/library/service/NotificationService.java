@@ -1,37 +1,80 @@
 package com.thanh.library.service;
 
+import com.thanh.library.domain.Notification;
+import com.thanh.library.repository.NotificationRepository;
 import com.thanh.library.service.dto.NotificationDTO;
+import com.thanh.library.service.mapper.NotificationMapper;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Interface for managing {@link com.thanh.library.domain.Notification}.
+ * Service Implementation for managing {@link Notification}.
  */
-public interface NotificationService {
+@Service
+@Transactional
+public class NotificationService {
+
+    private final Logger log = LoggerFactory.getLogger(NotificationService.class);
+
+    private final NotificationRepository notificationRepository;
+
+    private final NotificationMapper notificationMapper;
+
+    public NotificationService(NotificationRepository notificationRepository, NotificationMapper notificationMapper) {
+        this.notificationRepository = notificationRepository;
+        this.notificationMapper = notificationMapper;
+    }
+
     /**
      * Save a notification.
      *
      * @param notificationDTO the entity to save.
      * @return the persisted entity.
      */
-    NotificationDTO save(NotificationDTO notificationDTO);
+    public NotificationDTO save(NotificationDTO notificationDTO) {
+        log.debug("Request to save Notification : {}", notificationDTO);
+        Notification notification = notificationMapper.toEntity(notificationDTO);
+        notification = notificationRepository.save(notification);
+        return notificationMapper.toDto(notification);
+    }
 
     /**
-     * Updates a notification.
+     * Update a notification.
      *
-     * @param notificationDTO the entity to update.
+     * @param notificationDTO the entity to save.
      * @return the persisted entity.
      */
-    NotificationDTO update(NotificationDTO notificationDTO);
+    public NotificationDTO update(NotificationDTO notificationDTO) {
+        log.debug("Request to update Notification : {}", notificationDTO);
+        Notification notification = notificationMapper.toEntity(notificationDTO);
+        notification = notificationRepository.save(notification);
+        return notificationMapper.toDto(notification);
+    }
 
     /**
-     * Partially updates a notification.
+     * Partially update a notification.
      *
      * @param notificationDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<NotificationDTO> partialUpdate(NotificationDTO notificationDTO);
+    public Optional<NotificationDTO> partialUpdate(NotificationDTO notificationDTO) {
+        log.debug("Request to partially update Notification : {}", notificationDTO);
+
+        return notificationRepository
+            .findById(notificationDTO.getId())
+            .map(existingNotification -> {
+                notificationMapper.partialUpdate(existingNotification, notificationDTO);
+
+                return existingNotification;
+            })
+            .map(notificationRepository::save)
+            .map(notificationMapper::toDto);
+    }
 
     /**
      * Get all the notifications.
@@ -39,28 +82,40 @@ public interface NotificationService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<NotificationDTO> findAll(Pageable pageable);
+    @Transactional(readOnly = true)
+    public Page<NotificationDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all Notifications");
+        return notificationRepository.findAll(pageable).map(notificationMapper::toDto);
+    }
 
     /**
      * Get all the notifications with eager load of many-to-many relationships.
      *
-     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<NotificationDTO> findAllWithEagerRelationships(Pageable pageable);
+    public Page<NotificationDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return notificationRepository.findAllWithEagerRelationships(pageable).map(notificationMapper::toDto);
+    }
 
     /**
-     * Get the "id" notification.
+     * Get one notification by id.
      *
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<NotificationDTO> findOne(Long id);
+    @Transactional(readOnly = true)
+    public Optional<NotificationDTO> findOne(Long id) {
+        log.debug("Request to get Notification : {}", id);
+        return notificationRepository.findOneWithEagerRelationships(id).map(notificationMapper::toDto);
+    }
 
     /**
-     * Delete the "id" notification.
+     * Delete the notification by id.
      *
      * @param id the id of the entity.
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        log.debug("Request to delete Notification : {}", id);
+        notificationRepository.deleteById(id);
+    }
 }

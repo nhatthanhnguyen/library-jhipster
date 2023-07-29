@@ -66,4 +66,4 @@ relationship ManyToOne {
     Book{publisher(name)} to Publisher,
 }
 
-use mapstruct, serviceImpl, pagination for all
+use mapstruct, serviceClass, pagination for all

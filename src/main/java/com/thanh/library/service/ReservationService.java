@@ -1,37 +1,80 @@
 package com.thanh.library.service;
 
+import com.thanh.library.domain.Reservation;
+import com.thanh.library.repository.ReservationRepository;
 import com.thanh.library.service.dto.ReservationDTO;
+import com.thanh.library.service.mapper.ReservationMapper;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service Interface for managing {@link com.thanh.library.domain.Reservation}.
+ * Service Implementation for managing {@link Reservation}.
  */
-public interface ReservationService {
+@Service
+@Transactional
+public class ReservationService {
+
+    private final Logger log = LoggerFactory.getLogger(ReservationService.class);
+
+    private final ReservationRepository reservationRepository;
+
+    private final ReservationMapper reservationMapper;
+
+    public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper) {
+        this.reservationRepository = reservationRepository;
+        this.reservationMapper = reservationMapper;
+    }
+
     /**
      * Save a reservation.
      *
      * @param reservationDTO the entity to save.
      * @return the persisted entity.
      */
-    ReservationDTO save(ReservationDTO reservationDTO);
+    public ReservationDTO save(ReservationDTO reservationDTO) {
+        log.debug("Request to save Reservation : {}", reservationDTO);
+        Reservation reservation = reservationMapper.toEntity(reservationDTO);
+        reservation = reservationRepository.save(reservation);
+        return reservationMapper.toDto(reservation);
+    }
 
     /**
-     * Updates a reservation.
+     * Update a reservation.
      *
-     * @param reservationDTO the entity to update.
+     * @param reservationDTO the entity to save.
      * @return the persisted entity.
      */
-    ReservationDTO update(ReservationDTO reservationDTO);
+    public ReservationDTO update(ReservationDTO reservationDTO) {
+        log.debug("Request to update Reservation : {}", reservationDTO);
+        Reservation reservation = reservationMapper.toEntity(reservationDTO);
+        reservation = reservationRepository.save(reservation);
+        return reservationMapper.toDto(reservation);
+    }
 
     /**
-     * Partially updates a reservation.
+     * Partially update a reservation.
      *
      * @param reservationDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<ReservationDTO> partialUpdate(ReservationDTO reservationDTO);
+    public Optional<ReservationDTO> partialUpdate(ReservationDTO reservationDTO) {
+        log.debug("Request to partially update Reservation : {}", reservationDTO);
+
+        return reservationRepository
+            .findById(reservationDTO.getId())
+            .map(existingReservation -> {
+                reservationMapper.partialUpdate(existingReservation, reservationDTO);
+
+                return existingReservation;
+            })
+            .map(reservationRepository::save)
+            .map(reservationMapper::toDto);
+    }
 
     /**
      * Get all the reservations.
@@ -39,28 +82,40 @@ public interface ReservationService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<ReservationDTO> findAll(Pageable pageable);
+    @Transactional(readOnly = true)
+    public Page<ReservationDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all Reservations");
+        return reservationRepository.findAll(pageable).map(reservationMapper::toDto);
+    }
 
     /**
      * Get all the reservations with eager load of many-to-many relationships.
      *
-     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<ReservationDTO> findAllWithEagerRelationships(Pageable pageable);
+    public Page<ReservationDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return reservationRepository.findAllWithEagerRelationships(pageable).map(reservationMapper::toDto);
+    }
 
     /**
-     * Get the "id" reservation.
+     * Get one reservation by id.
      *
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<ReservationDTO> findOne(Long id);
+    @Transactional(readOnly = true)
+    public Optional<ReservationDTO> findOne(Long id) {
+        log.debug("Request to get Reservation : {}", id);
+        return reservationRepository.findOneWithEagerRelationships(id).map(reservationMapper::toDto);
+    }
 
     /**
-     * Delete the "id" reservation.
+     * Delete the reservation by id.
      *
      * @param id the id of the entity.
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        log.debug("Request to delete Reservation : {}", id);
+        reservationRepository.deleteById(id);
+    }
 }

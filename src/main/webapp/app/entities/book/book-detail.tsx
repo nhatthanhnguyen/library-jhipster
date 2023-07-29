@@ -55,7 +55,7 @@ export const BookDetail = () => {
             {bookEntity.authors
               ? bookEntity.authors.map((val, i) => (
                   <span key={val.id}>
-                    <a>{`${val.firstName}`}</a>
+                    <a>{val.firstName}</a>
                     {bookEntity.authors && i === bookEntity.authors.length - 1 ? '' : ', '}
                   </span>
                 ))

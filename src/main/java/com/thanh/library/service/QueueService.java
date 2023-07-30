@@ -11,6 +11,7 @@ import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.service.mapper.QueueMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,6 +115,11 @@ public class QueueService {
             throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
         }
 
+        List<Queue> queues = queueRepository.findByUserIdAndBookId(user.getId(), bookId);
+        if (!queues.isEmpty()) {
+            throw new BadRequestAlertException("Queue is available", "Queue", "queueisavailable");
+        }
+
         Queue queue = new Queue();
         queue.setUser(user);
         queue.setBook(book);
@@ -136,6 +142,11 @@ public class QueueService {
             .orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
         if (book.getIsDeleted()) {
             throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
+        }
+
+        List<Queue> queues = queueRepository.findByUserIdAndBookId(queueAddingRequestDTO.getUserId(), queueAddingRequestDTO.getBookId());
+        if (!queues.isEmpty()) {
+            throw new BadRequestAlertException("Queue is available", "Queue", "queueisavailable");
         }
 
         Queue queue = new Queue();

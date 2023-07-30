@@ -3,6 +3,8 @@ package com.thanh.library.web.rest;
 import com.thanh.library.repository.BookRepository;
 import com.thanh.library.service.BookService;
 import com.thanh.library.service.dto.BookDTO;
+import com.thanh.library.service.dto.request.HoldBookRequestDTO;
+import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -48,13 +49,6 @@ public class BookResource {
         this.bookRepository = bookRepository;
     }
 
-    /**
-     * {@code POST  /books} : Create a new book.
-     *
-     * @param bookDTO the bookDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new bookDTO, or with status {@code 400 (Bad Request)} if the book has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/books")
     public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO bookDTO) throws URISyntaxException {
         log.debug("REST request to save Book : {}", bookDTO);
@@ -68,16 +62,6 @@ public class BookResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /books/:id} : Updates an existing book.
-     *
-     * @param id the id of the bookDTO to save.
-     * @param bookDTO the bookDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bookDTO,
-     * or with status {@code 400 (Bad Request)} if the bookDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the bookDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/books/{id}")
     public ResponseEntity<BookDTO> updateBook(
         @PathVariable(value = "id", required = false) final Long id,
@@ -102,17 +86,6 @@ public class BookResource {
             .body(result);
     }
 
-    /**
-     * {@code PATCH  /books/:id} : Partial updates given fields of an existing book, field will ignore if it is null
-     *
-     * @param id the id of the bookDTO to save.
-     * @param bookDTO the bookDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bookDTO,
-     * or with status {@code 400 (Bad Request)} if the bookDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the bookDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the bookDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/books/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<BookDTO> partialUpdateBook(
         @PathVariable(value = "id", required = false) final Long id,
@@ -138,13 +111,6 @@ public class BookResource {
         );
     }
 
-    /**
-     * {@code GET  /books} : get all the books.
-     *
-     * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of books in body.
-     */
     @GetMapping("/books")
     public ResponseEntity<List<BookDTO>> getAllBooks(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
@@ -161,12 +127,6 @@ public class BookResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /books/:id} : get the "id" book.
-     *
-     * @param id the id of the bookDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bookDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/books/{id}")
     public ResponseEntity<BookDTO> getBook(@PathVariable Long id) {
         log.debug("REST request to get Book : {}", id);
@@ -174,12 +134,6 @@ public class BookResource {
         return ResponseUtil.wrapOrNotFound(bookDTO);
     }
 
-    /**
-     * {@code DELETE  /books/:id} : delete the "id" book.
-     *
-     * @param id the id of the bookDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         log.debug("REST request to delete Book : {}", id);
@@ -188,5 +142,15 @@ public class BookResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping("/books/{id}/hold")
+    public ResponseEntity<ResponseMessageDTO> holdBookByCurrentUser(@PathVariable("id") Long bookId) {
+        return ResponseEntity.ok(bookService.holdBookByCurrentUser(bookId));
+    }
+
+    @PostMapping("/books/hold")
+    public ResponseEntity<ResponseMessageDTO> holdBook(@RequestBody HoldBookRequestDTO holdBookRequestDTO) {
+        return ResponseEntity.ok(bookService.holdBook(holdBookRequestDTO));
     }
 }

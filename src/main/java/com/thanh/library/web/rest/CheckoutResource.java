@@ -3,6 +3,9 @@ package com.thanh.library.web.rest;
 import com.thanh.library.repository.CheckoutRepository;
 import com.thanh.library.service.CheckoutService;
 import com.thanh.library.service.dto.CheckoutDTO;
+import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
+import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
+import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -46,13 +48,6 @@ public class CheckoutResource {
         this.checkoutRepository = checkoutRepository;
     }
 
-    /**
-     * {@code POST  /checkouts} : Create a new checkout.
-     *
-     * @param checkoutDTO the checkoutDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new checkoutDTO, or with status {@code 400 (Bad Request)} if the checkout has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/checkouts")
     public ResponseEntity<CheckoutDTO> createCheckout(@RequestBody CheckoutDTO checkoutDTO) throws URISyntaxException {
         log.debug("REST request to save Checkout : {}", checkoutDTO);
@@ -66,16 +61,6 @@ public class CheckoutResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /checkouts/:id} : Updates an existing checkout.
-     *
-     * @param id the id of the checkoutDTO to save.
-     * @param checkoutDTO the checkoutDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated checkoutDTO,
-     * or with status {@code 400 (Bad Request)} if the checkoutDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the checkoutDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/checkouts/{id}")
     public ResponseEntity<CheckoutDTO> updateCheckout(
         @PathVariable(value = "id", required = false) final Long id,
@@ -100,17 +85,6 @@ public class CheckoutResource {
             .body(result);
     }
 
-    /**
-     * {@code PATCH  /checkouts/:id} : Partial updates given fields of an existing checkout, field will ignore if it is null
-     *
-     * @param id the id of the checkoutDTO to save.
-     * @param checkoutDTO the checkoutDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated checkoutDTO,
-     * or with status {@code 400 (Bad Request)} if the checkoutDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the checkoutDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the checkoutDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/checkouts/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CheckoutDTO> partialUpdateCheckout(
         @PathVariable(value = "id", required = false) final Long id,
@@ -136,13 +110,6 @@ public class CheckoutResource {
         );
     }
 
-    /**
-     * {@code GET  /checkouts} : get all the checkouts.
-     *
-     * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of checkouts in body.
-     */
     @GetMapping("/checkouts")
     public ResponseEntity<List<CheckoutDTO>> getAllCheckouts(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
@@ -159,12 +126,6 @@ public class CheckoutResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /checkouts/:id} : get the "id" checkout.
-     *
-     * @param id the id of the checkoutDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the checkoutDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/checkouts/{id}")
     public ResponseEntity<CheckoutDTO> getCheckout(@PathVariable Long id) {
         log.debug("REST request to get Checkout : {}", id);
@@ -172,12 +133,6 @@ public class CheckoutResource {
         return ResponseUtil.wrapOrNotFound(checkoutDTO);
     }
 
-    /**
-     * {@code DELETE  /checkouts/:id} : delete the "id" checkout.
-     *
-     * @param id the id of the checkoutDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/checkouts/{id}")
     public ResponseEntity<Void> deleteCheckout(@PathVariable Long id) {
         log.debug("REST request to delete Checkout : {}", id);
@@ -186,5 +141,15 @@ public class CheckoutResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping("/checkouts/borrow")
+    public ResponseEntity<ResponseMessageDTO> borrowBook(@RequestBody BorrowBookRequestDTO borrowBookRequestDTO) {
+        return ResponseEntity.ok(checkoutService.borrowBook(borrowBookRequestDTO));
+    }
+
+    @PutMapping("/checkouts/return")
+    public ResponseEntity<ResponseMessageDTO> returnBook(@RequestBody ReturnBookRequestDTO returnBookRequestDTO) {
+        return ResponseEntity.ok(checkoutService.returnBook(returnBookRequestDTO));
     }
 }

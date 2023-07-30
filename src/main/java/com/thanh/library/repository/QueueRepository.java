@@ -43,4 +43,7 @@ public interface QueueRepository extends JpaRepository<Queue, Long> {
 
     @Query("select q from Queue q join fetch q.book where q.book.id = :bookId")
     List<Queue> findByBookId(@Param("bookId") Long bookId);
+
+    @Query("select q from Queue q " + "join fetch q.book " + "join fetch q.user " + "where q.user.id = :userId and q.book.id = :bookId")
+    List<Queue> findByUserIdAndBookId(@Param("userId") Long userId, @Param("bookId") Long bookId);
 }

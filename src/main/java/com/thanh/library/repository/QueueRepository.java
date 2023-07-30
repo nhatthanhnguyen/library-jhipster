@@ -40,4 +40,7 @@ public interface QueueRepository extends JpaRepository<Queue, Long> {
 
     @Query("select queue from Queue queue left join fetch queue.user left join fetch queue.book where queue.id =:id")
     Optional<Queue> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query("select q from Queue q join fetch q.book where q.book.id = :bookId")
+    List<Queue> findByBookId(@Param("bookId") Long bookId);
 }

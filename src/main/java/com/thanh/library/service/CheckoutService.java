@@ -1,9 +1,16 @@
 package com.thanh.library.service;
 
-import com.thanh.library.domain.Checkout;
-import com.thanh.library.repository.CheckoutRepository;
+import com.thanh.library.domain.*;
+import com.thanh.library.domain.enumeration.Type;
+import com.thanh.library.repository.*;
 import com.thanh.library.service.dto.CheckoutDTO;
+import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
+import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
+import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.service.mapper.CheckoutMapper;
+import com.thanh.library.web.rest.errors.BadRequestAlertException;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +30,36 @@ public class CheckoutService {
 
     private final CheckoutRepository checkoutRepository;
 
+    private final UserRepository userRepository;
+
+    private final BookCopyRepository bookCopyRepository;
+
+    private final ReservationRepository reservationRepository;
+
+    private final QueueRepository queueRepository;
+
+    private final NotificationRepository notificationRepository;
+
     private final CheckoutMapper checkoutMapper;
 
-    public CheckoutService(CheckoutRepository checkoutRepository, CheckoutMapper checkoutMapper) {
+    public CheckoutService(
+        CheckoutRepository checkoutRepository,
+        UserRepository userRepository,
+        BookCopyRepository bookCopyRepository,
+        ReservationRepository reservationRepository,
+        QueueRepository queueRepository,
+        NotificationRepository notificationRepository,
+        CheckoutMapper checkoutMapper
+    ) {
         this.checkoutRepository = checkoutRepository;
+        this.userRepository = userRepository;
+        this.bookCopyRepository = bookCopyRepository;
+        this.reservationRepository = reservationRepository;
+        this.queueRepository = queueRepository;
+        this.notificationRepository = notificationRepository;
         this.checkoutMapper = checkoutMapper;
     }
 
-    /**
-     * Save a checkout.
-     *
-     * @param checkoutDTO the entity to save.
-     * @return the persisted entity.
-     */
     public CheckoutDTO save(CheckoutDTO checkoutDTO) {
         log.debug("Request to save Checkout : {}", checkoutDTO);
         Checkout checkout = checkoutMapper.toEntity(checkoutDTO);
@@ -43,12 +67,6 @@ public class CheckoutService {
         return checkoutMapper.toDto(checkout);
     }
 
-    /**
-     * Update a checkout.
-     *
-     * @param checkoutDTO the entity to save.
-     * @return the persisted entity.
-     */
     public CheckoutDTO update(CheckoutDTO checkoutDTO) {
         log.debug("Request to update Checkout : {}", checkoutDTO);
         Checkout checkout = checkoutMapper.toEntity(checkoutDTO);
@@ -56,12 +74,6 @@ public class CheckoutService {
         return checkoutMapper.toDto(checkout);
     }
 
-    /**
-     * Partially update a checkout.
-     *
-     * @param checkoutDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<CheckoutDTO> partialUpdate(CheckoutDTO checkoutDTO) {
         log.debug("Request to partially update Checkout : {}", checkoutDTO);
 
@@ -76,46 +88,76 @@ public class CheckoutService {
             .map(checkoutMapper::toDto);
     }
 
-    /**
-     * Get all the checkouts.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<CheckoutDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Checkouts");
         return checkoutRepository.findAll(pageable).map(checkoutMapper::toDto);
     }
 
-    /**
-     * Get all the checkouts with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
     public Page<CheckoutDTO> findAllWithEagerRelationships(Pageable pageable) {
         return checkoutRepository.findAllWithEagerRelationships(pageable).map(checkoutMapper::toDto);
     }
 
-    /**
-     * Get one checkout by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Transactional(readOnly = true)
     public Optional<CheckoutDTO> findOne(Long id) {
         log.debug("Request to get Checkout : {}", id);
         return checkoutRepository.findOneWithEagerRelationships(id).map(checkoutMapper::toDto);
     }
 
-    /**
-     * Delete the checkout by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         log.debug("Request to delete Checkout : {}", id);
         checkoutRepository.deleteById(id);
+    }
+
+    public ResponseMessageDTO borrowBook(BorrowBookRequestDTO borrowBookRequestDTO) {
+        User user = userRepository
+            .findById(borrowBookRequestDTO.getUserId())
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "idnotfound"));
+        if (!user.isActivated()) {
+            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
+        }
+        BookCopy bookCopy = bookCopyRepository
+            .findById(borrowBookRequestDTO.getBookCopyId())
+            .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
+        if (bookCopy.getIsDeleted()) {
+            throw new BadRequestAlertException("Book Copy is deleted", "BookCopy", "bookcopyisdeleted");
+        }
+
+        List<Checkout> checkouts = checkoutRepository.findAllThatBookCopyIsBorrowed(borrowBookRequestDTO.getBookCopyId());
+        List<Reservation> reservations = reservationRepository.findAllThatBookCopyIsBorrowed(borrowBookRequestDTO.getBookCopyId());
+        if (!checkouts.isEmpty() || !reservations.isEmpty()) {
+            throw new BadRequestAlertException("Book Copy is not available", "BookCopy", "bookcopyisnotavailable");
+        }
+        Checkout checkout = new Checkout();
+        checkout.setUser(user);
+        checkout.setBookCopy(bookCopy);
+        checkout.setStartTime(Instant.now());
+        checkout.setIsReturned(false);
+        checkoutRepository.save(checkout);
+        return new ResponseMessageDTO(200, "Borrowed book successfully", Instant.now());
+    }
+
+    public ResponseMessageDTO returnBook(ReturnBookRequestDTO returnBookRequestDTO) {
+        Checkout checkout = checkoutRepository
+            .findById(returnBookRequestDTO.getCheckoutId())
+            .orElseThrow(() -> new BadRequestAlertException("Checkout not found", "Checkout", "checkoutnotfound"));
+        if (checkout.getIsReturned()) {
+            throw new BadRequestAlertException("Book Copy is returned", "BookCopy", "bookcopyisreturned");
+        }
+        checkout.setIsReturned(returnBookRequestDTO.isReturnSuccess());
+        checkout.setEndTime(Instant.now());
+        checkoutRepository.save(checkout);
+        Book book = checkout.getBookCopy().getBook();
+        List<Queue> queues = queueRepository.findByBookId(book.getId());
+        queues.forEach(queue -> {
+            queueRepository.deleteById(queue.getId());
+            Notification notification = new Notification();
+            notification.setUser(checkout.getUser());
+            notification.setType(Type.AVAILABLE);
+            notification.setSentAt(Instant.now());
+            notificationRepository.save(notification);
+            // call mail service
+        });
+        return new ResponseMessageDTO(200, "Return book successfully", Instant.now());
     }
 }

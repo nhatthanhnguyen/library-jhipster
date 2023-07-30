@@ -1,9 +1,16 @@
 package com.thanh.library.service;
 
-import com.thanh.library.domain.Queue;
+import com.thanh.library.domain.*;
+import com.thanh.library.repository.BookCopyRepository;
+import com.thanh.library.repository.BookRepository;
 import com.thanh.library.repository.QueueRepository;
+import com.thanh.library.repository.UserRepository;
 import com.thanh.library.service.dto.QueueDTO;
+import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
+import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.service.mapper.QueueMapper;
+import com.thanh.library.web.rest.errors.BadRequestAlertException;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +37,6 @@ public class QueueService {
         this.queueMapper = queueMapper;
     }
 
-    /**
-     * Save a queue.
-     *
-     * @param queueDTO the entity to save.
-     * @return the persisted entity.
-     */
     public QueueDTO save(QueueDTO queueDTO) {
         log.debug("Request to save Queue : {}", queueDTO);
         Queue queue = queueMapper.toEntity(queueDTO);
@@ -43,12 +44,6 @@ public class QueueService {
         return queueMapper.toDto(queue);
     }
 
-    /**
-     * Update a queue.
-     *
-     * @param queueDTO the entity to save.
-     * @return the persisted entity.
-     */
     public QueueDTO update(QueueDTO queueDTO) {
         log.debug("Request to update Queue : {}", queueDTO);
         Queue queue = queueMapper.toEntity(queueDTO);
@@ -56,12 +51,6 @@ public class QueueService {
         return queueMapper.toDto(queue);
     }
 
-    /**
-     * Partially update a queue.
-     *
-     * @param queueDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<QueueDTO> partialUpdate(QueueDTO queueDTO) {
         log.debug("Request to partially update Queue : {}", queueDTO);
 
@@ -76,44 +65,22 @@ public class QueueService {
             .map(queueMapper::toDto);
     }
 
-    /**
-     * Get all the queues.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<QueueDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Queues");
         return queueRepository.findAll(pageable).map(queueMapper::toDto);
     }
 
-    /**
-     * Get all the queues with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
     public Page<QueueDTO> findAllWithEagerRelationships(Pageable pageable) {
         return queueRepository.findAllWithEagerRelationships(pageable).map(queueMapper::toDto);
     }
 
-    /**
-     * Get one queue by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Transactional(readOnly = true)
     public Optional<QueueDTO> findOne(Long id) {
         log.debug("Request to get Queue : {}", id);
         return queueRepository.findOneWithEagerRelationships(id).map(queueMapper::toDto);
     }
 
-    /**
-     * Delete the queue by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         log.debug("Request to delete Queue : {}", id);
         queueRepository.deleteById(id);

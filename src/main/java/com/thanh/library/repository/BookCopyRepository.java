@@ -37,4 +37,11 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
 
     @Query("select bookCopy from BookCopy bookCopy left join fetch bookCopy.book where bookCopy.id =:id")
     Optional<BookCopy> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query(
+        "select bc from BookCopy bc join fetch bc.book where bc.book.id = :id and " +
+        "((bc.id not in (select r.bookCopy.id from Reservation r join fetch r.bookCopy where r.endTime is null)) and " +
+        "(bc.id not in (select c.bookCopy.id from Checkout c join fetch c.bookCopy where c.endTime is null)))"
+    )
+    List<BookCopy> findBookCopiesAvailableByBookId(@Param("bookId") Long bookId);
 }

@@ -30,12 +30,6 @@ public class NotificationService {
         this.notificationMapper = notificationMapper;
     }
 
-    /**
-     * Save a notification.
-     *
-     * @param notificationDTO the entity to save.
-     * @return the persisted entity.
-     */
     public NotificationDTO save(NotificationDTO notificationDTO) {
         log.debug("Request to save Notification : {}", notificationDTO);
         Notification notification = notificationMapper.toEntity(notificationDTO);
@@ -43,12 +37,6 @@ public class NotificationService {
         return notificationMapper.toDto(notification);
     }
 
-    /**
-     * Update a notification.
-     *
-     * @param notificationDTO the entity to save.
-     * @return the persisted entity.
-     */
     public NotificationDTO update(NotificationDTO notificationDTO) {
         log.debug("Request to update Notification : {}", notificationDTO);
         Notification notification = notificationMapper.toEntity(notificationDTO);
@@ -56,12 +44,6 @@ public class NotificationService {
         return notificationMapper.toDto(notification);
     }
 
-    /**
-     * Partially update a notification.
-     *
-     * @param notificationDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<NotificationDTO> partialUpdate(NotificationDTO notificationDTO) {
         log.debug("Request to partially update Notification : {}", notificationDTO);
 
@@ -76,44 +58,22 @@ public class NotificationService {
             .map(notificationMapper::toDto);
     }
 
-    /**
-     * Get all the notifications.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<NotificationDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Notifications");
         return notificationRepository.findAll(pageable).map(notificationMapper::toDto);
     }
 
-    /**
-     * Get all the notifications with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
     public Page<NotificationDTO> findAllWithEagerRelationships(Pageable pageable) {
         return notificationRepository.findAllWithEagerRelationships(pageable).map(notificationMapper::toDto);
     }
 
-    /**
-     * Get one notification by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Transactional(readOnly = true)
     public Optional<NotificationDTO> findOne(Long id) {
         log.debug("Request to get Notification : {}", id);
         return notificationRepository.findOneWithEagerRelationships(id).map(notificationMapper::toDto);
     }
 
-    /**
-     * Delete the notification by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         log.debug("Request to delete Notification : {}", id);
         notificationRepository.deleteById(id);

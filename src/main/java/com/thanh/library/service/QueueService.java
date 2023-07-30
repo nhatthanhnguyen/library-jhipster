@@ -1,16 +1,16 @@
 package com.thanh.library.service;
 
 import com.thanh.library.domain.*;
-import com.thanh.library.repository.BookCopyRepository;
 import com.thanh.library.repository.BookRepository;
 import com.thanh.library.repository.QueueRepository;
 import com.thanh.library.repository.UserRepository;
+import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.QueueDTO;
-import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
+import com.thanh.library.service.dto.request.QueueAddingRequestDTO;
 import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.service.mapper.QueueMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
-import java.util.List;
+import java.time.Instant;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,21 @@ public class QueueService {
 
     private final QueueRepository queueRepository;
 
+    private final BookRepository bookRepository;
+
+    private final UserRepository userRepository;
+
     private final QueueMapper queueMapper;
 
-    public QueueService(QueueRepository queueRepository, QueueMapper queueMapper) {
+    public QueueService(
+        QueueRepository queueRepository,
+        BookRepository bookRepository,
+        UserRepository userRepository,
+        QueueMapper queueMapper
+    ) {
         this.queueRepository = queueRepository;
+        this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
         this.queueMapper = queueMapper;
     }
 
@@ -84,5 +95,55 @@ public class QueueService {
     public void delete(Long id) {
         log.debug("Request to delete Queue : {}", id);
         queueRepository.deleteById(id);
+    }
+
+    public ResponseMessageDTO addToQueueByCurrentUser(Long bookId) {
+        String login = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("User is not login", "User", "usernotlogin"));
+
+        User user = userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "loginnotfound"));
+        if (!user.isActivated()) {
+            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
+        }
+
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
+        if (book.getIsDeleted()) {
+            throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
+        }
+
+        Queue queue = new Queue();
+        queue.setUser(user);
+        queue.setBook(book);
+        queue.setCreatedAt(Instant.now());
+        queueRepository.save(queue);
+
+        return new ResponseMessageDTO(200, "Add queue successfully", Instant.now());
+    }
+
+    public ResponseMessageDTO addToQueue(QueueAddingRequestDTO queueAddingRequestDTO) {
+        User user = userRepository
+            .findById(queueAddingRequestDTO.getUserId())
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "idnotfound"));
+        if (!user.isActivated()) {
+            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
+        }
+
+        Book book = bookRepository
+            .findById(queueAddingRequestDTO.getBookId())
+            .orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
+        if (book.getIsDeleted()) {
+            throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
+        }
+
+        Queue queue = new Queue();
+        queue.setUser(user);
+        queue.setBook(book);
+        queue.setCreatedAt(Instant.now());
+        queueRepository.save(queue);
+
+        return new ResponseMessageDTO(200, "Add queue successfully", Instant.now());
     }
 }

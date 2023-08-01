@@ -1,21 +1,21 @@
 {
   "global": {
-    "title": "Library",
+    "title": "Thư viện",
     "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
     "menu": {
       "home": "Trang chủ",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
-        "main": "Thực thể",
-        "book": "Book",
-        "author": "Author",
-        "category": "Category",
-        "publisher": "Publisher",
-        "bookCopy": "Book Copy",
-        "checkout": "Checkout",
-        "reservation": "Reservation",
-        "notification": "Notification",
-        "queue": "Queue",
+        "main": "Tài nguyên",
+        "book": "Đầu sách",
+        "author": "Tác giả",
+        "category": "Thể loại",
+        "publisher": "Nhà xuất bản",
+        "bookCopy": "Bản copy đầu sách",
+        "checkout": "Mượn trả",
+        "reservation": "Đặt trước",
+        "notification": "Thông báo",
+        "queue": "Hàng đợi",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

@@ -2,27 +2,27 @@
   "libraryApp": {
     "checkout": {
       "home": {
-        "title": "Checkouts",
+        "title": "Mượn trả",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Checkout",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Checkout",
-        "notFound": "No Checkouts found"
+        "createLabel": "Thêm mới một lượt Mượn trả",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật lượt Mượn trả",
+        "notFound": "Không một lượt Mượn trả nào được tìm thấy"
       },
-      "created": "Một Checkout mới được tạo với định danh {{ param }}",
-      "updated": "Một Checkout cập nhật với định danh {{ param }}",
-      "deleted": "Một Checkout đã xóa với định danh {{ param }}",
+      "created": "Một lượt Mượn trả mới được tạo với định danh {{ param }}",
+      "updated": "Một lượt Mượn trả cập nhật với định danh {{ param }}",
+      "deleted": "Một lượt Mượn trả đã xóa với định danh {{ param }}",
       "delete": {
-        "question": "Bạn có chắc là muốn xóa Checkout {{ id }}?"
+        "question": "Bạn có chắc là muốn xóa lượt Mượn trả {{ id }}?"
       },
       "detail": {
-        "title": "Checkout"
+        "title": "Thông tin lượt Mượn trả"
       },
       "id": "ID",
-      "startTime": "Start Time",
-      "endTime": "End Time",
-      "isReturned": "Is Returned",
-      "user": "User",
-      "bookCopy": "Book Copy"
+      "startTime": "Thời gian bắt đầu",
+      "endTime": "Thời gian kết thúc",
+      "isReturned": "Đã hoàn trả",
+      "user": "Người dùng",
+      "bookCopy": "Bản copy đầu sách"
     }
   }
 }

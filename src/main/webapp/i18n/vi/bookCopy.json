@@ -2,24 +2,24 @@
   "libraryApp": {
     "bookCopy": {
       "home": {
-        "title": "Book Copies",
+        "title": "Bản copy đầu sách",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Book Copy",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Book Copy",
-        "notFound": "No Book Copies found"
+        "createLabel": "Thêm mới một Bản copy đầu sách",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Bản copy đầu sách",
+        "notFound": "Không một Bản copy đầu sách nào được tìm thấy"
       },
-      "created": "Một Book Copy mới được tạo với định danh {{ param }}",
-      "updated": "Một Book Copy cập nhật với định danh {{ param }}",
-      "deleted": "Một Book Copy đã xóa với định danh {{ param }}",
+      "created": "Một Bản copy đầu sách mới được tạo với định danh {{ param }}",
+      "updated": "Một Bản copy đầu sách cập nhật với định danh {{ param }}",
+      "deleted": "Một Bản copy đầu sách đã xóa với định danh {{ param }}",
       "delete": {
-        "question": "Bạn có chắc là muốn xóa Book Copy {{ id }}?"
+        "question": "Bạn có chắc là muốn xóa Bản copy đầu sách {{ id }}?"
       },
       "detail": {
-        "title": "Book Copy"
+        "title": "Bản copy đầu sách"
       },
       "id": "ID",
-      "isDeleted": "Is Deleted",
-      "book": "Book"
+      "isDeleted": "Đã xóa",
+      "book": "Đầu sách"
     }
   }
 }

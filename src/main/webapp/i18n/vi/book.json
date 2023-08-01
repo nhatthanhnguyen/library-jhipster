@@ -2,27 +2,27 @@
   "libraryApp": {
     "book": {
       "home": {
-        "title": "Books",
+        "title": "Đầu sách",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Book",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Book",
-        "notFound": "No Books found"
+        "createLabel": "Thêm mới một Đầu sách",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Đầu sách",
+        "notFound": "Không Đầu sách nào được tìm thấy"
       },
-      "created": "Một Book mới được tạo với định danh {{ param }}",
-      "updated": "Một Book cập nhật với định danh {{ param }}",
-      "deleted": "Một Book đã xóa với định danh {{ param }}",
+      "created": "Một Đầu sách mới được tạo với định danh {{ param }}",
+      "updated": "Một Đầu sách cập nhật với định danh {{ param }}",
+      "deleted": "Một Đầu sách đã xóa với định danh {{ param }}",
       "delete": {
-        "question": "Bạn có chắc là muốn xóa Book {{ id }}?"
+        "question": "Bạn có chắc là muốn xóa Đầu sách {{ id }}?"
       },
       "detail": {
-        "title": "Book"
+        "title": "Đầu sách"
       },
       "id": "ID",
-      "title": "Title",
-      "isDeleted": "Is Deleted",
-      "publisher": "Publisher",
-      "author": "Author",
-      "category": "Category"
+      "title": "Tiêu đề",
+      "isDeleted": "Đã xóa",
+      "publisher": "Nhà xuất bản",
+      "author": "Tác giả",
+      "category": "Thể loại"
     }
   }
 }

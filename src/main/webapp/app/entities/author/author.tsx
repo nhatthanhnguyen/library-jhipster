@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { Translate, getSortState, JhiPagination, JhiItemCount, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -114,6 +114,14 @@ export const Author = () => {
                 <th className="hand" onClick={sort('isDeleted')}>
                   <Translate contentKey="libraryApp.author.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('createdDate')}>
+                  <Translate contentKey="libraryApp.author.createdDate">Created Date</Translate>
+                  <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('lastModifiedBy')}>
+                  <Translate contentKey="libraryApp.author.lastModifiedBy">Last Modified By</Translate>
+                  <FontAwesomeIcon icon="sort" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -128,6 +136,12 @@ export const Author = () => {
                   <td>{author.firstName}</td>
                   <td>{author.lastName}</td>
                   <td>{author.isDeleted ? 'true' : 'false'}</td>
+                  <td>
+                    {author.createdDate ? (
+                      <TextFormat value={author.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                    ) : null}
+                  </td>
+                  <td>{author.lastModifiedBy}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/author/${author.id}`} color="info" size="sm" data-cy="entityDetailsButton">

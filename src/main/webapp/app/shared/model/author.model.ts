@@ -5,6 +5,10 @@ export interface IAuthor {
   firstName?: string;
   lastName?: string;
   isDeleted?: boolean | null;
+  createdBy?: string;
+  createdDate?: Date | null;
+  lastModifiedBy?: string;
+  lastModifiedDate?: Date | null;
   books?: IBook[] | null;
 }
 

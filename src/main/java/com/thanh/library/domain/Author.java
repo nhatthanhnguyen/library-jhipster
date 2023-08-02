@@ -16,7 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "author")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Author implements Serializable {
+public class Author extends AbstractAuditingEntity<Long> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

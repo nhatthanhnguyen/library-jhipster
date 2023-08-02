@@ -107,7 +107,10 @@
       "open": "Open",
       "save": "Save",
       "view": "View",
-      "show": "Show {{otherEntity}}"
+      "show": "Show {{otherEntity}}",
+      "hold": "Hold",
+      "borrow": "Borrow",
+      "return": "Return"
     },
     "detail": {
       "field": "Field",

@@ -105,7 +105,10 @@
       "open": "Mở",
       "save": "Lưu",
       "view": "Xem",
-      "show": "Show {{otherEntity}}"
+      "show": "Show {{otherEntity}}",
+      "hold": "Đặt trước",
+      "borrow": "Mượn sách",
+      "return": "Trả sách"
     },
     "detail": {
       "field": "Trường",

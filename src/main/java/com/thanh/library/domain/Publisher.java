@@ -13,7 +13,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "publisher")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Publisher implements Serializable {
+public class Publisher extends AbstractAuditingEntity<Long> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

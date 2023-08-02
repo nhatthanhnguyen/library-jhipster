@@ -21,7 +21,9 @@
       "firstName": "Tên",
       "lastName": "Họ",
       "isDeleted": "Đang xóa",
-      "book": "Đầu sách"
+      "book": "Đầu sách",
+      "createdDate": "Ngày tạo",
+      "lastModifiedBy": "Cập nhật bởi"
     }
   }
 }

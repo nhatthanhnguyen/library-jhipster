@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IBook } from 'app/shared/model/book.model';
 import { getEntities } from './book.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const Book = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +24,8 @@ export const Book = () => {
   const bookList = useAppSelector(state => state.book.entities);
   const loading = useAppSelector(state => state.book.loading);
   const totalItems = useAppSelector(state => state.book.totalItems);
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
+  console.log(isLibrarian);
 
   const getAllEntities = () => {
     dispatch(
@@ -90,11 +91,13 @@ export const Book = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.book.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/book/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="libraryApp.book.home.createLabel">Create new Book</Translate>
-          </Link>
+          {isLibrarian ? (
+            <Link to="/book/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp;
+              <Translate contentKey="libraryApp.book.home.createLabel">Create new Book</Translate>
+            </Link>
+          ) : undefined}
         </div>
       </h2>
       <div className="table-responsive">
@@ -108,9 +111,11 @@ export const Book = () => {
                 <th className="hand" onClick={sort('title')}>
                   <Translate contentKey="libraryApp.book.title">Title</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('isDeleted')}>
-                  <Translate contentKey="libraryApp.book.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
+                {isLibrarian ? (
+                  <th className="hand" onClick={sort('isDeleted')}>
+                    <Translate contentKey="libraryApp.book.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                ) : undefined}
                 <th>
                   <Translate contentKey="libraryApp.book.publisher">Publisher</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -126,40 +131,56 @@ export const Book = () => {
                     </Button>
                   </td>
                   <td>{book.title}</td>
-                  <td>{book.isDeleted ? 'true' : 'false'}</td>
+                  {isLibrarian ? <td>{book.isDeleted ? 'true' : 'false'}</td> : undefined}
                   <td>{book.publisher ? <Link to={`/publisher/${book.publisher.id}`}>{book.publisher.name}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/book/${book.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`/book/${book.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`/book/${book.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
-                        </span>
-                      </Button>
+                      {isLibrarian ? (
+                        <>
+                          <Button tag={Link} to={`/book/${book.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                            <FontAwesomeIcon icon="eye" />{' '}
+                            <span className="d-none d-md-inline">
+                              <Translate contentKey="entity.action.view">View</Translate>
+                            </span>
+                          </Button>
+                          <Button
+                            tag={Link}
+                            to={`/book/${book.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            color="primary"
+                            size="sm"
+                            data-cy="entityEditButton"
+                          >
+                            <FontAwesomeIcon icon="pencil-alt" />{' '}
+                            <span className="d-none d-md-inline">
+                              <Translate contentKey="entity.action.edit">Edit</Translate>
+                            </span>
+                          </Button>
+                          <Button
+                            tag={Link}
+                            to={`/book/${book.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            color="danger"
+                            size="sm"
+                            data-cy="entityDeleteButton"
+                          >
+                            <FontAwesomeIcon icon="trash" />{' '}
+                            <span className="d-none d-md-inline">
+                              <Translate contentKey="entity.action.delete">Delete</Translate>
+                            </span>
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button color="primary" size="sm" data-cy="HoldBookButton">
+                            <FontAwesomeIcon icon={'hand'} /> <Translate contentKey="entity.action.hold">Hold</Translate>
+                          </Button>
+                          <Button tag={Link} to={`/book/${book.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                            <FontAwesomeIcon icon="eye" />{' '}
+                            <span className="d-none d-md-inline">
+                              <Translate contentKey="entity.action.view">View</Translate>
+                            </span>
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

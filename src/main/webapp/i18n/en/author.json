@@ -21,7 +21,9 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "isDeleted": "Is Deleted",
-      "book": "Book"
+      "book": "Book",
+      "createdDate": "Created Date",
+      "lastModifiedBy": "Last Modified By"
     }
   }
 }

@@ -152,7 +152,7 @@ export const BookUpdate = () => {
                 {authors
                   ? authors.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.firstName}
+                        {`${otherEntity.lastName} ${otherEntity.firstName}`}
                       </option>
                     ))
                   : null}

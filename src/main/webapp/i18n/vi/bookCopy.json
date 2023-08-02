@@ -19,7 +19,8 @@
       },
       "id": "ID",
       "isDeleted": "Đã xóa",
-      "book": "Đầu sách"
+      "book": "Đầu sách",
+      "publisher": "Nhà xuất bản"
     }
   }
 }

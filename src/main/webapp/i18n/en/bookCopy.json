@@ -19,7 +19,8 @@
       },
       "id": "ID",
       "isDeleted": "Is Deleted",
-      "book": "Book"
+      "book": "Book",
+      "publisher": "Publisher"
     }
   }
 }

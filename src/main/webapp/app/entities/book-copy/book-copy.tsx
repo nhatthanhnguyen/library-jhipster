@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IBookCopy } from 'app/shared/model/book-copy.model';
 import { getEntities } from './book-copy.reducer';
 
 export const BookCopy = () => {
@@ -111,6 +107,9 @@ export const BookCopy = () => {
                 <th>
                   <Translate contentKey="libraryApp.bookCopy.book">Book</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th>
+                  <Translate contentKey="libraryApp.bookCopy.publisher">Publisher</Translate>
+                </th>
                 <th />
               </tr>
             </thead>
@@ -124,6 +123,17 @@ export const BookCopy = () => {
                   </td>
                   <td>{bookCopy.isDeleted ? 'true' : 'false'}</td>
                   <td>{bookCopy.book ? <Link to={`/book/${bookCopy.book.id}`}>{bookCopy.book.title}</Link> : ''}</td>
+                  <td>
+                    {bookCopy.book ? (
+                      bookCopy.book.publisher ? (
+                        <Link to={`/publisher/${bookCopy.book.publisher.id}`}>{bookCopy.book.publisher.name}</Link>
+                      ) : (
+                        ''
+                      )
+                    ) : (
+                      ''
+                    )}
+                  </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/book-copy/${bookCopy.id}`} color="info" size="sm" data-cy="entityDetailsButton">

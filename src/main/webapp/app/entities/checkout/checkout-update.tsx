@@ -137,7 +137,7 @@ export const CheckoutUpdate = () => {
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
+                        {`${otherEntity.login} - ${otherEntity.lastName} ${otherEntity.firstName}`}
                       </option>
                     ))
                   : null}
@@ -153,7 +153,7 @@ export const CheckoutUpdate = () => {
                 {bookCopies
                   ? bookCopies.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {`${otherEntity.id} - ${otherEntity.book.title} - ${otherEntity.book.publisher.name}`}
                       </option>
                     ))
                   : null}

@@ -109,6 +109,7 @@
       "view": "View",
       "show": "Show {{otherEntity}}",
       "hold": "Hold",
+      "restore": "Restore",
       "borrow": "Borrow",
       "return": "Return"
     },

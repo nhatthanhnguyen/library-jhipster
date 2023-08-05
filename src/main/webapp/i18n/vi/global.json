@@ -106,6 +106,7 @@
       "save": "Lưu",
       "view": "Xem",
       "show": "Show {{otherEntity}}",
+      "restore": "Khôi phục",
       "hold": "Đặt trước",
       "borrow": "Mượn sách",
       "return": "Trả sách"

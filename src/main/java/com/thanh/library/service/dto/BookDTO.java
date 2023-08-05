@@ -1,6 +1,7 @@
 package com.thanh.library.service.dto;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -24,6 +25,14 @@ public class BookDTO implements Serializable {
     private Set<AuthorDTO> authors = new HashSet<>();
 
     private Set<CategoryDTO> categories = new HashSet<>();
+
+    private String createdBy;
+
+    private Instant createdDate;
+
+    private String lastModifiedBy;
+
+    private String lastModifiedDate;
 
     public Long getId() {
         return id;
@@ -73,20 +82,55 @@ public class BookDTO implements Serializable {
         this.categories = categories;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public String getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(String lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof BookDTO)) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         BookDTO bookDTO = (BookDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, bookDTO.id);
+        return (
+            Objects.equals(id, bookDTO.id) &&
+            Objects.equals(title, bookDTO.title) &&
+            Objects.equals(isDeleted, bookDTO.isDeleted) &&
+            Objects.equals(publisher, bookDTO.publisher) &&
+            Objects.equals(authors, bookDTO.authors) &&
+            Objects.equals(categories, bookDTO.categories) &&
+            Objects.equals(createdBy, bookDTO.createdBy) &&
+            Objects.equals(createdDate, bookDTO.createdDate) &&
+            Objects.equals(lastModifiedBy, bookDTO.lastModifiedBy) &&
+            Objects.equals(lastModifiedDate, bookDTO.lastModifiedDate)
+        );
     }
 
     @Override
@@ -95,15 +139,20 @@ public class BookDTO implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "BookDTO{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", isDeleted='" + getIsDeleted() + "'" +
-            ", publisher=" + getPublisher() +
-            ", authors=" + getAuthors() +
-            ", categories=" + getCategories() +
-            "}";
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", isDeleted=" + isDeleted +
+            ", publisher=" + publisher +
+            ", authors=" + authors +
+            ", categories=" + categories +
+            ", createdBy='" + createdBy + '\'' +
+            ", createdDate=" + createdDate +
+            ", lastModifiedBy='" + lastModifiedBy + '\'' +
+            ", lastModifiedDate='" + lastModifiedDate + '\'' +
+            '}';
     }
 }

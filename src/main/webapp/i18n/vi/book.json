@@ -22,7 +22,11 @@
       "isDeleted": "Đã xóa",
       "publisher": "Nhà xuất bản",
       "author": "Tác giả",
-      "category": "Thể loại"
+      "category": "Thể loại",
+      "createdBy": "Tạo bởi",
+      "createdDate": "Thời gian tạo",
+      "lastModifiedBy": "Cập nhật bởi",
+      "lastModifiedDate": "Thời gian cập nhật"
     }
   }
 }

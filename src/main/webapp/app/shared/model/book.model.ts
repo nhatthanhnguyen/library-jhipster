@@ -9,6 +9,10 @@ export interface IBook {
   publisher?: IPublisher | null;
   authors?: IAuthor[] | null;
   categories?: ICategory[] | null;
+  createdBy?: string;
+  createdDate?: Date | null;
+  lastModifiedBy?: string;
+  lastModifiedDate?: Date | null;
 }
 
 export const defaultValue: Readonly<IBook> = {

@@ -18,13 +18,8 @@ public interface ReservationMapper extends EntityMapper<ReservationDTO, Reservat
     ReservationDTO toDto(Reservation s);
 
     @Named("userLogin")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "login", source = "login")
     UserDTO toDtoUserLogin(User user);
 
     @Named("bookCopyId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
     BookCopyDTO toDtoBookCopyId(BookCopy bookCopy);
 }

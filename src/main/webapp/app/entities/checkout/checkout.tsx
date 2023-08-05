@@ -134,16 +134,18 @@ export const Checkout = () => {
                   <td>{checkout.startTime ? <TextFormat type="date" value={checkout.startTime} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{checkout.endTime ? <TextFormat type="date" value={checkout.endTime} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{checkout.isReturned ? 'true' : 'false'}</td>
-                  <td>{checkout.user ? checkout.user.login : ''}</td>
-                  <td>{checkout.bookCopy ? <Link to={`/book-copy/${checkout.bookCopy.id}`}>{checkout.bookCopy.id}</Link> : ''}</td>
+                  <td>{checkout.user ? `${checkout.user.lastName} ${checkout.user.firstName}` : ''}</td>
+                  <td>
+                    {checkout.bookCopy ? (
+                      <Link
+                        to={`/book-copy/${checkout.bookCopy.id}`}
+                      >{`${checkout.bookCopy.id} - ${checkout.bookCopy.book.title} - ${checkout.bookCopy.book.publisher.name}`}</Link>
+                    ) : (
+                      ''
+                    )}
+                  </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/checkout/${checkout.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
                       <Button
                         tag={Link}
                         to={`/checkout/${checkout.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

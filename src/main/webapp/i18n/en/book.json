@@ -22,7 +22,11 @@
       "isDeleted": "Is Deleted",
       "publisher": "Publisher",
       "author": "Author",
-      "category": "Category"
+      "category": "Category",
+      "createdBy": "Created by",
+      "createdDate": "Created date",
+      "lastModifiedBy": "Updated by",
+      "lastModifiedDate": "Updated date"
     }
   }
 }

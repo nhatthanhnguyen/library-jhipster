@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { getSortState, JhiItemCount, JhiPagination, Translate } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { AUTHORITIES } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
@@ -25,7 +25,6 @@ export const Book = () => {
   const loading = useAppSelector(state => state.book.loading);
   const totalItems = useAppSelector(state => state.book.totalItems);
   const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
-  console.log(isLibrarian);
 
   const getAllEntities = () => {
     dispatch(
@@ -82,6 +81,8 @@ export const Book = () => {
     sortEntities();
   };
 
+  const currentLocale = useAppSelector(state => state.locale.currentLocale);
+
   return (
     <div>
       <h2 id="book-heading" data-cy="BookHeading">
@@ -100,6 +101,12 @@ export const Book = () => {
           ) : undefined}
         </div>
       </h2>
+      <input
+        className="form-control mb-4"
+        id="tableSearch"
+        type="text"
+        placeholder={currentLocale === 'vi' ? 'Nhập thông tin tìm kiếm vào đây' : 'Type to search'}
+      />
       <div className="table-responsive">
         {bookList && bookList.length > 0 ? (
           <Table responsive>
@@ -111,14 +118,29 @@ export const Book = () => {
                 <th className="hand" onClick={sort('title')}>
                   <Translate contentKey="libraryApp.book.title">Title</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                {isLibrarian ? (
-                  <th className="hand" onClick={sort('isDeleted')}>
-                    <Translate contentKey="libraryApp.book.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                ) : undefined}
                 <th>
                   <Translate contentKey="libraryApp.book.publisher">Publisher</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                {isLibrarian ? (
+                  <>
+                    <th className="hand" onClick={sort('createdBy')}>
+                      <Translate contentKey="libraryApp.book.createdBy">Created By</Translate>
+                      <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand" onClick={sort('createdDate')}>
+                      <Translate contentKey="libraryApp.book.createdDate">Created Date</Translate>
+                      <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand" onClick={sort('lastModifiedBy')}>
+                      <Translate contentKey="libraryApp.book.lastModifiedBy">Last Modified By</Translate>
+                      <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand" onClick={sort('lastModifiedDate')}>
+                      <Translate contentKey="libraryApp.book.lastModifiedDate">Last Modified Date</Translate>
+                      <FontAwesomeIcon icon="sort" />
+                    </th>
+                  </>
+                ) : undefined}
                 <th />
               </tr>
             </thead>
@@ -131,8 +153,23 @@ export const Book = () => {
                     </Button>
                   </td>
                   <td>{book.title}</td>
-                  {isLibrarian ? <td>{book.isDeleted ? 'true' : 'false'}</td> : undefined}
                   <td>{book.publisher ? <Link to={`/publisher/${book.publisher.id}`}>{book.publisher.name}</Link> : ''}</td>
+                  {isLibrarian ? (
+                    <>
+                      <td>{book.createdBy}</td>
+                      <td>
+                        {book.createdDate ? (
+                          <TextFormat value={book.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                        ) : null}
+                      </td>
+                      <td>{book.lastModifiedBy}</td>
+                      <td>
+                        {book.lastModifiedDate ? (
+                          <TextFormat value={book.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                        ) : null}
+                      </td>
+                    </>
+                  ) : undefined}
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       {isLibrarian ? (
@@ -155,18 +192,27 @@ export const Book = () => {
                               <Translate contentKey="entity.action.edit">Edit</Translate>
                             </span>
                           </Button>
-                          <Button
-                            tag={Link}
-                            to={`/book/${book.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                            color="danger"
-                            size="sm"
-                            data-cy="entityDeleteButton"
-                          >
-                            <FontAwesomeIcon icon="trash" />{' '}
-                            <span className="d-none d-md-inline">
-                              <Translate contentKey="entity.action.delete">Delete</Translate>
-                            </span>
-                          </Button>
+                          {!book.isDeleted ? (
+                            <Button
+                              tag={Link}
+                              to={`/book/${book.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                              color="danger"
+                              size="sm"
+                              data-cy="entityDeleteButton"
+                            >
+                              <FontAwesomeIcon icon="trash" />{' '}
+                              <span className="d-none d-md-inline">
+                                <Translate contentKey="entity.action.delete">Delete</Translate>
+                              </span>
+                            </Button>
+                          ) : (
+                            <Button tag={Link} to={`/book/${book.id}/restore`} color="success" size="sm">
+                              <FontAwesomeIcon icon="sync" />{' '}
+                              <span className="d-none d-md-inline">
+                                <Translate contentKey="entity.action.restore">Restore</Translate>
+                              </span>
+                            </Button>
+                          )}
                         </>
                       ) : (
                         <>

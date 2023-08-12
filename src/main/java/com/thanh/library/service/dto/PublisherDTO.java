@@ -15,8 +15,6 @@ public class PublisherDTO implements Serializable {
     @NotNull
     private String name;
 
-    private Boolean isDeleted;
-
     public Long getId() {
         return id;
     }
@@ -31,14 +29,6 @@ public class PublisherDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     @Override
@@ -68,7 +58,6 @@ public class PublisherDTO implements Serializable {
         return "PublisherDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", isDeleted='" + getIsDeleted() + "'" +
             "}";
     }
 }

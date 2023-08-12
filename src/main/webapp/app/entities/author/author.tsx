@@ -111,8 +111,8 @@ export const Author = () => {
                 <th className="hand" onClick={sort('lastName')}>
                   <Translate contentKey="libraryApp.author.lastName">Last Name</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('isDeleted')}>
-                  <Translate contentKey="libraryApp.author.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('createdBy')}>
+                  <Translate contentKey="libraryApp.author.createdBy">Created By</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('createdDate')}>
                   <Translate contentKey="libraryApp.author.createdDate">Created Date</Translate>
@@ -122,11 +122,15 @@ export const Author = () => {
                   <Translate contentKey="libraryApp.author.lastModifiedBy">Last Modified By</Translate>
                   <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('lastModifiedDate')}>
+                  <Translate contentKey="libraryApp.author.lastModifiedDate">Last Modified Date</Translate>
+                  <FontAwesomeIcon icon="sort" />
+                </th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              {authorList.map((author, i) => (
+              {authorList.map((author: IAuthor, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
                     <Button tag={Link} to={`/author/${author.id}`} color="link" size="sm">
@@ -135,13 +139,18 @@ export const Author = () => {
                   </td>
                   <td>{author.firstName}</td>
                   <td>{author.lastName}</td>
-                  <td>{author.isDeleted ? 'true' : 'false'}</td>
+                  <td>{author.createdBy}</td>
                   <td>
                     {author.createdDate ? (
                       <TextFormat value={author.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
                     ) : null}
                   </td>
                   <td>{author.lastModifiedBy}</td>
+                  <td>
+                    {author.lastModifiedDate ? (
+                      <TextFormat value={author.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                    ) : null}
+                  </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/author/${author.id}`} color="info" size="sm" data-cy="entityDetailsButton">

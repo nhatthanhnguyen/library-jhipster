@@ -11,6 +11,10 @@
       "fieldValidateRules": ["required"]
     },
     {
+      "fieldName": "yearPublished",
+      "fieldType": "Integer"
+    },
+    {
       "fieldName": "isDeleted",
       "fieldType": "Boolean"
     }

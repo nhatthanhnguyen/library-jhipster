@@ -1,5 +1,6 @@
 package com.thanh.library.web.rest;
 
+import com.thanh.library.domain.QueueId;
 import com.thanh.library.repository.QueueRepository;
 import com.thanh.library.service.QueueService;
 import com.thanh.library.service.dto.QueueDTO;
@@ -78,7 +79,7 @@ public class QueueResource {
      */
     @PutMapping("/queues/{id}")
     public ResponseEntity<QueueDTO> updateQueue(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final QueueId id,
         @RequestBody QueueDTO queueDTO
     ) throws URISyntaxException {
         log.debug("REST request to update Queue : {}, {}", id, queueDTO);
@@ -113,7 +114,7 @@ public class QueueResource {
      */
     @PatchMapping(value = "/queues/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<QueueDTO> partialUpdateQueue(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final QueueId id,
         @RequestBody QueueDTO queueDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update Queue partially : {}, {}", id, queueDTO);
@@ -166,7 +167,7 @@ public class QueueResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the queueDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/queues/{id}")
-    public ResponseEntity<QueueDTO> getQueue(@PathVariable Long id) {
+    public ResponseEntity<QueueDTO> getQueue(@PathVariable QueueId id) {
         log.debug("REST request to get Queue : {}", id);
         Optional<QueueDTO> queueDTO = queueService.findOne(id);
         return ResponseUtil.wrapOrNotFound(queueDTO);
@@ -179,7 +180,7 @@ public class QueueResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/queues/{id}")
-    public ResponseEntity<Void> deleteQueue(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteQueue(@PathVariable QueueId id) {
         log.debug("REST request to delete Queue : {}", id);
         queueService.delete(id);
         return ResponseEntity

@@ -1,11 +1,33 @@
-id;name;is_deleted
-1;visionary;true
-2;multi-byte Tasty Rustic;true
-3;attitude Avon collaboration;false
-4;reboot Associate;false
-5;wireless Afghani;true
-6;open-source;true
-7;quantify parse pixel;false
-8;Vermont expedite;false
-9;Decentralized Florida Account;false
-10;actuating;true
+id;name;created_by;created_date;last_modified_by;last_modified_date
+1;Nhà xuất bản Chính trị Quốc gia;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+2;Nhà xuất bản Tư pháp;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+3;Nhà xuất bản Hồng Đức;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+4;Nhà xuất bản Quân đội;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+5;Nhà xuất bản Công an nhân dân;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+6;Nhà xuất bản Kim Đồng;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+7;Nhà xuất bản Thanh niên;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+8;Nhà xuất bản Lao động;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+9;Nhà xuất bản Phụ nữ;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+10;Nhà xuất bản Mỹ thuật;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+11;Nhà xuất bản Sân khấu;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+12;Nhà xuất bản Hội nhà văn;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+13;Nhà xuất bản Lao động xã hội;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+14;Nhà xuất bản Khoa học xã hội;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+15;Nhà xuất bản Tôn giáo;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+16;Nhà xuất bản Thông tấn;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+17;Nhà xuất bản Bản đồ;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+18;Nhà xuất bản Bưu điện;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+19;Nhà xuất bản Giao thông;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+20;Nhà xuất bản Khoa học và kỹ thuật;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+21;Nhà xuất bản Khoa học tự nhiên và Công nghệ;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+22;Nhà xuất bản Nông nghiệp;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+23;Nhà xuất bản Tài chính;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+24;Nhà xuất bản Thống kê;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+25;Nhà xuất bản Thể dục thể thao;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+26;Nhà xuất bản Y học;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+27;Nhà xuất bản Xây dựng;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+28;Nhà xuất bản Từ điển bách khoa;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+29;Nhà xuất bản Tri thức;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+30;Nhà xuất bản Thế giới;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+31;Nhà xuất bản Âm nhạc;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+32;Nhà xuất bản Văn học;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399

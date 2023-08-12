@@ -74,6 +74,17 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError }
 );
 
+export const restoreEntity = createAsyncThunk(
+  'author/restore_entity',
+  async (id: string | number, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}/restore`;
+    const result = await axios.put<IAuthor>(requestUrl);
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
 // slice
 
 export const AuthorSlice = createEntitySlice({
@@ -90,6 +101,11 @@ export const AuthorSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
+      .addCase(restoreEntity.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = true;
+        state.entity = {};
+      })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
         const { data, headers } = action.payload;
 
@@ -100,7 +116,7 @@ export const AuthorSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
       })
-      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity, restoreEntity), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
@@ -111,7 +127,7 @@ export const AuthorSlice = createEntitySlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity, restoreEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

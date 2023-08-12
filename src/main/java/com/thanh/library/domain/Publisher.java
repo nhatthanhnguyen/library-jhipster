@@ -27,9 +27,6 @@ public class Publisher extends AbstractAuditingEntity<Long> implements Serializa
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
-
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -58,19 +55,6 @@ public class Publisher extends AbstractAuditingEntity<Long> implements Serializa
         this.name = name;
     }
 
-    public Boolean getIsDeleted() {
-        return this.isDeleted;
-    }
-
-    public Publisher isDeleted(Boolean isDeleted) {
-        this.setIsDeleted(isDeleted);
-        return this;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -96,7 +80,6 @@ public class Publisher extends AbstractAuditingEntity<Long> implements Serializa
         return "Publisher{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", isDeleted='" + getIsDeleted() + "'" +
             "}";
     }
 }

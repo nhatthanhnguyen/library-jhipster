@@ -92,7 +92,7 @@
     "ribbon": {
       "dev": "Phát triển"
     },
-    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+    "item-count": "Đang hiển thị {{first}} - {{second}} của {{total}}."
   },
   "entity": {
     "action": {
@@ -109,7 +109,8 @@
       "restore": "Khôi phục",
       "hold": "Đặt trước",
       "borrow": "Mượn sách",
-      "return": "Trả sách"
+      "return": "Trả sách",
+      "wait": "Thêm vào danh sách chờ"
     },
     "detail": {
       "field": "Trường",
@@ -117,6 +118,9 @@
     },
     "delete": {
       "title": "Xác nhận hành động xóa"
+    },
+    "restore": {
+      "title": "Xác nhận hành động khôi phục"
     },
     "validation": {
       "required": "Trường này bắt buộc phải nhập.",
@@ -148,6 +152,9 @@
     "idnull": "Invalid ID",
     "idinvalid": "Invalid Id",
     "idnotfound": "ID cannot be found",
+    "bookalreadyrestored": "Đầu sách đã được khôi phục trước đó",
+    "bookalreadydeleted": "Đầu sách đã được xóa trước đó",
+    "bookcopynotavailable": "Bản sao của Đầu sách không đủ",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

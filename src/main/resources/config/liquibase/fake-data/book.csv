@@ -1,11 +1,27 @@
-id;title;is_deleted
-1;Table Fish;true
-2;cyan Forward forecast;false
-3;Principal compress state;true
-4;intuitive Center Georgia;true
-5;Designer connect;true
-6;Accountability;true
-7;auxiliary Pula Representative;true
-8;Bedfordshire driver Soft;false
-9;Soft;true
-10;Points violet;true
+id;title;year_published;is_deleted;publisher_id;created_by;created_date;last_modified_by;last_modified_date
+1;Chiếc nhẫn tình cờ;2000;false;1;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+2;Dấu bộ tứ;2000;false;2;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+3;Con chó của dòng họ Baskervilles;2000;false;3;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+4;Thung lũng khủng khiếp;2000;false;4;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+5;Thế giới bị mất;2000;false;5;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+6;Cung đàn sau cuối;2000;false;6;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+7;Án mạng trên chiếc tàu tốc hành phương Đông;2000;false;7;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+8;Vụ án mạng ở vùng Mesopotamie;2000;false;8;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+9;Cô gái thứ ba;2000;false;9;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+10;Nữ thần báo oán;2000;false;10;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+11;Bí mật trong chiếc vali;2000;false;11;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+12;Thiên thần và ác quỷ;2000;false;12;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+13;Điểm dối lừa;2001;false;13;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+14;Biểu tượng thất truyền;2009;false;14;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+15;Thiên thần nổi giận;2000;false;15;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+16;Nếu còn có ngày mai;2000;false;16;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+17;Không có gì là mãi mãi;2000;false;17;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+18;Bầu trời sụp đổ;2000;false;18;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+19;Romeo và Juliet;2000;false;19;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+20;Hoàng tử Hamlet;2000;false;20;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+21;Nhà thờ Đức Bà Paris;2000;false;21;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+22;Những người thống khổ;2000;false;22;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+23;Tôi thấy hoa vàng trên cỏ xanh;2000;false;23;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+24;Kính vạn hoa;2000;false;24;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+25;Đoàn thuyền đánh cá;2000;false;25;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+26;Dế mèn phiêu lưu ký;2000;false;26;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399

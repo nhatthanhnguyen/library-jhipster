@@ -31,6 +31,11 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons/faUserPlus';
 import { faUsers } from '@fortawesome/free-solid-svg-icons/faUsers';
 import { faUsersCog } from '@fortawesome/free-solid-svg-icons/faUsersCog';
 import { faWrench } from '@fortawesome/free-solid-svg-icons/faWrench';
+import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark';
+import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons/faClockRotateLeft';
+import { faRotateLeft } from '@fortawesome/free-solid-svg-icons/faRotateLeft';
+import { faBookBookmark } from '@fortawesome/free-solid-svg-icons/faBookBookmark';
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -68,6 +73,11 @@ export const loadIcons = () => {
     faUserPlus,
     faUsers,
     faUsersCog,
-    faWrench
+    faWrench,
+    faXmark,
+    faClockRotateLeft,
+    faRotateLeft,
+    faBookBookmark,
+    faCheck
   );
 };

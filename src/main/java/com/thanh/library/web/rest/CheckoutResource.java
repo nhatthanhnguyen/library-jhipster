@@ -116,12 +116,7 @@ public class CheckoutResource {
         @RequestParam(required = false, defaultValue = "false") boolean eagerload
     ) {
         log.debug("REST request to get a page of Checkouts");
-        Page<CheckoutDTO> page;
-        if (eagerload) {
-            page = checkoutService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = checkoutService.findAll(pageable);
-        }
+        Page<CheckoutDTO> page = checkoutService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

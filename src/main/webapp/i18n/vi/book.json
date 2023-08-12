@@ -6,14 +6,28 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Đầu sách",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Đầu sách",
-        "notFound": "Không Đầu sách nào được tìm thấy"
+        "notFound": "Không Đầu sách nào được tìm thấy",
+        "searchLabel": "Gõ vào đây để tìm kiếm Đầu sách"
       },
       "created": "Một Đầu sách mới được tạo với định danh {{ param }}",
       "updated": "Một Đầu sách cập nhật với định danh {{ param }}",
-      "deleted": "Một Đầu sách đã xóa với định danh {{ param }}",
+      "deleted": "Một Đầu sách đã được xóa với định danh {{ param }}",
+      "restored": "Một Đầu sách đã được khôi phục với định danh {{ param }}",
       "delete": {
         "question": "Bạn có chắc là muốn xóa Đầu sách {{ id }}?"
       },
+      "restore": {
+        "question": "Bạn có chắc là muốn khôi phục Đầu sách {{ id }}?"
+      },
+      "hold": {
+        "title": "Xác nhận hành động đặt trước Đầu sách",
+        "question": "Bạn có chắc là bạn muốn đặt trước Đầu sách có tiêu đề {{ title }}?"
+      },
+      "wait": {
+        "title": "Xác nhận hành động thêm vào danh sách chờ",
+        "question": "Bạn có chắc là bạn muốn thêm Đầu sách vào danh sách chờ có tiêu đề {{ title }}?"
+      },
+      "addToQueueSuccessfully": "Một Đầu sách đã được thêm vào hàng đợi với định danh {{ param }}",
       "detail": {
         "title": "Đầu sách"
       },
@@ -21,6 +35,7 @@
       "title": "Tiêu đề",
       "isDeleted": "Đã xóa",
       "publisher": "Nhà xuất bản",
+      "yearPublished": "Năm xuất bản",
       "author": "Tác giả",
       "category": "Thể loại",
       "createdBy": "Tạo bởi",

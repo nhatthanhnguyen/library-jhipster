@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
+import { Button, Input, InputGroup, Table } from 'reactstrap';
+import { JhiItemCount, JhiPagination, TextFormat, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
-import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import { getCurrentSortState, overridePaginationStateWithQueryParamsWithSearch } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './book.reducer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
@@ -18,13 +18,14 @@ export const Book = () => {
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParamsWithSearch(getCurrentSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
+  const [searchText, setSearchText] = useState<string>(paginationState.search ?? '');
 
   const bookList = useAppSelector(state => state.book.entities);
   const loading = useAppSelector(state => state.book.loading);
   const totalItems = useAppSelector(state => state.book.totalItems);
-  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
 
   const getAllEntities = () => {
     dispatch(
@@ -32,13 +33,16 @@ export const Book = () => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
+        query: paginationState.search ?? '',
       })
     );
   };
 
   const sortEntities = () => {
     getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}${
+      paginationState.search ? `&search=${paginationState.search}` : ''
+    }`;
     if (location.search !== endURL) {
       navigate(`${location.pathname}${endURL}`);
     }
@@ -46,19 +50,21 @@ export const Book = () => {
 
   useEffect(() => {
     sortEntities();
-  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+  }, [paginationState.activePage, paginationState.order, paginationState.sort, paginationState.search]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
-    if (page && sort) {
+    const search = params.get('search');
+    if (page && sort && search) {
       const sortSplit = sort.split(',');
       setPaginationState({
         ...paginationState,
         activePage: +page,
         sort: sortSplit[0],
         order: sortSplit[1],
+        search,
       });
     }
   }, [location.search]);
@@ -81,7 +87,29 @@ export const Book = () => {
     sortEntities();
   };
 
-  const currentLocale = useAppSelector(state => state.locale.currentLocale);
+  const handleSearch = search =>
+    setPaginationState({
+      ...paginationState,
+      search,
+    });
+
+  const handlePressSearch = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch(searchText);
+    }
+  };
+
+  const handleButtonSearchPressed = () => {
+    handleSearch(searchText);
+  };
+
+  const handleButtonClearSearchPressed = () => {
+    setPaginationState({
+      ...paginationState,
+      search: '',
+    });
+    setSearchText('');
+  };
 
   return (
     <div>
@@ -101,12 +129,21 @@ export const Book = () => {
           ) : undefined}
         </div>
       </h2>
-      <input
-        className="form-control mb-4"
-        id="tableSearch"
-        type="text"
-        placeholder={currentLocale === 'vi' ? 'Nhập thông tin tìm kiếm vào đây' : 'Type to search'}
-      />
+      <InputGroup>
+        <Input
+          type="text"
+          onKeyDown={handlePressSearch}
+          value={searchText}
+          onChange={e => setSearchText(e.currentTarget.value)}
+          placeholder={translate('libraryApp.book.home.searchLabel')}
+        />
+        <Button onClick={handleButtonClearSearchPressed}>
+          <FontAwesomeIcon icon="xmark" />
+        </Button>
+        <Button onClick={handleButtonSearchPressed}>
+          <FontAwesomeIcon icon="search" />
+        </Button>
+      </InputGroup>
       <div className="table-responsive">
         {bookList && bookList.length > 0 ? (
           <Table responsive>
@@ -206,8 +243,14 @@ export const Book = () => {
                               </span>
                             </Button>
                           ) : (
-                            <Button tag={Link} to={`/book/${book.id}/restore`} color="success" size="sm">
-                              <FontAwesomeIcon icon="sync" />{' '}
+                            <Button
+                              tag={Link}
+                              to={`/book/${book.id}/restore?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                              color="success"
+                              size="sm"
+                              data-cy="entityRestoreButton"
+                            >
+                              <FontAwesomeIcon icon="rotate-left" />{' '}
                               <span className="d-none d-md-inline">
                                 <Translate contentKey="entity.action.restore">Restore</Translate>
                               </span>
@@ -216,8 +259,8 @@ export const Book = () => {
                         </>
                       ) : (
                         <>
-                          <Button color="primary" size="sm" data-cy="HoldBookButton">
-                            <FontAwesomeIcon icon={'hand'} /> <Translate contentKey="entity.action.hold">Hold</Translate>
+                          <Button tag={Link} color="primary" size="sm" data-cy="HoldBookButton" to={`/book/${book.id}/hold`}>
+                            <FontAwesomeIcon icon="book-bookmark" /> <Translate contentKey="entity.action.hold">Hold this book</Translate>
                           </Button>
                           <Button tag={Link} to={`/book/${book.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                             <FontAwesomeIcon icon="eye" />{' '}

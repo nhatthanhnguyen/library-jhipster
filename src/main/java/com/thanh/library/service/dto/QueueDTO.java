@@ -1,5 +1,6 @@
 package com.thanh.library.service.dto;
 
+import com.thanh.library.domain.QueueId;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Objects;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class QueueDTO implements Serializable {
 
-    private Long id;
+    private QueueId id;
 
     private Instant createdAt;
 
@@ -18,11 +19,11 @@ public class QueueDTO implements Serializable {
 
     private BookDTO book;
 
-    public Long getId() {
+    public QueueId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(QueueId id) {
         this.id = id;
     }
 

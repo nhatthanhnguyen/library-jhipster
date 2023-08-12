@@ -44,6 +44,9 @@ class BookResourceIT {
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
+    private static final Integer DEFAULT_YEAR_PUBLISHED = 1;
+    private static final Integer UPDATED_YEAR_PUBLISHED = 2;
+
     private static final Boolean DEFAULT_IS_DELETED = false;
     private static final Boolean UPDATED_IS_DELETED = true;
 
@@ -80,7 +83,7 @@ class BookResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Book createEntity(EntityManager em) {
-        Book book = new Book().title(DEFAULT_TITLE).isDeleted(DEFAULT_IS_DELETED);
+        Book book = new Book().title(DEFAULT_TITLE).yearPublished(DEFAULT_YEAR_PUBLISHED).isDeleted(DEFAULT_IS_DELETED);
         return book;
     }
 
@@ -91,7 +94,7 @@ class BookResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Book createUpdatedEntity(EntityManager em) {
-        Book book = new Book().title(UPDATED_TITLE).isDeleted(UPDATED_IS_DELETED);
+        Book book = new Book().title(UPDATED_TITLE).yearPublished(UPDATED_YEAR_PUBLISHED).isDeleted(UPDATED_IS_DELETED);
         return book;
     }
 
@@ -115,6 +118,7 @@ class BookResourceIT {
         assertThat(bookList).hasSize(databaseSizeBeforeCreate + 1);
         Book testBook = bookList.get(bookList.size() - 1);
         assertThat(testBook.getTitle()).isEqualTo(DEFAULT_TITLE);
+        assertThat(testBook.getYearPublished()).isEqualTo(DEFAULT_YEAR_PUBLISHED);
         assertThat(testBook.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
@@ -168,6 +172,7 @@ class BookResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(book.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
+            .andExpect(jsonPath("$.[*].yearPublished").value(hasItem(DEFAULT_YEAR_PUBLISHED)))
             .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED.booleanValue())));
     }
 
@@ -201,6 +206,7 @@ class BookResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(book.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
+            .andExpect(jsonPath("$.yearPublished").value(DEFAULT_YEAR_PUBLISHED))
             .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED.booleanValue()));
     }
 
@@ -223,7 +229,7 @@ class BookResourceIT {
         Book updatedBook = bookRepository.findById(book.getId()).get();
         // Disconnect from session so that the updates on updatedBook are not directly saved in db
         em.detach(updatedBook);
-        updatedBook.title(UPDATED_TITLE).isDeleted(UPDATED_IS_DELETED);
+        updatedBook.title(UPDATED_TITLE).yearPublished(UPDATED_YEAR_PUBLISHED).isDeleted(UPDATED_IS_DELETED);
         BookDTO bookDTO = bookMapper.toDto(updatedBook);
 
         restBookMockMvc
@@ -239,6 +245,7 @@ class BookResourceIT {
         assertThat(bookList).hasSize(databaseSizeBeforeUpdate);
         Book testBook = bookList.get(bookList.size() - 1);
         assertThat(testBook.getTitle()).isEqualTo(UPDATED_TITLE);
+        assertThat(testBook.getYearPublished()).isEqualTo(UPDATED_YEAR_PUBLISHED);
         assertThat(testBook.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
@@ -332,6 +339,7 @@ class BookResourceIT {
         assertThat(bookList).hasSize(databaseSizeBeforeUpdate);
         Book testBook = bookList.get(bookList.size() - 1);
         assertThat(testBook.getTitle()).isEqualTo(DEFAULT_TITLE);
+        assertThat(testBook.getYearPublished()).isEqualTo(DEFAULT_YEAR_PUBLISHED);
         assertThat(testBook.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
@@ -347,7 +355,7 @@ class BookResourceIT {
         Book partialUpdatedBook = new Book();
         partialUpdatedBook.setId(book.getId());
 
-        partialUpdatedBook.title(UPDATED_TITLE).isDeleted(UPDATED_IS_DELETED);
+        partialUpdatedBook.title(UPDATED_TITLE).yearPublished(UPDATED_YEAR_PUBLISHED).isDeleted(UPDATED_IS_DELETED);
 
         restBookMockMvc
             .perform(
@@ -362,6 +370,7 @@ class BookResourceIT {
         assertThat(bookList).hasSize(databaseSizeBeforeUpdate);
         Book testBook = bookList.get(bookList.size() - 1);
         assertThat(testBook.getTitle()).isEqualTo(UPDATED_TITLE);
+        assertThat(testBook.getYearPublished()).isEqualTo(UPDATED_YEAR_PUBLISHED);
         assertThat(testBook.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 

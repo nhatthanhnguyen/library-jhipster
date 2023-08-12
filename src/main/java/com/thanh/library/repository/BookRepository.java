@@ -40,4 +40,10 @@ public interface BookRepository extends BookRepositoryWithBagRelationships, JpaR
 
     @Query("select book from Book book left join fetch book.publisher where book.id =:id")
     Optional<Book> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query("select b from Book b " + "where :search is null or b.title like concat('%', :search, '%') ")
+    Page<Book> findAll(@Param("search") String search, Pageable pageable);
+
+    @Query("select b from Book b " + "where b.isDeleted = false " + "and (:search is null or b.title like concat('%', :search, '%'))")
+    Page<Book> findAllAvailable(@Param("search") String search, Pageable pageable);
 }

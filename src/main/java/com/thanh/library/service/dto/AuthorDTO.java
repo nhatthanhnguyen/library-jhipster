@@ -19,8 +19,6 @@ public class AuthorDTO implements Serializable {
     @NotNull
     private String lastName;
 
-    private Boolean isDeleted;
-
     private String createdBy;
 
     private Instant createdDate;
@@ -51,14 +49,6 @@ public class AuthorDTO implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     public String getCreatedBy() {
@@ -102,7 +92,6 @@ public class AuthorDTO implements Serializable {
             Objects.equals(id, authorDTO.id) &&
             Objects.equals(firstName, authorDTO.firstName) &&
             Objects.equals(lastName, authorDTO.lastName) &&
-            Objects.equals(isDeleted, authorDTO.isDeleted) &&
             Objects.equals(createdBy, authorDTO.createdBy) &&
             Objects.equals(createdDate, authorDTO.createdDate) &&
             Objects.equals(lastModifiedBy, authorDTO.lastModifiedBy) &&
@@ -122,7 +111,6 @@ public class AuthorDTO implements Serializable {
             "id=" + id +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", isDeleted=" + isDeleted +
             ", createdBy='" + createdBy + '\'' +
             ", createdDate=" + createdDate +
             ", lastModifiedBy='" + lastModifiedBy + '\'' +

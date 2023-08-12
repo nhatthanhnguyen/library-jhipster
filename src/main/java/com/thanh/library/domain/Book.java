@@ -30,6 +30,9 @@ public class Book extends AbstractAuditingEntity<Long> implements Serializable {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "year_published")
+    private Integer yearPublished;
+
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
@@ -78,6 +81,19 @@ public class Book extends AbstractAuditingEntity<Long> implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Integer getYearPublished() {
+        return this.yearPublished;
+    }
+
+    public Book yearPublished(Integer yearPublished) {
+        this.setYearPublished(yearPublished);
+        return this;
+    }
+
+    public void setYearPublished(Integer yearPublished) {
+        this.yearPublished = yearPublished;
     }
 
     public Boolean getIsDeleted() {
@@ -181,6 +197,7 @@ public class Book extends AbstractAuditingEntity<Long> implements Serializable {
         return "Book{" +
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
+            ", yearPublished=" + getYearPublished() +
             ", isDeleted='" + getIsDeleted() + "'" +
             "}";
     }

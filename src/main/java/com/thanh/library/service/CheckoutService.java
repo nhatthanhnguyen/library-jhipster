@@ -3,6 +3,7 @@ package com.thanh.library.service;
 import com.thanh.library.domain.*;
 import com.thanh.library.domain.enumeration.Type;
 import com.thanh.library.repository.*;
+import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
 import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
@@ -91,7 +92,23 @@ public class CheckoutService {
     @Transactional(readOnly = true)
     public Page<CheckoutDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Checkouts");
-        return checkoutRepository.findAll(pageable).map(checkoutMapper::toDto);
+        String login = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Login not found", "User", "loginnotfound"));
+        User user = userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        //        Authority roleAdmin = new Authority();
+        Authority roleLibrarian = new Authority();
+        //        roleAdmin.setName("ROLE_ADMIN");
+        roleLibrarian.setName("ROLE_LIBRARIAN");
+        /*if (user.getAuthorities().contains(roleAdmin)) {
+            throw new BadRequestAlertException("You does not has permission", "Permission", "donothavepermission");
+        }*/
+        if (user.getAuthorities().contains(roleLibrarian)) {
+            return checkoutRepository.findAll(pageable).map(checkoutMapper::toDto);
+        }
+        return checkoutRepository.findAllByCurrentUser(user.getId(), pageable).map(checkoutMapper::toDto);
     }
 
     public Page<CheckoutDTO> findAllWithEagerRelationships(Pageable pageable) {
@@ -150,7 +167,7 @@ public class CheckoutService {
         Book book = checkout.getBookCopy().getBook();
         List<Queue> queues = queueRepository.findByBookId(book.getId());
         queues.forEach(queue -> {
-            queueRepository.deleteById(queue.getId());
+            //            queueRepository.deleteById(queue.getId());
             Notification notification = new Notification();
             notification.setUser(checkout.getUser());
             notification.setType(Type.AVAILABLE);

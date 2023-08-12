@@ -9,10 +9,6 @@
       "fieldName": "name",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "isDeleted",
-      "fieldType": "Boolean"
     }
   ],
   "fluentMethods": true,

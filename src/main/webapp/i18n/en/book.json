@@ -6,27 +6,42 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Book",
         "createOrEditLabel": "Create or edit a Book",
-        "notFound": "No Books found"
+        "notFound": "No Books found",
+        "searchLabel": "Type here to search Book(s)"
       },
       "created": "A new Book is created with identifier {{ param }}",
       "updated": "A Book is updated with identifier {{ param }}",
       "deleted": "A Book is deleted with identifier {{ param }}",
+      "restored": "A Book is restore with identifier {{ param }}",
       "delete": {
         "question": "Are you sure you want to delete Book {{ id }}?"
       },
+      "restore": {
+        "question": "Are you sure you want to restore Book {{ id }}?"
+      },
+      "hold": {
+        "title": "Confirm hold Book operation",
+        "question": "Are you sure you want to hold the Book {{ title }}?"
+      },
+      "wait": {
+        "title": "Confirm add to Queue operation",
+        "question": "Are you sure you want to add to Queue of the Book {{ title }}?"
+      },
+      "addToQueueSuccessfully": "A Book is added to queue with identifier {{ param }}",
       "detail": {
         "title": "Book"
       },
       "id": "ID",
       "title": "Title",
+      "yearPublished": "Year Published",
       "isDeleted": "Is Deleted",
       "publisher": "Publisher",
       "author": "Author",
       "category": "Category",
-      "createdBy": "Created by",
-      "createdDate": "Created date",
-      "lastModifiedBy": "Updated by",
-      "lastModifiedDate": "Updated date"
+      "createdBy": "Created By",
+      "createdDate": "Created Date",
+      "lastModifiedBy": "Last Modified By",
+      "lastModifiedDate": "Last Modified Date"
     }
   }
 }

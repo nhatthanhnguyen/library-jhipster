@@ -1,10 +1,12 @@
 package com.thanh.library.web.rest;
 
 import com.thanh.library.repository.BookRepository;
+import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.BookService;
 import com.thanh.library.service.dto.BookDTO;
 import com.thanh.library.service.dto.request.HoldBookRequestDTO;
 import com.thanh.library.service.dto.response.ResponseMessageDTO;
+import com.thanh.library.util.LibraryHeaderUtil;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -114,14 +116,15 @@ public class BookResource {
     @GetMapping("/books")
     public ResponseEntity<List<BookDTO>> getAllBooks(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @RequestParam(required = false, defaultValue = "false") boolean eagerload,
+        @RequestParam(required = false, defaultValue = "") String search
     ) {
         log.debug("REST request to get a page of Books");
         Page<BookDTO> page;
-        if (eagerload) {
-            page = bookService.findAllWithEagerRelationships(pageable);
+        if (SecurityUtils.hasCurrentUserThisAuthority("ROLE_LIBRARIAN")) {
+            page = bookService.findAll(search, pageable);
         } else {
-            page = bookService.findAll(pageable);
+            page = bookService.findAllAvailable(search, pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -144,9 +147,34 @@ public class BookResource {
             .build();
     }
 
+    @PutMapping("/books/{id}/restore")
+    public ResponseEntity<Void> restoreBook(@PathVariable Long id) {
+        log.debug("REST request to restore Book : {}", id);
+        bookService.restore(id);
+        return ResponseEntity
+            .noContent()
+            .headers(LibraryHeaderUtil.createEntityRestoreAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
+    }
+
     @PostMapping("/books/{id}/hold")
-    public ResponseEntity<ResponseMessageDTO> holdBookByCurrentUser(@PathVariable("id") Long bookId) {
-        return ResponseEntity.ok(bookService.holdBookByCurrentUser(bookId));
+    public ResponseEntity<Void> holdBookByCurrentUser(@PathVariable("id") Long id) {
+        log.debug("REST request to hold Book : {}", id);
+        Long bookCopyId = bookService.holdBookByCurrentUser(id);
+        return ResponseEntity
+            .noContent()
+            .headers(LibraryHeaderUtil.createBookHoldAlert(applicationName, true, bookCopyId.toString()))
+            .build();
+    }
+
+    @PostMapping("/books/{id}/wait")
+    public ResponseEntity<Void> waitBookByCurrentUser(@PathVariable("id") Long id) {
+        log.debug("REST request to add Book {} to queue", id);
+        bookService.addToQueue(id);
+        return ResponseEntity
+            .noContent()
+            .headers(LibraryHeaderUtil.createBookWaitFromReservationAlert(applicationName, true, id.toString()))
+            .build();
     }
 
     @PostMapping("/books/hold")

@@ -1,11 +1,11 @@
-id;first_name;last_name;is_deleted
-1;Chelsie;Thompson;true
-2;Kade;Effertz;true
-3;Kaela;Leannon;true
-4;Silas;Kautzer;true
-5;Broderick;Buckridge;true
-6;Logan;Ullrich;true
-7;Amelia;Braun;false
-8;Immanuel;Hickle;false
-9;Vanessa;Rath;false
-10;Easter;Tillman;true
+id;first_name;last_name;created_by;created_date;last_modified_by;last_modified_date
+1;Conan Doyle;Sir Author;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+2;Christie;Agatha;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+3;Brown;Dan;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+4;Sheldon;Sydney;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+5;Shakespear;William;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+6;Hugo;Victor;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+7;Ánh;Nguyễn Nhật;librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+8;Tố Hữu;"";librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+9;Huy Cận;"";librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399
+10;Tô Hoài;"";librarian;2023-08-12 16:53:36.638399;librarian;2023-08-12 16:53:36.638399

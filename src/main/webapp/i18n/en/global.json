@@ -111,7 +111,8 @@
       "hold": "Hold",
       "restore": "Restore",
       "borrow": "Borrow",
-      "return": "Return"
+      "return": "Return",
+      "wait": "Add to queue"
     },
     "detail": {
       "field": "Field",
@@ -119,6 +120,9 @@
     },
     "delete": {
       "title": "Confirm delete operation"
+    },
+    "restore": {
+      "title": "Confirm restore operation"
     },
     "validation": {
       "required": "This field is required.",
@@ -151,6 +155,9 @@
     "idnull": "Invalid ID",
     "idinvalid": "Invalid ID",
     "idnotfound": "ID cannot be found",
+    "bookalreadyrestored": "Book is already restored",
+    "bookalreadydeleted": "Book is already deleted",
+    "bookcopynotavailable": "Book Copy is not enough",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

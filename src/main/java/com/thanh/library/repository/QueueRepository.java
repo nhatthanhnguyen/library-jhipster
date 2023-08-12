@@ -1,6 +1,7 @@
 package com.thanh.library.repository;
 
 import com.thanh.library.domain.Queue;
+import com.thanh.library.domain.QueueId;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -13,11 +14,11 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the Queue entity.
  */
 @Repository
-public interface QueueRepository extends JpaRepository<Queue, Long> {
+public interface QueueRepository extends JpaRepository<Queue, QueueId> {
     @Query("select queue from Queue queue where queue.user.login = ?#{principal.username}")
     List<Queue> findByUserIsCurrentUser();
 
-    default Optional<Queue> findOneWithEagerRelationships(Long id) {
+    default Optional<Queue> findOneWithEagerRelationships(QueueId id) {
         return this.findOneWithToOneRelationships(id);
     }
 
@@ -39,7 +40,7 @@ public interface QueueRepository extends JpaRepository<Queue, Long> {
     List<Queue> findAllWithToOneRelationships();
 
     @Query("select queue from Queue queue left join fetch queue.user left join fetch queue.book where queue.id =:id")
-    Optional<Queue> findOneWithToOneRelationships(@Param("id") Long id);
+    Optional<Queue> findOneWithToOneRelationships(@Param("id") QueueId id);
 
     @Query("select q from Queue q join fetch q.book where q.book.id = :bookId")
     List<Queue> findByBookId(@Param("bookId") Long bookId);

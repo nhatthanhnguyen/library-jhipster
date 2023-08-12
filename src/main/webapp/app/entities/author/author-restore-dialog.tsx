@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import React, { useEffect, useState } from 'react';
+import { getEntity, restoreEntity } from 'app/entities/author/author.reducer';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { toast } from 'react-toastify';
 
-import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntity, deleteEntity } from './author.reducer';
-
-export const AuthorDeleteDialog = () => {
+export const AuthorRestoreDialog = () => {
   const dispatch = useAppDispatch();
 
   const location = useLocation();
@@ -36,19 +34,18 @@ export const AuthorDeleteDialog = () => {
     }
   }, [updateSuccess]);
 
-  const confirmDelete = () => {
-    dispatch(deleteEntity(authorEntity.id));
-    toast.success('Deleted successfully!');
+  const confirmRestore = () => {
+    dispatch(restoreEntity(authorEntity.id));
   };
 
   return (
     <Modal isOpen toggle={handleClose}>
-      <ModalHeader toggle={handleClose} data-cy="authorDeleteDialogHeading">
-        <Translate contentKey="entity.delete.title">Confirm delete operation</Translate>
+      <ModalHeader toggle={handleClose} data-cy="authorRestoreDialogHeading">
+        <Translate contentKey="entity.restore.title">Confirm restore operation</Translate>
       </ModalHeader>
-      <ModalBody id="libraryApp.author.delete.question">
-        <Translate contentKey="libraryApp.author.delete.question" interpolate={{ id: authorEntity.id }}>
-          Are you sure you want to delete this Author?
+      <ModalBody id="libraryApp.author.restore.question">
+        <Translate contentKey="libraryApp.author.restore.question" interpolate={{ id: authorEntity.id }}>
+          Are you sure you want to restore this Author?
         </Translate>
       </ModalBody>
       <ModalFooter>
@@ -57,14 +54,12 @@ export const AuthorDeleteDialog = () => {
           &nbsp;
           <Translate contentKey="entity.action.cancel">Cancel</Translate>
         </Button>
-        <Button id="jhi-confirm-delete-author" data-cy="entityConfirmDeleteButton" color="danger" onClick={confirmDelete}>
-          <FontAwesomeIcon icon="trash" />
+        <Button id="jhi-confirm-restore-author" data-cy="entityConfirmRestoreButton" color="success" onClick={confirmRestore}>
+          <FontAwesomeIcon icon="sync" />
           &nbsp;
-          <Translate contentKey="entity.action.delete">Delete</Translate>
+          <Translate contentKey="entity.action.restore">Restore</Translate>
         </Button>
       </ModalFooter>
     </Modal>
   );
 };
-
-export default AuthorDeleteDialog;

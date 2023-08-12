@@ -18,34 +18,40 @@ public class Queue implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
-    private Long id;
+    //    @Id
+    //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    //    @SequenceGenerator(name = "sequenceGenerator")
+    //    @Column(name = "id")
+    //    private Long id;
+    @EmbeddedId
+    private QueueId id;
 
     @Column(name = "created_at")
     private Instant createdAt;
 
     @ManyToOne
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
+    @MapsId("bookId")
     @JsonIgnoreProperties(value = { "publisher", "authors", "categories" }, allowSetters = true)
+    @JoinColumn(name = "book_id")
     private Book book;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public QueueId getId() {
         return this.id;
     }
 
-    public Queue id(Long id) {
+    public Queue id(QueueId id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(QueueId id) {
         this.id = id;
     }
 

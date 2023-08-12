@@ -17,6 +17,9 @@
             <column name="title" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="year_published" type="integer">
+                <constraints nullable="true" />
+            </column>
             <column name="is_deleted" type="boolean">
                 <constraints nullable="true" />
             </column>
@@ -70,6 +73,7 @@
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="title" type="string"/>
+            <column name="year_published" type="numeric"/>
             <column name="is_deleted" type="boolean"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>

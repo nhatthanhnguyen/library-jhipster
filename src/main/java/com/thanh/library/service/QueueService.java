@@ -88,12 +88,12 @@ public class QueueService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<QueueDTO> findOne(Long id) {
+    public Optional<QueueDTO> findOne(QueueId id) {
         log.debug("Request to get Queue : {}", id);
         return queueRepository.findOneWithEagerRelationships(id).map(queueMapper::toDto);
     }
 
-    public void delete(Long id) {
+    public void delete(QueueId id) {
         log.debug("Request to delete Queue : {}", id);
         queueRepository.deleteById(id);
     }

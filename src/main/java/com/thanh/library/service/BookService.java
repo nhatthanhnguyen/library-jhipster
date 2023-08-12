@@ -1,13 +1,7 @@
 package com.thanh.library.service;
 
-import com.thanh.library.domain.Book;
-import com.thanh.library.domain.BookCopy;
-import com.thanh.library.domain.Reservation;
-import com.thanh.library.domain.User;
-import com.thanh.library.repository.BookCopyRepository;
-import com.thanh.library.repository.BookRepository;
-import com.thanh.library.repository.ReservationRepository;
-import com.thanh.library.repository.UserRepository;
+import com.thanh.library.domain.*;
+import com.thanh.library.repository.*;
 import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.BookDTO;
 import com.thanh.library.service.dto.request.HoldBookRequestDTO;
@@ -41,6 +35,8 @@ public class BookService {
 
     private final ReservationRepository reservationRepository;
 
+    private final QueueRepository queueRepository;
+
     private final BookMapper bookMapper;
 
     public BookService(
@@ -48,12 +44,14 @@ public class BookService {
         BookCopyRepository bookCopyRepository,
         UserRepository userRepository,
         ReservationRepository reservationRepository,
+        QueueRepository queueRepository,
         BookMapper bookMapper
     ) {
         this.bookRepository = bookRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
+        this.queueRepository = queueRepository;
         this.bookMapper = bookMapper;
     }
 
@@ -86,9 +84,14 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BookDTO> findAll(Pageable pageable) {
+    public Page<BookDTO> findAll(String search, Pageable pageable) {
         log.debug("Request to get all Books");
-        return bookRepository.findAll(pageable).map(bookMapper::toDto);
+        return bookRepository.findAll(search, pageable).map(bookMapper::toDto);
+    }
+
+    public Page<BookDTO> findAllAvailable(String search, Pageable pageable) {
+        log.debug("Request to get all available Books");
+        return bookRepository.findAllAvailable(search, pageable).map(bookMapper::toDto);
     }
 
     public Page<BookDTO> findAllWithEagerRelationships(Pageable pageable) {
@@ -103,10 +106,25 @@ public class BookService {
 
     public void delete(Long id) {
         log.debug("Request to delete Book : {}", id);
-        bookRepository.deleteById(id);
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
+        if (book.getIsDeleted()) {
+            throw new BadRequestAlertException("Book already deleted", "Book", "bookalreadydeleted");
+        }
+        book.setIsDeleted(true);
+        bookRepository.save(book);
     }
 
-    public ResponseMessageDTO holdBookByCurrentUser(Long bookId) {
+    public void restore(Long id) {
+        log.debug("Request to restore Book : {}", id);
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
+        if (!book.getIsDeleted()) {
+            throw new BadRequestAlertException("Book already restored", "Book", "bookalreadyrestored");
+        }
+        book.setIsDeleted(false);
+        bookRepository.save(book);
+    }
+
+    public Long holdBookByCurrentUser(Long bookId) {
         String userLogin = SecurityUtils
             .getCurrentUserLogin()
             .orElseThrow(() -> new BadRequestAlertException("User is not login", "User", "usernotlogin"));
@@ -135,8 +153,37 @@ public class BookService {
         reservation.setBookCopy(bookCopies.get(0));
         reservation.setStartTime(Instant.now());
         reservationRepository.save(reservation);
+        return bookCopies.get(0).getId();
+    }
 
-        return new ResponseMessageDTO(200, "Hold book successfully", Instant.now());
+    public void addToQueue(Long bookId) {
+        String userLogin = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("User is not login", "User", "usernotlogin"));
+
+        User user = userRepository
+            .findOneByLogin(userLogin)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        if (!user.isActivated()) {
+            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
+        }
+
+        Book book = bookRepository
+            .findById(bookId)
+            .orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "booknotfound"));
+        if (book.getIsDeleted()) {
+            throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
+        }
+
+        Queue queue = new Queue();
+        QueueId queueId = new QueueId();
+        queueId.setBookId(book.getId());
+        queueId.setUserId(user.getId());
+        queue.setId(queueId);
+        queue.setBook(book);
+        queue.setUser(user);
+        queue.setCreatedAt(Instant.now());
+        queueRepository.save(queue);
     }
 
     public ResponseMessageDTO holdBook(HoldBookRequestDTO holdBookRequestDTO) {

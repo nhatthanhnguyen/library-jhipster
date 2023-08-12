@@ -1,5 +1,5 @@
 import pick from 'lodash/pick';
-import { IPaginationBaseState } from 'react-jhipster';
+import { getUrlParameter, IPaginationBaseState } from 'react-jhipster';
 
 /**
  * Removes fields with an 'id' field that equals ''.
@@ -22,15 +22,57 @@ export const cleanEntity = entity => {
  */
 export const mapIdList = (idList: ReadonlyArray<any>) => idList.filter((id: any) => id !== '').map((id: any) => ({ id }));
 
-export const overridePaginationStateWithQueryParams = (paginationBaseState: IPaginationBaseState, locationSearch: string) => {
+export interface IPaginationState extends IPaginationBaseState {
+  search: string;
+}
+
+export const getCurrentSortState = (
+  location: { search: string },
+  itemsPerPage: number,
+  sortField = 'id',
+  sortOrder = 'asc',
+  searchText = ''
+): IPaginationState => {
+  const pageParam = getUrlParameter('page', location.search);
+  const sortParam = getUrlParameter('sort', location.search);
+  const searchParam = getUrlParameter('search', location.search);
+  let sort = sortField;
+  let order = sortOrder;
+  let activePage = 1;
+  if (pageParam !== '' && !isNaN(parseInt(pageParam, 10))) {
+    activePage = parseInt(pageParam, 10);
+  }
+  if (sortParam !== '') {
+    sort = sortParam.split(',')[0];
+    order = sortParam.split(',')[1];
+  }
+  return { itemsPerPage, sort, order, activePage, search: searchParam };
+};
+
+export const overridePaginationStateWithQueryParamsWithSearch = (paginationState: IPaginationState, locationSearch: string) => {
+  const params = new URLSearchParams(locationSearch);
+  const page = params.get('page');
+  const sort = params.get('sort');
+  const search = params.get('search');
+  if (page && sort && search) {
+    const sortSplit = sort.split(',');
+    paginationState.activePage = +page;
+    paginationState.sort = sortSplit[0];
+    paginationState.order = sortSplit[1];
+    paginationState.search = search ?? '';
+  }
+  return paginationState;
+};
+
+export const overridePaginationStateWithQueryParams = (paginationState: IPaginationBaseState, locationSearch: string) => {
   const params = new URLSearchParams(locationSearch);
   const page = params.get('page');
   const sort = params.get('sort');
   if (page && sort) {
     const sortSplit = sort.split(',');
-    paginationBaseState.activePage = +page;
-    paginationBaseState.sort = sortSplit[0];
-    paginationBaseState.order = sortSplit[1];
+    paginationState.activePage = +page;
+    paginationState.sort = sortSplit[0];
+    paginationState.order = sortSplit[1];
   }
-  return paginationBaseState;
+  return paginationState;
 };

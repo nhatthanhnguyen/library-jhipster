@@ -20,6 +20,8 @@ public class BookDTO implements Serializable {
 
     private Boolean isDeleted;
 
+    private Integer yearPublished;
+
     private PublisherDTO publisher;
 
     private Set<AuthorDTO> authors = new HashSet<>();
@@ -56,6 +58,14 @@ public class BookDTO implements Serializable {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public Integer getYearPublished() {
+        return yearPublished;
+    }
+
+    public void setYearPublished(Integer yearPublished) {
+        this.yearPublished = yearPublished;
     }
 
     public PublisherDTO getPublisher() {
@@ -123,6 +133,7 @@ public class BookDTO implements Serializable {
             Objects.equals(id, bookDTO.id) &&
             Objects.equals(title, bookDTO.title) &&
             Objects.equals(isDeleted, bookDTO.isDeleted) &&
+            Objects.equals(yearPublished, bookDTO.getYearPublished()) &&
             Objects.equals(publisher, bookDTO.publisher) &&
             Objects.equals(authors, bookDTO.authors) &&
             Objects.equals(categories, bookDTO.categories) &&
@@ -146,6 +157,7 @@ public class BookDTO implements Serializable {
             "id=" + id +
             ", title='" + title + '\'' +
             ", isDeleted=" + isDeleted +
+            ", yearPublished=" + yearPublished +
             ", publisher=" + publisher +
             ", authors=" + authors +
             ", categories=" + categories +

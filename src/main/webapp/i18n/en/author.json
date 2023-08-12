@@ -23,7 +23,9 @@
       "isDeleted": "Is Deleted",
       "book": "Book",
       "createdDate": "Created Date",
-      "lastModifiedBy": "Last Modified By"
+      "createdBy": "Created By",
+      "lastModifiedBy": "Last Modified By",
+      "lastModifiedDate": "Last Modified Date"
     }
   }
 }

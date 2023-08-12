@@ -34,9 +34,6 @@ public class Author extends AbstractAuditingEntity<Long> implements Serializable
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
-
     @ManyToMany(mappedBy = "authors")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "publisher", "authors", "categories" }, allowSetters = true)
@@ -81,19 +78,6 @@ public class Author extends AbstractAuditingEntity<Long> implements Serializable
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public Boolean getIsDeleted() {
-        return this.isDeleted;
-    }
-
-    public Author isDeleted(Boolean isDeleted) {
-        this.setIsDeleted(isDeleted);
-        return this;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     public Set<Book> getBooks() {
@@ -153,7 +137,6 @@ public class Author extends AbstractAuditingEntity<Long> implements Serializable
             "id=" + getId() +
             ", firstName='" + getFirstName() + "'" +
             ", lastName='" + getLastName() + "'" +
-            ", isDeleted='" + getIsDeleted() + "'" +
             "}";
     }
 }

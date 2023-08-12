@@ -30,9 +30,6 @@ public class Category extends AbstractAuditingEntity<Long> implements Serializab
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
-
     @ManyToMany(mappedBy = "categories")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "publisher", "authors", "categories" }, allowSetters = true)
@@ -64,19 +61,6 @@ public class Category extends AbstractAuditingEntity<Long> implements Serializab
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean getIsDeleted() {
-        return this.isDeleted;
-    }
-
-    public Category isDeleted(Boolean isDeleted) {
-        this.setIsDeleted(isDeleted);
-        return this;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     public Set<Book> getBooks() {
@@ -135,7 +119,6 @@ public class Category extends AbstractAuditingEntity<Long> implements Serializab
         return "Category{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", isDeleted='" + getIsDeleted() + "'" +
             "}";
     }
 }

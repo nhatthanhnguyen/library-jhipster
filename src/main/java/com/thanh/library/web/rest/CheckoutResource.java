@@ -1,11 +1,12 @@
 package com.thanh.library.web.rest;
 
+import com.thanh.library.domain.Checkout;
 import com.thanh.library.repository.CheckoutRepository;
 import com.thanh.library.service.CheckoutService;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
 import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
-import com.thanh.library.service.dto.response.ResponseMessageDTO;
+import com.thanh.library.util.LibraryHeaderUtil;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -139,12 +140,33 @@ public class CheckoutResource {
     }
 
     @PostMapping("/checkouts/borrow")
-    public ResponseEntity<ResponseMessageDTO> borrowBook(@RequestBody BorrowBookRequestDTO borrowBookRequestDTO) {
-        return ResponseEntity.ok(checkoutService.borrowBook(borrowBookRequestDTO));
+    public ResponseEntity<Void> borrowBook(@RequestBody BorrowBookRequestDTO borrowBookRequestDTO) {
+        log.debug(
+            "REST request to borrow Book {} of User {} ",
+            borrowBookRequestDTO.getBookCopy().getBook(),
+            borrowBookRequestDTO.getUser().getId()
+        );
+        checkoutService.borrowBook(borrowBookRequestDTO);
+        String param = borrowBookRequestDTO.getBookCopy().getBook().getId().toString();
+        return ResponseEntity.noContent().headers(LibraryHeaderUtil.createBookCopyBorrowAlert(applicationName, true, param)).build();
     }
 
     @PutMapping("/checkouts/return")
-    public ResponseEntity<ResponseMessageDTO> returnBook(@RequestBody ReturnBookRequestDTO returnBookRequestDTO) {
-        return ResponseEntity.ok(checkoutService.returnBook(returnBookRequestDTO));
+    public ResponseEntity<Void> returnBook(@RequestBody ReturnBookRequestDTO returnBookRequestDTO) {
+        Checkout checkout = checkoutRepository
+            .findById(returnBookRequestDTO.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Checkout not found", "Checkout", "idnotfound"));
+        String param = checkout.getId().toString();
+        checkoutService.returnBook(returnBookRequestDTO);
+        return ResponseEntity
+            .noContent()
+            .headers(LibraryHeaderUtil.createBookCopyReturnAlert(applicationName, true, param, returnBookRequestDTO.isSuccess()))
+            .build();
+    }
+
+    @PostMapping("/checkouts/books/{id}/wait")
+    public ResponseEntity<Void> addToQueue(@PathVariable("id") Long id) {
+        checkoutService.addToQueue(id);
+        return ResponseEntity.noContent().headers(LibraryHeaderUtil.createBookWaitAlert(applicationName, true, id.toString())).build();
     }
 }

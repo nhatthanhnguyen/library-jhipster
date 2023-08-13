@@ -179,6 +179,9 @@ public class BookService {
         QueueId queueId = new QueueId();
         queueId.setBookId(book.getId());
         queueId.setUserId(user.getId());
+        if (queueRepository.existsById(queueId)) {
+            throw new BadRequestAlertException("Currently in queue", "Queue", "alreadyinqueue");
+        }
         queue.setId(queueId);
         queue.setBook(book);
         queue.setUser(user);

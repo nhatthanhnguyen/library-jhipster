@@ -14,6 +14,10 @@
       "delete": {
         "question": "Bạn có chắc là muốn xóa lượt Đặt trước {{ id }}?"
       },
+      "borrow": {
+        "title": "Xác nhận hành động mượn sách",
+        "question": "Bạn có chắc là muốn mượn bản sao của đầu sách với định danh {{ id }}?"
+      },
       "detail": {
         "title": "Lượt Đặt trước"
       },

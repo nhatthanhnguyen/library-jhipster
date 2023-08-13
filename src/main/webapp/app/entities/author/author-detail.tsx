@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './author.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 
 export const AuthorDetail = () => {
   const dispatch = useAppDispatch();
@@ -19,6 +19,8 @@ export const AuthorDetail = () => {
   }, []);
 
   const authorEntity = useAppSelector(state => state.author.entity);
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
+
   return (
     <Row>
       <Col md="8">
@@ -33,23 +35,11 @@ export const AuthorDetail = () => {
           </dt>
           <dd>{authorEntity.id}</dd>
           <dt>
-            <span id="firstName">
-              <Translate contentKey="libraryApp.author.firstName">First Name</Translate>
+            <span id="fullName">
+              <Translate contentKey="libraryApp.author.fullName">Full Name</Translate>
             </span>
           </dt>
-          <dd>{authorEntity.firstName}</dd>
-          <dt>
-            <span id="lastName">
-              <Translate contentKey="libraryApp.author.lastName">Last Name</Translate>
-            </span>
-          </dt>
-          <dd>{authorEntity.lastName}</dd>
-          <dt>
-            <span id="isDeleted">
-              <Translate contentKey="libraryApp.author.isDeleted">Is Deleted</Translate>
-            </span>
-          </dt>
-          <dd>{authorEntity.isDeleted ? 'true' : 'false'}</dd>
+          <dd>{`${authorEntity.lastName} ${authorEntity.firstName}`}</dd>
         </dl>
         <Button tag={Link} to="/author" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}
@@ -57,13 +47,17 @@ export const AuthorDetail = () => {
             <Translate contentKey="entity.action.back">Back</Translate>
           </span>
         </Button>
-        &nbsp;
-        <Button tag={Link} to={`/author/${authorEntity.id}/edit`} replace color="primary">
-          <FontAwesomeIcon icon="pencil-alt" />{' '}
-          <span className="d-none d-md-inline">
-            <Translate contentKey="entity.action.edit">Edit</Translate>
-          </span>
-        </Button>
+        {isLibrarian ? (
+          <>
+            &nbsp;
+            <Button tag={Link} to={`/author/${authorEntity.id}/edit`} replace color="primary">
+              <FontAwesomeIcon icon="pencil-alt" />{' '}
+              <span className="d-none d-md-inline">
+                <Translate contentKey="entity.action.edit">Edit</Translate>
+              </span>
+            </Button>
+          </>
+        ) : undefined}
       </Col>
     </Row>
   );

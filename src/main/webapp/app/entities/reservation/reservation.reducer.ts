@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IReservation, defaultValue } from 'app/shared/model/reservation.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, IReservation } from 'app/shared/model/reservation.model';
 
 const initialState: EntityState<IReservation> = {
   loading: false,
@@ -74,6 +74,17 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError }
 );
 
+export const borrowBook = createAsyncThunk(
+  'reservation/borrow_book',
+  async (id: string | number, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}/borrow`;
+    const result = await axios.post<IReservation>(requestUrl);
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
 // slice
 
 export const ReservationSlice = createEntitySlice({
@@ -89,6 +100,12 @@ export const ReservationSlice = createEntitySlice({
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
+      })
+      .addCase(borrowBook.fulfilled, state => {
+        state.updateSuccess = true;
+        state.updating = false;
+        state.entity = {};
+        state.errorMessage = null;
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
         const { data, headers } = action.payload;

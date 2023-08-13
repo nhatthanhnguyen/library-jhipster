@@ -4,28 +4,28 @@ import java.util.Objects;
 
 public class ReturnBookRequestDTO {
 
-    private Long checkoutId;
-    private boolean returnSuccess;
+    private Long id;
+    private boolean success;
 
-    public ReturnBookRequestDTO(Long checkoutId, boolean returnSuccess) {
-        this.checkoutId = checkoutId;
-        this.returnSuccess = returnSuccess;
+    public ReturnBookRequestDTO(Long id, boolean success) {
+        this.id = id;
+        this.success = success;
     }
 
-    public Long getCheckoutId() {
-        return checkoutId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCheckoutId(Long checkoutId) {
-        this.checkoutId = checkoutId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public boolean isReturnSuccess() {
-        return returnSuccess;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public void setReturnSuccess(boolean returnSuccess) {
-        this.returnSuccess = returnSuccess;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     @Override
@@ -33,16 +33,16 @@ public class ReturnBookRequestDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReturnBookRequestDTO that = (ReturnBookRequestDTO) o;
-        return returnSuccess == that.returnSuccess && Objects.equals(checkoutId, that.checkoutId);
+        return success == that.success && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(checkoutId, returnSuccess);
+        return Objects.hash(id, success);
     }
 
     @Override
     public String toString() {
-        return "ReturnBookRequestDTO{" + "checkoutId=" + checkoutId + ", returnSuccess=" + returnSuccess + '}';
+        return "ReturnBookRequestDTO{" + "checkoutId=" + id + ", returnSuccess=" + success + '}';
     }
 }

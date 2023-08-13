@@ -20,7 +20,7 @@
       "id": "ID",
       "firstName": "First Name",
       "lastName": "Last Name",
-      "isDeleted": "Is Deleted",
+      "fullName": "Full Name",
       "book": "Book",
       "createdDate": "Created Date",
       "createdBy": "Created By",

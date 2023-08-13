@@ -11,6 +11,16 @@ export interface ICheckout {
   bookCopy?: IBookCopy | null;
 }
 
+export interface ICheckoutBorrow {
+  user?: IUser | null;
+  bookCopy?: IBookCopy | null;
+}
+
+export interface ICheckoutReturn {
+  id?: number;
+  success?: boolean | null;
+}
+
 export const defaultValue: Readonly<ICheckout> = {
   isReturned: false,
 };

@@ -36,6 +36,7 @@ import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons/faClockRota
 import { faRotateLeft } from '@fortawesome/free-solid-svg-icons/faRotateLeft';
 import { faBookBookmark } from '@fortawesome/free-solid-svg-icons/faBookBookmark';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -78,6 +79,7 @@ export const loadIcons = () => {
     faClockRotateLeft,
     faRotateLeft,
     faBookBookmark,
-    faCheck
+    faCheck,
+    faEyeSlash
   );
 };

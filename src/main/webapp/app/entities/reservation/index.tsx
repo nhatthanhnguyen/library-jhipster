@@ -7,6 +7,7 @@ import Reservation from './reservation';
 import ReservationDetail from './reservation-detail';
 import ReservationUpdate from './reservation-update';
 import ReservationDeleteDialog from './reservation-delete-dialog';
+import ReservationBorrowDialog from 'app/entities/reservation/reservation-borrow-dialog';
 
 const ReservationRoutes = () => (
   <ErrorBoundaryRoutes>
@@ -15,6 +16,7 @@ const ReservationRoutes = () => (
     <Route path=":id">
       <Route index element={<ReservationDetail />} />
       <Route path="edit" element={<ReservationUpdate />} />
+      <Route path="borrow/:bookCopyId" element={<ReservationBorrowDialog />} />
       <Route path="delete" element={<ReservationDeleteDialog />} />
     </Route>
   </ErrorBoundaryRoutes>

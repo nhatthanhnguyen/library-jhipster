@@ -14,6 +14,14 @@
       "delete": {
         "question": "Are you sure you want to delete Checkout {{ id }}?"
       },
+      "borrow": {
+        "question": "Are you sure you want to borrow Book Copy with identifier {{ id }}?"
+      },
+      "return": {
+        "question": "Are you sure you want to return Book Copy with identifier {{ id }}?",
+        "success": "Return",
+        "failed": "Lost"
+      },
       "detail": {
         "title": "Checkout"
       },

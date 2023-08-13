@@ -171,10 +171,7 @@ public class BookResource {
     public ResponseEntity<Void> waitBookByCurrentUser(@PathVariable("id") Long id) {
         log.debug("REST request to add Book {} to queue", id);
         bookService.addToQueue(id);
-        return ResponseEntity
-            .noContent()
-            .headers(LibraryHeaderUtil.createBookWaitFromReservationAlert(applicationName, true, id.toString()))
-            .build();
+        return ResponseEntity.noContent().headers(LibraryHeaderUtil.createBookWaitAlert(applicationName, true, id.toString())).build();
     }
 
     @PostMapping("/books/hold")

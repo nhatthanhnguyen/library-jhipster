@@ -14,13 +14,21 @@
       "delete": {
         "question": "Bạn có chắc là muốn xóa lượt Mượn trả {{ id }}?"
       },
+      "borrow": {
+        "question": "Bạn có chắc là bạn muốn mượn sách có bản sao với định danh {{ id }}?"
+      },
+      "return": {
+        "question": "Bạn có chắc là bạn muốn hoàn sách có bản sao với định danh {{ id }}?",
+        "success": "Hoàn trả",
+        "failed": "Mất sách"
+      },
       "detail": {
         "title": "Thông tin lượt Mượn trả"
       },
       "id": "ID",
       "startTime": "Thời gian bắt đầu",
       "endTime": "Thời gian kết thúc",
-      "isReturned": "Đã hoàn trả",
+      "isReturned": "Hoàn trả thành công",
       "user": "Người dùng",
       "bookCopy": "Bản copy đầu sách"
     }

@@ -12,6 +12,9 @@
       "updated": "Một Bản sao đầu sách cập nhật với mã bản sao {{ param }}",
       "deleted": "Một Bản sao đầu sách đã xóa với mã bản sao {{ param }}",
       "hold": "Một Bản sao đầu sách đã được đặt trước với mã bản sao {{ param }}",
+      "borrowed": "Một Bản sao đầu sách đã được mượn với mã bản sao {{ param }}",
+      "returnedSuccessfully": "Một Bản sao đầu sách đã được trả lại với mã bản sao {{ param }}",
+      "returnedFailed": "Một Bản sao đầu sách không trả lại được với mã bản sao {{ param }}",
       "delete": {
         "question": "Bạn có chắc là muốn xóa Bản sao đầu sách {{ id }}?"
       },

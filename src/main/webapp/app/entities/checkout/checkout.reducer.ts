@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { ICheckout, defaultValue } from 'app/shared/model/checkout.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, ICheckout, ICheckoutBorrow, ICheckoutReturn } from 'app/shared/model/checkout.model';
 
 const initialState: EntityState<ICheckout> = {
   loading: false,
@@ -74,6 +74,34 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError }
 );
 
+export const borrowBook = createAsyncThunk(
+  'checkout/borrow_book',
+  async (entity: ICheckoutBorrow, thunkAPI) => {
+    const result = await axios.post<ICheckout>(`${apiUrl}/borrow`, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const returnBook = createAsyncThunk(
+  'checkout/return_book',
+  async (entity: ICheckoutReturn, thunkAPI) => {
+    const result = await axios.put<ICheckout>(`${apiUrl}/return`, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const addToQueue = createAsyncThunk(
+  'checkout/add_to_queue',
+  async (id: string | number, thunkAPI) => {
+    return await axios.post<ICheckout>(`${apiUrl}/books/${id}/wait`);
+  },
+  { serializeError: serializeAxiosError }
+);
+
 // slice
 
 export const CheckoutSlice = createEntitySlice({
@@ -89,6 +117,29 @@ export const CheckoutSlice = createEntitySlice({
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
+      })
+      .addCase(borrowBook.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = true;
+        state.entity = {};
+        state.errorMessage = null;
+      })
+      .addCase(returnBook.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = true;
+        state.entity = {};
+        state.errorMessage = null;
+      })
+      .addCase(borrowBook.rejected, state => {
+        state.updating = false;
+        state.updateSuccess = false;
+        state.entity = {};
+      })
+      .addCase(addToQueue.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = false;
+        state.entity = {};
+        state.errorMessage = null;
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
         const { data, headers } = action.payload;
@@ -111,7 +162,7 @@ export const CheckoutSlice = createEntitySlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity, borrowBook, returnBook), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

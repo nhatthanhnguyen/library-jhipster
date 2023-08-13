@@ -4,7 +4,6 @@ export interface IAuthor {
   id?: number;
   firstName?: string;
   lastName?: string;
-  isDeleted?: boolean | null;
   createdBy?: string;
   createdDate?: Date | null;
   lastModifiedBy?: string;
@@ -12,6 +11,4 @@ export interface IAuthor {
   books?: IBook[] | null;
 }
 
-export const defaultValue: Readonly<IAuthor> = {
-  isDeleted: false,
-};
+export const defaultValue: Readonly<IAuthor> = {};

@@ -140,11 +140,16 @@ export const BookSlice = createEntitySlice({
         state.updating = false;
         state.updateSuccess = false;
         state.entity = {};
-        state.errorMessage = 'Cannot';
       })
       .addCase(addToQueue.fulfilled, state => {
         state.updating = false;
         state.updateSuccess = true;
+        state.entity = {};
+        state.errorMessage = null;
+      })
+      .addCase(addToQueue.rejected, state => {
+        state.updating = false;
+        state.updateSuccess = false;
         state.entity = {};
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {

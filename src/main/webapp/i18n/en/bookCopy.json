@@ -12,6 +12,9 @@
       "updated": "A Book Copy is updated with identifier {{ param }}",
       "deleted": "A Book Copy is deleted with identifier {{ param }}",
       "hold": "A Book Copy is hold with identifier {{ param }}",
+      "borrowed": "A Book Copy is borrowed with identifier {{ param }}",
+      "returnedSuccessfully": "A Book Copy is returned with identifier {{ param }}",
+      "returnedFailed": "A Book Copy is not returned because it is missing with identifier {{ param }}",
       "delete": {
         "question": "Are you sure you want to delete Book Copy {{ id }}?"
       },

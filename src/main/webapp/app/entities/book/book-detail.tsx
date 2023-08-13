@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { AUTHORITIES } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './book.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const BookDetail = () => {
   const dispatch = useAppDispatch();
@@ -19,6 +20,7 @@ export const BookDetail = () => {
   }, []);
 
   const bookEntity = useAppSelector(state => state.book.entity);
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
   return (
     <Row>
       <Col md="8">
@@ -81,13 +83,17 @@ export const BookDetail = () => {
             <Translate contentKey="entity.action.back">Back</Translate>
           </span>
         </Button>
-        &nbsp;
-        <Button tag={Link} to={`/book/${bookEntity.id}/edit`} replace color="primary">
-          <FontAwesomeIcon icon="pencil-alt" />{' '}
-          <span className="d-none d-md-inline">
-            <Translate contentKey="entity.action.edit">Edit</Translate>
-          </span>
-        </Button>
+        {isLibrarian ? (
+          <>
+            &nbsp;
+            <Button tag={Link} to={`/book/${bookEntity.id}/edit`} replace color="primary">
+              <FontAwesomeIcon icon="pencil-alt" />{' '}
+              <span className="d-none d-md-inline">
+                <Translate contentKey="entity.action.edit">Edit</Translate>
+              </span>
+            </Button>
+          </>
+        ) : undefined}
       </Col>
     </Row>
   );

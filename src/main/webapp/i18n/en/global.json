@@ -124,6 +124,9 @@
     "restore": {
       "title": "Confirm restore operation"
     },
+    "return": {
+      "title": "Conform return operation"
+    },
     "validation": {
       "required": "This field is required.",
       "minlength": "This field is required to be at least {{ min }} characters.",
@@ -158,6 +161,9 @@
     "bookalreadyrestored": "Book is already restored",
     "bookalreadydeleted": "Book is already deleted",
     "bookcopynotavailable": "Book Copy is not enough",
+    "usernotactivated": "User is not activated",
+    "bookcopyisdeleted": "Book Copy is deleted",
+    "alreadyinqueue": "User and Book are currently in Queue",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

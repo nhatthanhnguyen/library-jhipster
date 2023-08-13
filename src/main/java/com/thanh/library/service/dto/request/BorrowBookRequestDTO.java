@@ -1,33 +1,36 @@
 package com.thanh.library.service.dto.request;
 
+import com.thanh.library.service.dto.BookCopyDTO;
+import com.thanh.library.service.dto.UserDTO;
 import java.util.Objects;
 
 public class BorrowBookRequestDTO {
 
-    private Long bookCopyId;
-    private Long userId;
+    private UserDTO user;
+
+    private BookCopyDTO bookCopy;
 
     public BorrowBookRequestDTO() {}
 
-    public BorrowBookRequestDTO(Long bookCopyId, Long userId) {
-        this.bookCopyId = bookCopyId;
-        this.userId = userId;
+    public BorrowBookRequestDTO(UserDTO user, BookCopyDTO bookCopy) {
+        this.user = user;
+        this.bookCopy = bookCopy;
     }
 
-    public Long getBookCopyId() {
-        return bookCopyId;
+    public UserDTO getUser() {
+        return user;
     }
 
-    public void setBookCopyId(Long bookCopyId) {
-        this.bookCopyId = bookCopyId;
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 
-    public Long getUserId() {
-        return userId;
+    public BookCopyDTO getBookCopy() {
+        return bookCopy;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setBookCopy(BookCopyDTO bookCopy) {
+        this.bookCopy = bookCopy;
     }
 
     @Override
@@ -35,16 +38,16 @@ public class BorrowBookRequestDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BorrowBookRequestDTO that = (BorrowBookRequestDTO) o;
-        return Objects.equals(bookCopyId, that.bookCopyId) && Objects.equals(userId, that.userId);
+        return Objects.equals(user, that.user) && Objects.equals(bookCopy, that.bookCopy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookCopyId, userId);
+        return Objects.hash(user, bookCopy);
     }
 
     @Override
     public String toString() {
-        return "BorrowBookRequest{" + "bookCopyId=" + bookCopyId + ", userId=" + userId + '}';
+        return "BorrowBookRequestDTO{" + "user=" + user + ", bookCopy=" + bookCopy + '}';
     }
 }

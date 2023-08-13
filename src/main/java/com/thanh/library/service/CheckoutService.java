@@ -7,7 +7,6 @@ import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
 import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
-import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.service.mapper.CheckoutMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
@@ -43,6 +42,8 @@ public class CheckoutService {
 
     private final CheckoutMapper checkoutMapper;
 
+    private final BookRepository bookRepository;
+
     public CheckoutService(
         CheckoutRepository checkoutRepository,
         UserRepository userRepository,
@@ -50,7 +51,8 @@ public class CheckoutService {
         ReservationRepository reservationRepository,
         QueueRepository queueRepository,
         NotificationRepository notificationRepository,
-        CheckoutMapper checkoutMapper
+        CheckoutMapper checkoutMapper,
+        BookRepository bookRepository
     ) {
         this.checkoutRepository = checkoutRepository;
         this.userRepository = userRepository;
@@ -59,6 +61,7 @@ public class CheckoutService {
         this.queueRepository = queueRepository;
         this.notificationRepository = notificationRepository;
         this.checkoutMapper = checkoutMapper;
+        this.bookRepository = bookRepository;
     }
 
     public CheckoutDTO save(CheckoutDTO checkoutDTO) {
@@ -98,13 +101,8 @@ public class CheckoutService {
         User user = userRepository
             .findOneByLogin(login)
             .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
-        //        Authority roleAdmin = new Authority();
         Authority roleLibrarian = new Authority();
-        //        roleAdmin.setName("ROLE_ADMIN");
         roleLibrarian.setName("ROLE_LIBRARIAN");
-        /*if (user.getAuthorities().contains(roleAdmin)) {
-            throw new BadRequestAlertException("You does not has permission", "Permission", "donothavepermission");
-        }*/
         if (user.getAuthorities().contains(roleLibrarian)) {
             return checkoutRepository.findAll(pageable).map(checkoutMapper::toDto);
         }
@@ -123,51 +121,14 @@ public class CheckoutService {
 
     public void delete(Long id) {
         log.debug("Request to delete Checkout : {}", id);
-        checkoutRepository.deleteById(id);
-    }
-
-    public ResponseMessageDTO borrowBook(BorrowBookRequestDTO borrowBookRequestDTO) {
-        User user = userRepository
-            .findById(borrowBookRequestDTO.getUserId())
-            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "idnotfound"));
-        if (!user.isActivated()) {
-            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
-        }
-        BookCopy bookCopy = bookCopyRepository
-            .findById(borrowBookRequestDTO.getBookCopyId())
-            .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
-        if (bookCopy.getIsDeleted()) {
-            throw new BadRequestAlertException("Book Copy is deleted", "BookCopy", "bookcopyisdeleted");
-        }
-
-        List<Checkout> checkouts = checkoutRepository.findAllThatBookCopyIsBorrowed(borrowBookRequestDTO.getBookCopyId());
-        List<Reservation> reservations = reservationRepository.findAllThatBookCopyIsBorrowed(borrowBookRequestDTO.getBookCopyId());
-        if (!checkouts.isEmpty() || !reservations.isEmpty()) {
-            throw new BadRequestAlertException("Book Copy is not available", "BookCopy", "bookcopyisnotavailable");
-        }
-        Checkout checkout = new Checkout();
-        checkout.setUser(user);
-        checkout.setBookCopy(bookCopy);
-        checkout.setStartTime(Instant.now());
-        checkout.setIsReturned(false);
-        checkoutRepository.save(checkout);
-        return new ResponseMessageDTO(200, "Borrowed book successfully", Instant.now());
-    }
-
-    public ResponseMessageDTO returnBook(ReturnBookRequestDTO returnBookRequestDTO) {
         Checkout checkout = checkoutRepository
-            .findById(returnBookRequestDTO.getCheckoutId())
-            .orElseThrow(() -> new BadRequestAlertException("Checkout not found", "Checkout", "checkoutnotfound"));
-        if (checkout.getIsReturned()) {
-            throw new BadRequestAlertException("Book Copy is returned", "BookCopy", "bookcopyisreturned");
-        }
-        checkout.setIsReturned(returnBookRequestDTO.isReturnSuccess());
-        checkout.setEndTime(Instant.now());
-        checkoutRepository.save(checkout);
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Checkout not found", "Checkout", "idnotfound"));
+        checkoutRepository.deleteById(id);
         Book book = checkout.getBookCopy().getBook();
         List<Queue> queues = queueRepository.findByBookId(book.getId());
         queues.forEach(queue -> {
-            //            queueRepository.deleteById(queue.getId());
+            queueRepository.deleteById(queue.getId());
             Notification notification = new Notification();
             notification.setUser(checkout.getUser());
             notification.setType(Type.AVAILABLE);
@@ -175,6 +136,90 @@ public class CheckoutService {
             notificationRepository.save(notification);
             // call mail service
         });
-        return new ResponseMessageDTO(200, "Return book successfully", Instant.now());
+    }
+
+    public void borrowBook(BorrowBookRequestDTO borrowBookRequestDTO) {
+        User user = userRepository
+            .findById(borrowBookRequestDTO.getUser().getId())
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "idnotfound"));
+        if (!user.isActivated()) {
+            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
+        }
+        BookCopy bookCopy = bookCopyRepository
+            .findById(borrowBookRequestDTO.getBookCopy().getId())
+            .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
+        if (bookCopy.getIsDeleted()) {
+            throw new BadRequestAlertException("Book Copy is deleted", "BookCopy", "bookcopyisdeleted");
+        }
+
+        List<Checkout> checkouts = checkoutRepository.findAllThatBookCopyIsBorrowed(bookCopy.getId());
+        List<Reservation> reservations = reservationRepository.findAllThatBookCopyIsBorrowed(bookCopy.getId());
+        if (!checkouts.isEmpty() || !reservations.isEmpty()) {
+            throw new BadRequestAlertException("Book Copy is not available", "BookCopy", "bookcopynotavailable");
+        }
+        Checkout checkout = new Checkout();
+        checkout.setUser(user);
+        checkout.setBookCopy(bookCopy);
+        checkout.setStartTime(Instant.now());
+        checkout.setIsReturned(false);
+        checkoutRepository.save(checkout);
+    }
+
+    public void returnBook(ReturnBookRequestDTO returnBookRequestDTO) {
+        Checkout checkout = checkoutRepository
+            .findById(returnBookRequestDTO.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Checkout not found", "Checkout", "checkoutnotfound"));
+        if (checkout.getIsReturned()) {
+            throw new BadRequestAlertException("Book Copy is returned", "BookCopy", "bookcopyisreturned");
+        }
+        checkout.setIsReturned(returnBookRequestDTO.isSuccess());
+        checkout.setEndTime(Instant.now());
+        checkoutRepository.save(checkout);
+        if (!returnBookRequestDTO.isSuccess()) {
+            BookCopy bookCopy = checkout.getBookCopy();
+            bookCopy.setIsDeleted(true);
+            bookCopyRepository.save(bookCopy);
+        }
+        Book book = checkout.getBookCopy().getBook();
+        List<Queue> queues = queueRepository.findByBookId(book.getId());
+        queues.forEach(queue -> {
+            queueRepository.deleteById(queue.getId());
+            Notification notification = new Notification();
+            notification.setUser(checkout.getUser());
+            notification.setType(Type.AVAILABLE);
+            notification.setSentAt(Instant.now());
+            notificationRepository.save(notification);
+            // call mail service
+        });
+    }
+
+    public void addToQueue(Long id) {
+        String userLogin = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("User is not login", "User", "usernotlogin"));
+
+        User user = userRepository
+            .findOneByLogin(userLogin)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        if (!user.isActivated()) {
+            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
+        }
+
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "booknotfound"));
+        if (book.getIsDeleted()) {
+            throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
+        }
+        QueueId queueId = new QueueId();
+        queueId.setBookId(book.getId());
+        queueId.setUserId(user.getId());
+        if (queueRepository.existsById(queueId)) {
+            throw new BadRequestAlertException("Currently in queue", "Queue", "alreadyinqueue");
+        }
+        Queue queue = new Queue();
+        queue.setId(queueId);
+        queue.setBook(book);
+        queue.setUser(user);
+        queue.setCreatedAt(Instant.now());
+        queueRepository.save(queue);
     }
 }

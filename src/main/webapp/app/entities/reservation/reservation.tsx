@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IReservation } from 'app/shared/model/reservation.model';
 import { getEntities } from './reservation.reducer';
 
 export const Reservation = () => {
@@ -136,24 +134,20 @@ export const Reservation = () => {
                   <td>{reservation.bookCopy ? <Link to={`/book-copy/${reservation.bookCopy.id}`}>{reservation.bookCopy.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/reservation/${reservation.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`/reservation/${reservation.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
+                      {reservation.endTime ? null : (
+                        <Button
+                          tag={Link}
+                          to={`/reservation/${reservation.id}/borrow/${reservation.bookCopy.id}?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          color="primary"
+                          size="sm"
+                          data-cy="borrowButton"
+                        >
+                          <FontAwesomeIcon icon="book-bookmark" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.borrow">Borrow</Translate>
+                          </span>
+                        </Button>
+                      )}
                       <Button
                         tag={Link}
                         to={`/reservation/${reservation.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

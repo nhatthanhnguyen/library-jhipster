@@ -122,6 +122,9 @@
     "restore": {
       "title": "Xác nhận hành động khôi phục"
     },
+    "return": {
+      "title": "Xác nhận hành động trả sách"
+    },
     "validation": {
       "required": "Trường này bắt buộc phải nhập.",
       "minlength": "Trường này phải có ít nhất {{ min }} ký tự.",
@@ -155,6 +158,9 @@
     "bookalreadyrestored": "Đầu sách đã được khôi phục trước đó",
     "bookalreadydeleted": "Đầu sách đã được xóa trước đó",
     "bookcopynotavailable": "Bản sao của Đầu sách không đủ",
+    "usernotactivated": "Người dùng chưa được kích hoạt",
+    "bookcopyisdeleted": "Bản sao của Đầu Sách không còn trong thư viện",
+    "alreadyinqueue": "Người dùng và Đầu Sách đang ở trong hàng đợi",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

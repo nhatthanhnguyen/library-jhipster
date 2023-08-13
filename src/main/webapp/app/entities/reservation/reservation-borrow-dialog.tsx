@@ -5,14 +5,15 @@ import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { addToQueue, getEntity } from './book.reducer';
+import { borrowBook, getEntity } from './reservation.reducer';
 
-export const BookWaitDialog = () => {
+export const ReservationBorrowDialog = () => {
   const dispatch = useAppDispatch();
 
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams<'id'>();
+  const { bookCopyId } = useParams<'bookCopyId'>();
 
   const [loadModal, setLoadModal] = useState(false);
 
@@ -21,33 +22,32 @@ export const BookWaitDialog = () => {
     setLoadModal(true);
   }, []);
 
-  const bookEntity = useAppSelector(state => state.book.entity);
-  const updateSuccess = useAppSelector(state => state.book.updateSuccess);
-  const errorMessage = useAppSelector(state => state.book.errorMessage);
+  const reservationEntity = useAppSelector(state => state.reservation.entity);
+  const updateSuccess = useAppSelector(state => state.reservation.updateSuccess);
 
   const handleClose = () => {
-    navigate('/book' + location.search);
+    navigate('/reservation' + location.search);
   };
 
   useEffect(() => {
-    if ((updateSuccess && loadModal) || errorMessage !== null) {
+    if (updateSuccess && loadModal) {
       handleClose();
       setLoadModal(false);
     }
-  }, [updateSuccess, errorMessage]);
+  }, [updateSuccess]);
 
-  const confirmAddToQueue = () => {
-    dispatch(addToQueue(bookEntity.id));
+  const confirmBorrow = () => {
+    dispatch(borrowBook(reservationEntity.id));
   };
 
   return (
     <Modal isOpen toggle={handleClose}>
-      <ModalHeader toggle={handleClose} data-cy="bookWaitDialogHeading">
-        <Translate contentKey="libraryApp.book.wait.title">Confirm add to queue operation</Translate>
+      <ModalHeader toggle={handleClose} data-cy="reservationBorrowDialogHeading">
+        <Translate contentKey="libraryApp.reservation.borrow.title">Confirm borrow operation</Translate>
       </ModalHeader>
-      <ModalBody id="libraryApp.book.wait.question">
-        <Translate contentKey="libraryApp.book.wait.question" interpolate={{ title: bookEntity.title }}>
-          Are you sure you want to add to Queue of this Book?
+      <ModalBody id="libraryApp.reservation.borrow.question">
+        <Translate contentKey="libraryApp.reservation.borrow.question" interpolate={{ id: bookCopyId }}>
+          Are you sure you want to borrow Book Copy?
         </Translate>
       </ModalBody>
       <ModalFooter>
@@ -56,14 +56,14 @@ export const BookWaitDialog = () => {
           &nbsp;
           <Translate contentKey="entity.action.cancel">Cancel</Translate>
         </Button>
-        <Button id="jhi-confirm-restore-book" data-cy="bookWaitButton" color="success" onClick={confirmAddToQueue}>
-          <FontAwesomeIcon icon="check" />
+        <Button id="jhi-confirm-borrow" data-cy="entityConfirmBorrowBook" color="success" onClick={confirmBorrow}>
+          <FontAwesomeIcon icon="book-bookmark" />
           &nbsp;
-          <Translate contentKey="entity.action.wait">Add to queue</Translate>
+          <Translate contentKey="entity.action.borrow">Borrow</Translate>
         </Button>
       </ModalFooter>
     </Modal>
   );
 };
 
-export default BookWaitDialog;
+export default ReservationBorrowDialog;

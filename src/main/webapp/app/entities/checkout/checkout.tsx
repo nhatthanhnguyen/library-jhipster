@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ICheckout } from 'app/shared/model/checkout.model';
 import { getEntities } from './checkout.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const Checkout = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +24,7 @@ export const Checkout = () => {
   const checkoutList = useAppSelector(state => state.checkout.entities);
   const loading = useAppSelector(state => state.checkout.loading);
   const totalItems = useAppSelector(state => state.checkout.totalItems);
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
 
   const getAllEntities = () => {
     dispatch(
@@ -90,11 +90,13 @@ export const Checkout = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.checkout.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/checkout/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="libraryApp.checkout.home.createLabel">Create new Checkout</Translate>
-          </Link>
+          {isLibrarian ? (
+            <Link to="/checkout/borrow" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp;
+              <Translate contentKey="libraryApp.checkout.home.createLabel">Create new Checkout</Translate>
+            </Link>
+          ) : undefined}
         </div>
       </h2>
       <div className="table-responsive">
@@ -146,6 +148,20 @@ export const Checkout = () => {
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
+                      {checkout.endTime ? undefined : (
+                        <Button
+                          tag={Link}
+                          to={`/checkout/${checkout.id}/return?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          color="info"
+                          size="sm"
+                          data-cy="bookReturnButton"
+                        >
+                          <FontAwesomeIcon icon="rotate-left" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.return">Return</Translate>
+                          </span>
+                        </Button>
+                      )}
                       <Button
                         tag={Link}
                         to={`/checkout/${checkout.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

@@ -20,10 +20,12 @@
       "id": "ID",
       "firstName": "Tên",
       "lastName": "Họ",
-      "isDeleted": "Đang xóa",
+      "fullName": "Họ và tên",
       "book": "Đầu sách",
       "createdDate": "Ngày tạo",
-      "lastModifiedBy": "Cập nhật bởi"
+      "createdBy": "Người tạo",
+      "lastModifiedBy": "Cập nhật bởi",
+      "lastModifiedDate": "Ngày cập nhật"
     }
   }
 }

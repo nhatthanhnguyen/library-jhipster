@@ -1,9 +1,10 @@
 export interface IPublisher {
   id?: number;
   name?: string;
-  isDeleted?: boolean | null;
+  createdBy?: string;
+  createdDate?: Date | null;
+  lastModifiedBy?: string;
+  lastModifiedDate?: Date | null;
 }
 
-export const defaultValue: Readonly<IPublisher> = {
-  isDeleted: false,
-};
+export const defaultValue: Readonly<IPublisher> = {};

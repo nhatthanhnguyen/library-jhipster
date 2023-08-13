@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { AUTHORITIES } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './category.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const CategoryDetail = () => {
   const dispatch = useAppDispatch();
@@ -19,6 +20,8 @@ export const CategoryDetail = () => {
   }, []);
 
   const categoryEntity = useAppSelector(state => state.category.entity);
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
+
   return (
     <Row>
       <Col md="8">
@@ -38,12 +41,6 @@ export const CategoryDetail = () => {
             </span>
           </dt>
           <dd>{categoryEntity.name}</dd>
-          <dt>
-            <span id="isDeleted">
-              <Translate contentKey="libraryApp.category.isDeleted">Is Deleted</Translate>
-            </span>
-          </dt>
-          <dd>{categoryEntity.isDeleted ? 'true' : 'false'}</dd>
         </dl>
         <Button tag={Link} to="/category" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}
@@ -51,13 +48,17 @@ export const CategoryDetail = () => {
             <Translate contentKey="entity.action.back">Back</Translate>
           </span>
         </Button>
-        &nbsp;
-        <Button tag={Link} to={`/category/${categoryEntity.id}/edit`} replace color="primary">
-          <FontAwesomeIcon icon="pencil-alt" />{' '}
-          <span className="d-none d-md-inline">
-            <Translate contentKey="entity.action.edit">Edit</Translate>
-          </span>
-        </Button>
+        {isLibrarian ? (
+          <>
+            &nbsp;
+            <Button tag={Link} to={`/category/${categoryEntity.id}/edit`} replace color="primary">
+              <FontAwesomeIcon icon="pencil-alt" />{' '}
+              <span className="d-none d-md-inline">
+                <Translate contentKey="entity.action.edit">Edit</Translate>
+              </span>
+            </Button>
+          </>
+        ) : undefined}
       </Col>
     </Row>
   );

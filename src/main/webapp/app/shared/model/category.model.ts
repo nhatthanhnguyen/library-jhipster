@@ -3,10 +3,11 @@ import { IBook } from 'app/shared/model/book.model';
 export interface ICategory {
   id?: number;
   name?: string;
-  isDeleted?: boolean | null;
+  createdBy?: string;
+  createdDate?: Date | null;
+  lastModifiedBy?: string;
+  lastModifiedDate?: Date | null;
   books?: IBook[] | null;
 }
 
-export const defaultValue: Readonly<ICategory> = {
-  isDeleted: false,
-};
+export const defaultValue: Readonly<ICategory> = {};

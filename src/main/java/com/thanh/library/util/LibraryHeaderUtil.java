@@ -3,7 +3,6 @@ package com.thanh.library.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import org.springframework.http.HttpHeaders;
 
 public class LibraryHeaderUtil {
@@ -19,21 +18,26 @@ public class LibraryHeaderUtil {
         return headers;
     }
 
-    public static HttpHeaders createBookCopyBorrowAlert(String applicationName, boolean enableTranslation, String[] params) {
+    public static HttpHeaders createBookCopyBorrowAlert(String applicationName, boolean enableTranslation, String param) {
         String message = enableTranslation
             ? applicationName + ".bookCopy.borrowed"
-            : "A Book Copy with identifier " + params[0] + " of Book with identifier " + params[1] + " has been borrowed";
-        return createAlert(applicationName, message, Arrays.toString(params));
+            : "A Book Copy with identifier " + param + " has been borrowed";
+        return createAlert(applicationName, message, param);
     }
 
-    public static HttpHeaders createBookCopyReturnAlert(String applicationName, boolean enableTranslation, String[] params) {
+    public static HttpHeaders createBookCopyReturnAlert(
+        String applicationName,
+        boolean enableTranslation,
+        String param,
+        boolean isReturned
+    ) {
         String message = enableTranslation
-            ? applicationName + ".bookCopy.returned"
-            : "A Book Copy with identifier " + params[0] + " of Book with identifier" + params[1] + " has been returned";
-        return createAlert(applicationName, message, Arrays.toString(params));
+            ? isReturned ? applicationName + ".bookCopy.returnedSuccessfully" : applicationName + ".bookCopy.returnedFailed"
+            : "A Book Copy with identifier " + param + "has been returned";
+        return createAlert(applicationName, message, param);
     }
 
-    public static HttpHeaders createBookWaitFromReservationAlert(String applicationName, boolean enableTranslation, String param) {
+    public static HttpHeaders createBookWaitAlert(String applicationName, boolean enableTranslation, String param) {
         String message = enableTranslation
             ? applicationName + ".book.addToQueueSuccessfully"
             : "A Book with identifier " + param + " has been add to queue";

@@ -7,15 +7,21 @@ import Checkout from './checkout';
 import CheckoutDetail from './checkout-detail';
 import CheckoutUpdate from './checkout-update';
 import CheckoutDeleteDialog from './checkout-delete-dialog';
+import CheckoutBorrow from 'app/entities/checkout/checkout-borrow';
+import CheckoutWaitDialog from 'app/entities/checkout/checkout-wait-dialog';
+import CheckoutReturnDialog from 'app/entities/checkout/checkout-return-dialog';
 
 const CheckoutRoutes = () => (
   <ErrorBoundaryRoutes>
     <Route index element={<Checkout />} />
+    <Route path="borrow" element={<CheckoutBorrow />} />
     <Route path="new" element={<CheckoutUpdate />} />
+    <Route path="book/:id/wait" element={<CheckoutWaitDialog />} />
     <Route path=":id">
       <Route index element={<CheckoutDetail />} />
       <Route path="edit" element={<CheckoutUpdate />} />
       <Route path="delete" element={<CheckoutDeleteDialog />} />
+      <Route path="return" element={<CheckoutReturnDialog />} />
     </Route>
   </ErrorBoundaryRoutes>
 );

@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getSortState, JhiPagination, JhiItemCount, TextFormat } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { IAuthor } from 'app/shared/model/author.model';
 import { getEntities } from './author.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const Author = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +26,7 @@ export const Author = () => {
   const authorList = useAppSelector(state => state.author.entities);
   const loading = useAppSelector(state => state.author.loading);
   const totalItems = useAppSelector(state => state.author.totalItems);
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
 
   const getAllEntities = () => {
     dispatch(
@@ -90,11 +92,13 @@ export const Author = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.author.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/author/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="libraryApp.author.home.createLabel">Create new Author</Translate>
-          </Link>
+          {isLibrarian ? (
+            <Link to="/author/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp;
+              <Translate contentKey="libraryApp.author.home.createLabel">Create new Author</Translate>
+            </Link>
+          ) : undefined}
         </div>
       </h2>
       <div className="table-responsive">
@@ -105,27 +109,31 @@ export const Author = () => {
                 <th className="hand" onClick={sort('id')}>
                   <Translate contentKey="libraryApp.author.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('firstName')}>
-                  <Translate contentKey="libraryApp.author.firstName">First Name</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('lastName')}>
                   <Translate contentKey="libraryApp.author.lastName">Last Name</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('createdBy')}>
-                  <Translate contentKey="libraryApp.author.createdBy">Created By</Translate> <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('firstName')}>
+                  <Translate contentKey="libraryApp.author.firstName">First Name</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('createdDate')}>
-                  <Translate contentKey="libraryApp.author.createdDate">Created Date</Translate>
-                  <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('lastModifiedBy')}>
-                  <Translate contentKey="libraryApp.author.lastModifiedBy">Last Modified By</Translate>
-                  <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('lastModifiedDate')}>
-                  <Translate contentKey="libraryApp.author.lastModifiedDate">Last Modified Date</Translate>
-                  <FontAwesomeIcon icon="sort" />
-                </th>
+                {isLibrarian ? (
+                  <>
+                    <th className="hand" onClick={sort('createdBy')}>
+                      <Translate contentKey="libraryApp.author.createdBy">Created By</Translate> <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand" onClick={sort('createdDate')}>
+                      <Translate contentKey="libraryApp.author.createdDate">Created Date</Translate>
+                      <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand" onClick={sort('lastModifiedBy')}>
+                      <Translate contentKey="libraryApp.author.lastModifiedBy">Last Modified By</Translate>
+                      <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand" onClick={sort('lastModifiedDate')}>
+                      <Translate contentKey="libraryApp.author.lastModifiedDate">Last Modified Date</Translate>
+                      <FontAwesomeIcon icon="sort" />
+                    </th>
+                  </>
+                ) : undefined}
                 <th />
               </tr>
             </thead>
@@ -137,20 +145,24 @@ export const Author = () => {
                       {author.id}
                     </Button>
                   </td>
-                  <td>{author.firstName}</td>
                   <td>{author.lastName}</td>
-                  <td>{author.createdBy}</td>
-                  <td>
-                    {author.createdDate ? (
-                      <TextFormat value={author.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-                    ) : null}
-                  </td>
-                  <td>{author.lastModifiedBy}</td>
-                  <td>
-                    {author.lastModifiedDate ? (
-                      <TextFormat value={author.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-                    ) : null}
-                  </td>
+                  <td>{author.firstName}</td>
+                  {isLibrarian ? (
+                    <>
+                      <td>{author.createdBy}</td>
+                      <td>
+                        {author.createdDate ? (
+                          <TextFormat value={author.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                        ) : null}
+                      </td>
+                      <td>{author.lastModifiedBy}</td>
+                      <td>
+                        {author.lastModifiedDate ? (
+                          <TextFormat value={author.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                        ) : null}
+                      </td>
+                    </>
+                  ) : undefined}
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/author/${author.id}`} color="info" size="sm" data-cy="entityDetailsButton">
@@ -159,30 +171,34 @@ export const Author = () => {
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      <Button
-                        tag={Link}
-                        to={`/author/${author.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`/author/${author.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
-                        </span>
-                      </Button>
+                      {isLibrarian ? (
+                        <>
+                          <Button
+                            tag={Link}
+                            to={`/author/${author.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            color="primary"
+                            size="sm"
+                            data-cy="entityEditButton"
+                          >
+                            <FontAwesomeIcon icon="pencil-alt" />{' '}
+                            <span className="d-none d-md-inline">
+                              <Translate contentKey="entity.action.edit">Edit</Translate>
+                            </span>
+                          </Button>
+                          <Button
+                            tag={Link}
+                            to={`/author/${author.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            color="danger"
+                            size="sm"
+                            data-cy="entityDeleteButton"
+                          >
+                            <FontAwesomeIcon icon="trash" />{' '}
+                            <span className="d-none d-md-inline">
+                              <Translate contentKey="entity.action.delete">Delete</Translate>
+                            </span>
+                          </Button>
+                        </>
+                      ) : undefined}
                     </div>
                   </td>
                 </tr>

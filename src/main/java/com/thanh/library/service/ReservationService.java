@@ -1,13 +1,16 @@
 package com.thanh.library.service;
 
-import com.thanh.library.domain.Checkout;
-import com.thanh.library.domain.Reservation;
+import com.thanh.library.domain.*;
+import com.thanh.library.domain.enumeration.Type;
 import com.thanh.library.repository.CheckoutRepository;
+import com.thanh.library.repository.NotificationRepository;
+import com.thanh.library.repository.QueueRepository;
 import com.thanh.library.repository.ReservationRepository;
 import com.thanh.library.service.dto.ReservationDTO;
 import com.thanh.library.service.mapper.ReservationMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +32,28 @@ public class ReservationService {
 
     private final CheckoutRepository checkoutRepository;
 
+    private final QueueRepository queueRepository;
+
+    private final NotificationRepository notificationRepository;
+
     private final ReservationMapper reservationMapper;
+
+    private final MailService mailService;
 
     public ReservationService(
         ReservationRepository reservationRepository,
         CheckoutRepository checkoutRepository,
-        ReservationMapper reservationMapper
+        QueueRepository queueRepository,
+        NotificationRepository notificationRepository,
+        ReservationMapper reservationMapper,
+        MailService mailService
     ) {
         this.reservationRepository = reservationRepository;
         this.checkoutRepository = checkoutRepository;
+        this.queueRepository = queueRepository;
+        this.notificationRepository = notificationRepository;
         this.reservationMapper = reservationMapper;
+        this.mailService = mailService;
     }
 
     public ReservationDTO save(ReservationDTO reservationDTO) {
@@ -87,6 +102,20 @@ public class ReservationService {
 
     public void delete(Long id) {
         log.debug("Request to delete Reservation : {}", id);
+        Reservation reservation = reservationRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Reservation not found", "Reservation", "idnotfound"));
+        Book book = reservation.getBookCopy().getBook();
+        List<Queue> queues = queueRepository.findByBookId(book.getId());
+        queues.forEach(queue -> {
+            queueRepository.deleteById(queue.getId());
+            Notification notification = new Notification();
+            notification.setUser(reservation.getUser());
+            notification.setType(Type.AVAILABLE);
+            notification.setSentAt(Instant.now());
+            notificationRepository.save(notification);
+            mailService.sendBookRequestIsAvailable(notification.getUser(), notification.getBookCopy().getBook());
+        });
         reservationRepository.deleteById(id);
     }
 

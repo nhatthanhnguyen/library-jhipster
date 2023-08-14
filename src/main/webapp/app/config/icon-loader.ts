@@ -37,6 +37,7 @@ import { faRotateLeft } from '@fortawesome/free-solid-svg-icons/faRotateLeft';
 import { faBookBookmark } from '@fortawesome/free-solid-svg-icons/faBookBookmark';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
+import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -80,6 +81,7 @@ export const loadIcons = () => {
     faRotateLeft,
     faBookBookmark,
     faCheck,
-    faEyeSlash
+    faEyeSlash,
+    faFilter
   );
 };

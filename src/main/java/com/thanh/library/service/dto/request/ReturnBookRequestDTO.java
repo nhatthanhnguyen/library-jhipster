@@ -7,6 +7,8 @@ public class ReturnBookRequestDTO {
     private Long id;
     private boolean success;
 
+    public ReturnBookRequestDTO() {}
+
     public ReturnBookRequestDTO(Long id, boolean success) {
         this.id = id;
         this.success = success;

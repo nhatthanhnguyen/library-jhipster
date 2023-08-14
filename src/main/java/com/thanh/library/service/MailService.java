@@ -1,5 +1,6 @@
 package com.thanh.library.service;
 
+import com.thanh.library.domain.Book;
 import com.thanh.library.domain.User;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -28,6 +29,8 @@ public class MailService {
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
+
+    private static final String BOOK = "book";
 
     private static final String BASE_URL = "baseUrl";
 
@@ -108,5 +111,33 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    @Async
+    public void sendBookRequestIsAvailable(User user, Book book) {
+        log.debug("Sending book request is available to '{}'", user.getEmail());
+        sendBookEmail(user, book, "mail/availableBookEmail", "email.availablebook.title");
+    }
+
+    @Async
+    public void sendReminderToReturnBook(User user, Book book) {
+        log.debug("Sending reminder to return book to '{}'", user.getEmail());
+        sendBookEmail(user, book, "mail/reminderToReturnBookEmail", "email.reminder.title");
+    }
+
+    @Async
+    public void sendBookEmail(User user, Book book, String templateName, String titleKey) {
+        if (user.getEmail() == null) {
+            log.debug("Email doesn't exist for user '{}'", user.getLogin());
+            return;
+        }
+        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Context context = new Context(locale);
+        context.setVariable(USER, user);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        context.setVariable(BOOK, book);
+        String content = templateEngine.process(templateName, context);
+        String subject = messageSource.getMessage(titleKey, null, locale);
+        sendEmail(user.getEmail(), subject, content, false, true);
     }
 }

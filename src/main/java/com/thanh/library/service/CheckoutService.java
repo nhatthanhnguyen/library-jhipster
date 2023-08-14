@@ -44,6 +44,8 @@ public class CheckoutService {
 
     private final BookRepository bookRepository;
 
+    private final MailService mailService;
+
     public CheckoutService(
         CheckoutRepository checkoutRepository,
         UserRepository userRepository,
@@ -52,7 +54,8 @@ public class CheckoutService {
         QueueRepository queueRepository,
         NotificationRepository notificationRepository,
         CheckoutMapper checkoutMapper,
-        BookRepository bookRepository
+        BookRepository bookRepository,
+        MailService mailService
     ) {
         this.checkoutRepository = checkoutRepository;
         this.userRepository = userRepository;
@@ -62,6 +65,7 @@ public class CheckoutService {
         this.notificationRepository = notificationRepository;
         this.checkoutMapper = checkoutMapper;
         this.bookRepository = bookRepository;
+        this.mailService = mailService;
     }
 
     public CheckoutDTO save(CheckoutDTO checkoutDTO) {
@@ -93,20 +97,42 @@ public class CheckoutService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CheckoutDTO> findAll(Pageable pageable) {
+    public Page<CheckoutDTO> findAll(Long userId, Long bookCopyId, String status, Pageable pageable) {
         log.debug("Request to get all Checkouts");
         String login = SecurityUtils
             .getCurrentUserLogin()
             .orElseThrow(() -> new BadRequestAlertException("Login not found", "User", "loginnotfound"));
-        User user = userRepository
+        User currentUser = userRepository
             .findOneByLogin(login)
             .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        Boolean isReturned = false;
+        if (status.equalsIgnoreCase("returnsuccess")) {
+            isReturned = true;
+        }
         Authority roleLibrarian = new Authority();
         roleLibrarian.setName("ROLE_LIBRARIAN");
-        if (user.getAuthorities().contains(roleLibrarian)) {
-            return checkoutRepository.findAll(pageable).map(checkoutMapper::toDto);
+        // if current user is librarian
+        if (currentUser.getAuthorities().contains(roleLibrarian)) {
+            if (status.equalsIgnoreCase("borrowing")) {
+                return checkoutRepository.findAllWithEndTimeNull(userId, bookCopyId, isReturned, pageable).map(checkoutMapper::toDto);
+            }
+            if (status.equalsIgnoreCase("all")) {
+                return checkoutRepository.findAllWithCondition(userId, bookCopyId, pageable).map(checkoutMapper::toDto);
+            }
+            return checkoutRepository.findAllWithEndTimeNotNull(userId, bookCopyId, isReturned, pageable).map(checkoutMapper::toDto);
         }
-        return checkoutRepository.findAllByCurrentUser(user.getId(), pageable).map(checkoutMapper::toDto);
+        // if current user is reader
+        if (status.equalsIgnoreCase("borrowing")) {
+            return checkoutRepository
+                .findAllWithEndTimeNull(currentUser.getId(), bookCopyId, isReturned, pageable)
+                .map(checkoutMapper::toDto);
+        }
+        if (status.equalsIgnoreCase("all")) {
+            return checkoutRepository.findAllWithCondition(currentUser.getId(), bookCopyId, pageable).map(checkoutMapper::toDto);
+        }
+        return checkoutRepository
+            .findAllWithEndTimeNotNull(currentUser.getId(), bookCopyId, isReturned, pageable)
+            .map(checkoutMapper::toDto);
     }
 
     public Page<CheckoutDTO> findAllWithEagerRelationships(Pageable pageable) {
@@ -134,7 +160,7 @@ public class CheckoutService {
             notification.setType(Type.AVAILABLE);
             notification.setSentAt(Instant.now());
             notificationRepository.save(notification);
-            // call mail service
+            mailService.sendBookRequestIsAvailable(notification.getUser(), notification.getBookCopy().getBook());
         });
     }
 
@@ -189,7 +215,7 @@ public class CheckoutService {
             notification.setType(Type.AVAILABLE);
             notification.setSentAt(Instant.now());
             notificationRepository.save(notification);
-            // call mail service
+            mailService.sendBookRequestIsAvailable(notification.getUser(), notification.getBookCopy().getBook());
         });
     }
 

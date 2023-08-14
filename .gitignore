@@ -36,6 +36,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+.env
 .factorypath
 /src/main/resources/rebel.xml
 

@@ -92,7 +92,7 @@
     "ribbon": {
       "dev": "Phát triển"
     },
-    "item-count": "Đang hiển thị {{first}} - {{second}} của {{total}}."
+    "item-count": "Đang hiển thị trang {{first}} / {{second}} trong tổng số {{total}} kết quả."
   },
   "entity": {
     "action": {
@@ -152,15 +152,16 @@
     "userexists": "Tên đăng nhập đã được sử dụng!",
     "emailexists": "Email đã được sử dụng!",
     "idexists": "Thêm mới {{ entityName }} không được trùng với định danh đã tồn tại",
-    "idnull": "Invalid ID",
-    "idinvalid": "Invalid Id",
-    "idnotfound": "ID cannot be found",
+    "idnull": "ID bị null",
+    "idinvalid": "ID không hợp lệ",
+    "idnotfound": "ID không thể được tìm thấy",
     "bookalreadyrestored": "Đầu sách đã được khôi phục trước đó",
     "bookalreadydeleted": "Đầu sách đã được xóa trước đó",
     "bookcopynotavailable": "Bản sao của Đầu sách không đủ",
     "usernotactivated": "Người dùng chưa được kích hoạt",
     "bookcopyisdeleted": "Bản sao của Đầu Sách không còn trong thư viện",
     "alreadyinqueue": "Người dùng và Đầu Sách đang ở trong hàng đợi",
+    "userdoesnothavepermission": "Người dùng không có quyền để thực hiện hành động này",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

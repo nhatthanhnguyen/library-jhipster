@@ -94,7 +94,7 @@
     "ribbon": {
       "dev": "Development"
     },
-    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+    "item-count": "Showing page {{first}} / {{second}} of {{total}} items."
   },
   "entity": {
     "action": {
@@ -164,6 +164,7 @@
     "usernotactivated": "User is not activated",
     "bookcopyisdeleted": "Book Copy is deleted",
     "alreadyinqueue": "User and Book are currently in Queue",
+    "userdoesnothavepermission": "User does not have permission to do this action",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

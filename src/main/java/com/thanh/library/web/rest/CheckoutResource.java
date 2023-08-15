@@ -121,7 +121,7 @@ public class CheckoutResource {
         @RequestParam(required = false, value = "status", defaultValue = "ALL") Status status
     ) {
         log.debug("REST request to get a page of Checkouts");
-        Page<CheckoutDTO> page = checkoutService.findAll(userId, bookCopyId, status.toString(), pageable);
+        Page<CheckoutDTO> page = checkoutService.getAllPaginationWithCondition(userId, bookCopyId, status.toString(), pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -145,14 +145,10 @@ public class CheckoutResource {
 
     @PostMapping("/checkouts/borrow")
     public ResponseEntity<Void> borrowBook(@RequestBody BorrowBookRequestDTO borrowBookRequestDTO) {
-        log.debug(
-            "REST request to borrow Book {} of User {} ",
-            borrowBookRequestDTO.getBookCopy().getBook(),
-            borrowBookRequestDTO.getUser().getId()
-        );
+        log.debug("REST request to borrow Book {} of User {} ", borrowBookRequestDTO.getBookCopyId(), borrowBookRequestDTO.getUserId());
         checkoutService.borrowBook(borrowBookRequestDTO);
-        String param = borrowBookRequestDTO.getBookCopy().getBook().getId().toString();
-        return ResponseEntity.noContent().headers(LibraryHeaderUtil.createBookCopyBorrowAlert(applicationName, true, param)).build();
+        String bookCopyId = borrowBookRequestDTO.getBookCopyId().toString();
+        return ResponseEntity.noContent().headers(LibraryHeaderUtil.createBookCopyBorrowAlert(applicationName, true, bookCopyId)).build();
     }
 
     @PutMapping("/checkouts/return")
@@ -166,11 +162,5 @@ public class CheckoutResource {
             .noContent()
             .headers(LibraryHeaderUtil.createBookCopyReturnAlert(applicationName, true, param, returnBookRequestDTO.isSuccess()))
             .build();
-    }
-
-    @PostMapping("/checkouts/books/{id}/wait")
-    public ResponseEntity<Void> addToQueue(@PathVariable("id") Long id) {
-        checkoutService.addToQueue(id);
-        return ResponseEntity.noContent().headers(LibraryHeaderUtil.createBookWaitAlert(applicationName, true, id.toString())).build();
     }
 }

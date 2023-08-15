@@ -19,7 +19,7 @@
       },
       "return": {
         "question": "Bạn có chắc là bạn muốn hoàn sách có bản sao với định danh {{ id }}?",
-        "success": "Hoàn trả",
+        "success": "Hoàn trả sách",
         "failed": "Mất sách"
       },
       "detail": {

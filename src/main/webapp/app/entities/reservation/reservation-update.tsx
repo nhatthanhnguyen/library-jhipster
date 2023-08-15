@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IBookCopy } from 'app/shared/model/book-copy.model';
-import { getEntities as getBookCopies } from 'app/entities/book-copy/book-copy.reducer';
-import { IReservation } from 'app/shared/model/reservation.model';
-import { getEntity, updateEntity, createEntity, reset } from './reservation.reducer';
+import { getAllEntities as getBookCopies } from 'app/entities/book-copy/book-copy.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './reservation.reducer';
 
 export const ReservationUpdate = () => {
   const dispatch = useAppDispatch();
@@ -42,7 +37,7 @@ export const ReservationUpdate = () => {
     }
 
     dispatch(getUsers({}));
-    dispatch(getBookCopies({}));
+    dispatch(getBookCopies());
   }, []);
 
   useEffect(() => {
@@ -69,8 +64,8 @@ export const ReservationUpdate = () => {
     }
   };
 
-  const defaultValues = () =>
-    isNew
+  const defaultValues = () => {
+    return isNew
       ? {
           startTime: displayDefaultDateTime(),
           endTime: displayDefaultDateTime(),
@@ -82,6 +77,7 @@ export const ReservationUpdate = () => {
           user: reservationEntity?.user?.id,
           bookCopy: reservationEntity?.bookCopy?.id,
         };
+  };
 
   return (
     <div>
@@ -112,6 +108,8 @@ export const ReservationUpdate = () => {
                 label={translate('libraryApp.reservation.startTime')}
                 id="reservation-startTime"
                 name="startTime"
+                readOnly
+                hidden={isNew}
                 data-cy="startTime"
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
@@ -120,6 +118,7 @@ export const ReservationUpdate = () => {
                 label={translate('libraryApp.reservation.endTime')}
                 id="reservation-endTime"
                 name="endTime"
+                hidden={isNew}
                 data-cy="endTime"
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"

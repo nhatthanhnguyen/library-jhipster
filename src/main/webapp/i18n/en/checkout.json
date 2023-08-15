@@ -19,8 +19,8 @@
       },
       "return": {
         "question": "Are you sure you want to return Book Copy with identifier {{ id }}?",
-        "success": "Return",
-        "failed": "Lost"
+        "success": "Return book",
+        "failed": "Lost book"
       },
       "detail": {
         "title": "Checkout"

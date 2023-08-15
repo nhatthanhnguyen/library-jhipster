@@ -12,8 +12,8 @@ export interface ICheckout {
 }
 
 export interface ICheckoutBorrow {
-  user?: IUser | null;
-  bookCopy?: IBookCopy | null;
+  userId?: number;
+  bookCopyId?: number;
 }
 
 export interface ICheckoutReturn {

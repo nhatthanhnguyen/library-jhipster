@@ -9,7 +9,7 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { IBook } from 'app/shared/model/book.model';
-import { getEntities as getBooks } from 'app/entities/book/book.reducer';
+import { getAllEntities as getBooks } from 'app/entities/book/book.reducer';
 import { IAuthor } from 'app/shared/model/author.model';
 import { getEntity, updateEntity, createEntity, reset } from './author.reducer';
 
@@ -21,7 +21,6 @@ export const AuthorUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
-  const books = useAppSelector(state => state.book.entities);
   const authorEntity = useAppSelector(state => state.author.entity);
   const loading = useAppSelector(state => state.author.loading);
   const updating = useAppSelector(state => state.author.updating);
@@ -37,8 +36,6 @@ export const AuthorUpdate = () => {
     } else {
       dispatch(getEntity(id));
     }
-
-    dispatch(getBooks({}));
   }, []);
 
   useEffect(() => {
@@ -111,14 +108,6 @@ export const AuthorUpdate = () => {
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
-              />
-              <ValidatedField
-                label={translate('libraryApp.author.isDeleted')}
-                id="author-isDeleted"
-                name="isDeleted"
-                data-cy="isDeleted"
-                check
-                type="checkbox"
               />
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/author" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />

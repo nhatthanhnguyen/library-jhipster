@@ -7,6 +7,7 @@ import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
 import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
+import com.thanh.library.service.dto.request.WaitBookRequestDTO;
 import com.thanh.library.service.mapper.CheckoutMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
@@ -97,7 +98,7 @@ public class CheckoutService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CheckoutDTO> findAll(Long userId, Long bookCopyId, String status, Pageable pageable) {
+    public Page<CheckoutDTO> getAllPaginationWithCondition(Long userId, Long bookCopyId, String status, Pageable pageable) {
         log.debug("Request to get all Checkouts");
         String login = SecurityUtils
             .getCurrentUserLogin()
@@ -156,9 +157,10 @@ public class CheckoutService {
         queues.forEach(queue -> {
             queueRepository.deleteById(queue.getId());
             Notification notification = new Notification();
-            notification.setUser(checkout.getUser());
+            notification.setUser(queue.getUser());
             notification.setType(Type.AVAILABLE);
             notification.setSentAt(Instant.now());
+            notification.setBookCopy(checkout.getBookCopy());
             notificationRepository.save(notification);
             mailService.sendBookRequestIsAvailable(notification.getUser(), notification.getBookCopy().getBook());
         });
@@ -166,13 +168,13 @@ public class CheckoutService {
 
     public void borrowBook(BorrowBookRequestDTO borrowBookRequestDTO) {
         User user = userRepository
-            .findById(borrowBookRequestDTO.getUser().getId())
+            .findById(borrowBookRequestDTO.getUserId())
             .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "idnotfound"));
         if (!user.isActivated()) {
             throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
         }
         BookCopy bookCopy = bookCopyRepository
-            .findById(borrowBookRequestDTO.getBookCopy().getId())
+            .findById(borrowBookRequestDTO.getBookCopyId())
             .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
         if (bookCopy.getIsDeleted()) {
             throw new BadRequestAlertException("Book Copy is deleted", "BookCopy", "bookcopyisdeleted");
@@ -211,27 +213,26 @@ public class CheckoutService {
         queues.forEach(queue -> {
             queueRepository.deleteById(queue.getId());
             Notification notification = new Notification();
-            notification.setUser(checkout.getUser());
+            notification.setUser(queue.getUser());
             notification.setType(Type.AVAILABLE);
             notification.setSentAt(Instant.now());
+            notification.setBookCopy(checkout.getBookCopy());
             notificationRepository.save(notification);
             mailService.sendBookRequestIsAvailable(notification.getUser(), notification.getBookCopy().getBook());
         });
     }
 
-    public void addToQueue(Long id) {
-        String userLogin = SecurityUtils
-            .getCurrentUserLogin()
-            .orElseThrow(() -> new BadRequestAlertException("User is not login", "User", "usernotlogin"));
-
+    public void addToQueue(WaitBookRequestDTO requestDTO) {
         User user = userRepository
-            .findOneByLogin(userLogin)
+            .findById(requestDTO.getUserId())
             .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
         if (!user.isActivated()) {
             throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
         }
 
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "booknotfound"));
+        Book book = bookRepository
+            .findById(requestDTO.getBookId())
+            .orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "booknotfound"));
         if (book.getIsDeleted()) {
             throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
         }

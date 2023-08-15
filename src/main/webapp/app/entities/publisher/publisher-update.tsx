@@ -97,14 +97,6 @@ export const PublisherUpdate = () => {
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
               />
-              <ValidatedField
-                label={translate('libraryApp.publisher.isDeleted')}
-                id="publisher-isDeleted"
-                name="isDeleted"
-                data-cy="isDeleted"
-                check
-                type="checkbox"
-              />
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/publisher" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

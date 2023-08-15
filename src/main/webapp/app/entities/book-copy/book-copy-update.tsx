@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IBook } from 'app/shared/model/book.model';
-import { getEntities as getBooks } from 'app/entities/book/book.reducer';
-import { IBookCopy } from 'app/shared/model/book-copy.model';
-import { getEntity, updateEntity, createEntity, reset } from './book-copy.reducer';
+import { getAllEntities as getBooks } from 'app/entities/book/book.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './book-copy.reducer';
 
 export const BookCopyUpdate = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +32,7 @@ export const BookCopyUpdate = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getBooks({}));
+    dispatch(getBooks());
   }, []);
 
   useEffect(() => {

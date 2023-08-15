@@ -4,6 +4,8 @@ import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { defaultValue, IBook } from 'app/shared/model/book.model';
+import { IHoldBook } from 'app/shared/model/reservation.model';
+import { IWaitBook } from 'app/shared/model/queue.model';
 
 const initialState: EntityState<IBook> = {
   loading: false,
@@ -23,6 +25,11 @@ export const getEntities = createAsyncThunk('book/fetch_entity_list', async ({ p
   const requestUrl = `${apiUrl}${
     sort ? `?page=${page}&size=${size}&sort=${sort}${query ? `&search=${query}` : ''}&` : '?'
   }cacheBuster=${new Date().getTime()}`;
+  return axios.get<IBook[]>(requestUrl);
+});
+
+export const getAllEntities = createAsyncThunk('book/fetch_all_entities', async () => {
+  const requestUrl = `${apiUrl}/all`;
   return axios.get<IBook[]>(requestUrl);
 });
 
@@ -89,9 +96,9 @@ export const restoreEntity = createAsyncThunk(
 
 export const holdBook = createAsyncThunk(
   'book/hold',
-  async (id: string | number, thunkAPI) => {
-    const requestUrl = `${apiUrl}/${id}/hold`;
-    const result = await axios.post<IBook>(requestUrl);
+  async (entity: IHoldBook, thunkAPI) => {
+    const requestUrl = `${apiUrl}/hold`;
+    const result = await axios.post<IBook>(requestUrl, cleanEntity(entity));
     thunkAPI.dispatch(getEntities({}));
     return result;
   },
@@ -100,9 +107,9 @@ export const holdBook = createAsyncThunk(
 
 export const addToQueue = createAsyncThunk(
   'book/add_to_queue',
-  async (id: string | number, thunkAPI) => {
-    const requestUrl = `${apiUrl}/${id}/wait`;
-    const result = await axios.post<IBook>(requestUrl);
+  async (entity: IWaitBook, thunkAPI) => {
+    const requestUrl = `${apiUrl}/wait`;
+    const result = await axios.post<IBook>(requestUrl, entity);
     thunkAPI.dispatch(getEntities({}));
     return result;
   },
@@ -162,13 +169,21 @@ export const BookSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
       })
+      .addMatcher(isFulfilled(getAllEntities), (state, action) => {
+        const { data, headers } = action.payload;
+        return {
+          ...state,
+          loading: false,
+          entities: data,
+        };
+      })
       .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, getAllEntities), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

@@ -3,6 +3,7 @@ package com.thanh.library.web.rest;
 import com.thanh.library.repository.ReservationRepository;
 import com.thanh.library.service.ReservationService;
 import com.thanh.library.service.dto.ReservationDTO;
+import com.thanh.library.service.dto.request.HoldBookRequestDTO;
 import com.thanh.library.util.LibraryHeaderUtil;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -47,12 +48,9 @@ public class ReservationResource {
     }
 
     @PostMapping("/reservations")
-    public ResponseEntity<ReservationDTO> createReservation(@RequestBody ReservationDTO reservationDTO) throws URISyntaxException {
-        log.debug("REST request to save Reservation : {}", reservationDTO);
-        if (reservationDTO.getId() != null) {
-            throw new BadRequestAlertException("A new reservation cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        ReservationDTO result = reservationService.save(reservationDTO);
+    public ResponseEntity<ReservationDTO> createReservation(@RequestBody HoldBookRequestDTO requestDTO) throws URISyntaxException {
+        log.debug("REST request to save Reservation : {}", requestDTO);
+        ReservationDTO result = reservationService.save(requestDTO);
         return ResponseEntity
             .created(new URI("/api/reservations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -114,12 +112,7 @@ public class ReservationResource {
         @RequestParam(required = false, defaultValue = "false") boolean eagerload
     ) {
         log.debug("REST request to get a page of Reservations");
-        Page<ReservationDTO> page;
-        if (eagerload) {
-            page = reservationService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = reservationService.findAll(pageable);
-        }
+        Page<ReservationDTO> page = reservationService.getAllPagination(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

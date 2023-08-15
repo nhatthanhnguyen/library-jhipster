@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IAuthor, defaultValue } from 'app/shared/model/author.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, IAuthor } from 'app/shared/model/author.model';
 
 const initialState: EntityState<IAuthor> = {
   loading: false,
@@ -21,6 +21,11 @@ const apiUrl = 'api/authors';
 
 export const getEntities = createAsyncThunk('author/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
+  return axios.get<IAuthor[]>(requestUrl);
+});
+
+export const getAllEntities = createAsyncThunk('author/fetch_all_entity', async () => {
+  const requestUrl = `${apiUrl}/all`;
   return axios.get<IAuthor[]>(requestUrl);
 });
 
@@ -116,13 +121,21 @@ export const AuthorSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
       })
+      .addMatcher(isFulfilled(getAllEntities), (state, action) => {
+        const { data, headers } = action.payload;
+        return {
+          ...state,
+          loading: false,
+          entities: data,
+        };
+      })
       .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity, restoreEntity), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, getAllEntities), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

@@ -16,7 +16,6 @@ const CheckoutRoutes = () => (
     <Route index element={<Checkout />} />
     <Route path="borrow" element={<CheckoutBorrow />} />
     <Route path="new" element={<CheckoutUpdate />} />
-    <Route path="book/:id/wait" element={<CheckoutWaitDialog />} />
     <Route path=":id">
       <Route index element={<CheckoutDetail />} />
       <Route path="edit" element={<CheckoutUpdate />} />

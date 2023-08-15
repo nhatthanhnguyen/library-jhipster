@@ -43,4 +43,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("select r from Reservation r where r.bookCopy.id = :bookCopyId and r.endTime is null")
     List<Reservation> findAllThatBookCopyIsBorrowed(@Param("bookCopyId") Long bookCopyId);
+
+    @Query(
+        value = "select r from Reservation r join fetch r.user where r.user.id = :userId",
+        countQuery = "select count(r) from Reservation r where r.user.id = :userId"
+    )
+    Page<Reservation> getAllByUserPagination(@Param("userId") Long userId, Pageable pageable);
 }

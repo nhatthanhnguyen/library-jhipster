@@ -1,14 +1,24 @@
 package com.thanh.library.service;
 
+import com.thanh.library.domain.Book;
 import com.thanh.library.domain.BookCopy;
+import com.thanh.library.domain.Notification;
+import com.thanh.library.domain.Queue;
+import com.thanh.library.domain.enumeration.Type;
 import com.thanh.library.repository.BookCopyRepository;
+import com.thanh.library.repository.NotificationRepository;
+import com.thanh.library.repository.QueueRepository;
 import com.thanh.library.service.dto.BookCopyDTO;
 import com.thanh.library.service.mapper.BookCopyMapper;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,32 +33,48 @@ public class BookCopyService {
 
     private final BookCopyRepository bookCopyRepository;
 
+    private final QueueRepository queueRepository;
+
+    private final NotificationRepository notificationRepository;
+
     private final BookCopyMapper bookCopyMapper;
 
-    public BookCopyService(BookCopyRepository bookCopyRepository, BookCopyMapper bookCopyMapper) {
+    private final MailService mailService;
+
+    public BookCopyService(
+        BookCopyRepository bookCopyRepository,
+        QueueRepository queueRepository,
+        NotificationRepository notificationRepository,
+        BookCopyMapper bookCopyMapper,
+        MailService mailService
+    ) {
         this.bookCopyRepository = bookCopyRepository;
+        this.queueRepository = queueRepository;
+        this.notificationRepository = notificationRepository;
         this.bookCopyMapper = bookCopyMapper;
+        this.mailService = mailService;
     }
 
-    /**
-     * Save a bookCopy.
-     *
-     * @param bookCopyDTO the entity to save.
-     * @return the persisted entity.
-     */
     public BookCopyDTO save(BookCopyDTO bookCopyDTO) {
         log.debug("Request to save BookCopy : {}", bookCopyDTO);
         BookCopy bookCopy = bookCopyMapper.toEntity(bookCopyDTO);
         bookCopy = bookCopyRepository.save(bookCopy);
+        Book book = bookCopy.getBook();
+        List<Queue> queues = queueRepository.findByBookId(book.getId());
+        BookCopy finalBookCopy = bookCopy;
+        queues.forEach(queue -> {
+            queueRepository.deleteById(queue.getId());
+            Notification notification = new Notification();
+            notification.setUser(queue.getUser());
+            notification.setType(Type.AVAILABLE);
+            notification.setSentAt(Instant.now());
+            notification.setBookCopy(finalBookCopy);
+            notificationRepository.save(notification);
+            mailService.sendBookRequestIsAvailable(notification.getUser(), notification.getBookCopy().getBook());
+        });
         return bookCopyMapper.toDto(bookCopy);
     }
 
-    /**
-     * Update a bookCopy.
-     *
-     * @param bookCopyDTO the entity to save.
-     * @return the persisted entity.
-     */
     public BookCopyDTO update(BookCopyDTO bookCopyDTO) {
         log.debug("Request to update BookCopy : {}", bookCopyDTO);
         BookCopy bookCopy = bookCopyMapper.toEntity(bookCopyDTO);
@@ -56,12 +82,6 @@ public class BookCopyService {
         return bookCopyMapper.toDto(bookCopy);
     }
 
-    /**
-     * Partially update a bookCopy.
-     *
-     * @param bookCopyDTO the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<BookCopyDTO> partialUpdate(BookCopyDTO bookCopyDTO) {
         log.debug("Request to partially update BookCopy : {}", bookCopyDTO);
 
@@ -76,44 +96,26 @@ public class BookCopyService {
             .map(bookCopyMapper::toDto);
     }
 
-    /**
-     * Get all the bookCopies.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
-    public Page<BookCopyDTO> findAll(Pageable pageable) {
+    public Page<BookCopyDTO> getAllBookCopiesPagination(Pageable pageable) {
         log.debug("Request to get all BookCopies");
         return bookCopyRepository.findAll(pageable).map(bookCopyMapper::toDto);
     }
 
-    /**
-     * Get all the bookCopies with eager load of many-to-many relationships.
-     *
-     * @return the list of entities.
-     */
+    public List<BookCopyDTO> getAllBookCopies() {
+        return bookCopyRepository.findAll(Sort.by("id")).stream().map(bookCopyMapper::toDto).collect(Collectors.toList());
+    }
+
     public Page<BookCopyDTO> findAllWithEagerRelationships(Pageable pageable) {
         return bookCopyRepository.findAllWithEagerRelationships(pageable).map(bookCopyMapper::toDto);
     }
 
-    /**
-     * Get one bookCopy by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Transactional(readOnly = true)
     public Optional<BookCopyDTO> findOne(Long id) {
         log.debug("Request to get BookCopy : {}", id);
         return bookCopyRepository.findOneWithEagerRelationships(id).map(bookCopyMapper::toDto);
     }
 
-    /**
-     * Delete the bookCopy by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         log.debug("Request to delete BookCopy : {}", id);
         bookCopyRepository.deleteById(id);

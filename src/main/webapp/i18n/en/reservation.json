@@ -25,7 +25,8 @@
       "startTime": "Start Time",
       "endTime": "End Time",
       "user": "User",
-      "bookCopy": "Book Copy"
+      "bookCopy": "Book Copy",
+      "book": "Book"
     }
   }
 }

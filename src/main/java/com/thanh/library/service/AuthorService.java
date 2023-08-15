@@ -11,11 +11,14 @@ import com.thanh.library.service.dto.response.ResponseMessageDTO;
 import com.thanh.library.service.mapper.AuthorMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,7 +72,7 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AuthorDTO> findAll(Pageable pageable) {
+    public Page<AuthorDTO> getAllAuthorsPagination(Pageable pageable) {
         log.debug("Request to get all Authors");
         String login = SecurityUtils
             .getCurrentUserLogin()
@@ -89,6 +92,10 @@ public class AuthorService {
     public Optional<AuthorDTO> findOne(Long id) {
         log.debug("Request to get Author : {}", id);
         return authorRepository.findById(id).map(authorMapper::toDto);
+    }
+
+    public List<AuthorDTO> getAllAuthors() {
+        return authorRepository.findAll(Sort.by("id")).stream().map(authorMapper::toDto).collect(Collectors.toList());
     }
 
     public ResponseMessageDTO delete(Long id) {

@@ -7,6 +7,8 @@ import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.cons
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './book-copy.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 
 export const BookCopy = () => {
   const dispatch = useAppDispatch();
@@ -104,11 +106,11 @@ export const BookCopy = () => {
                 <th className="hand" onClick={sort('isDeleted')}>
                   <Translate contentKey="libraryApp.bookCopy.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
+                <th className="hand" onClick={sort('book.title')}>
                   <Translate contentKey="libraryApp.bookCopy.book">Book</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  <Translate contentKey="libraryApp.bookCopy.publisher">Publisher</Translate>
+                <th className="hand" onClick={sort('book.publisher.name')}>
+                  <Translate contentKey="libraryApp.bookCopy.publisher">Publisher</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>

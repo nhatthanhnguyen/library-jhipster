@@ -111,11 +111,16 @@ public class AuthorResource {
     }
 
     @GetMapping("/authors")
-    public ResponseEntity<List<AuthorDTO>> getAllAuthors(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<AuthorDTO>> getAllAuthorsPagination(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Authors");
-        Page<AuthorDTO> page = authorService.findAll(pageable);
+        Page<AuthorDTO> page = authorService.getAllAuthorsPagination(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/authors/all")
+    public ResponseEntity<List<AuthorDTO>> getAllPagination() {
+        return ResponseEntity.ok().body(authorService.getAllAuthors());
     }
 
     @GetMapping("/authors/{id}")

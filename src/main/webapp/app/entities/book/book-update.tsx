@@ -9,11 +9,11 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { IPublisher } from 'app/shared/model/publisher.model';
-import { getEntities as getPublishers } from 'app/entities/publisher/publisher.reducer';
+import { getAllEntities as getPublishers } from 'app/entities/publisher/publisher.reducer';
 import { IAuthor } from 'app/shared/model/author.model';
-import { getEntities as getAuthors } from 'app/entities/author/author.reducer';
+import { getAllEntities as getAuthors } from 'app/entities/author/author.reducer';
 import { ICategory } from 'app/shared/model/category.model';
-import { getEntities as getCategories } from 'app/entities/category/category.reducer';
+import { getAllEntities as getCategories } from 'app/entities/category/category.reducer';
 import { IBook } from 'app/shared/model/book.model';
 import { getEntity, updateEntity, createEntity, reset } from './book.reducer';
 
@@ -44,9 +44,9 @@ export const BookUpdate = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getPublishers({}));
-    dispatch(getAuthors({}));
-    dispatch(getCategories({}));
+    dispatch(getPublishers());
+    dispatch(getAuthors());
+    dispatch(getCategories());
   }, []);
 
   useEffect(() => {

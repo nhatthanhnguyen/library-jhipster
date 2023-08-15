@@ -25,7 +25,8 @@
       "startTime": "Thời gian bắt đầu",
       "endTime": "Thời gian kết thúc",
       "user": "Người dùng",
-      "bookCopy": "Bản copy đầu sách"
+      "bookCopy": "Bản copy đầu sách",
+      "book": "Đầu sách"
     }
   }
 }

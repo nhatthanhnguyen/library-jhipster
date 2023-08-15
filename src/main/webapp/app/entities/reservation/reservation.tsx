@@ -4,11 +4,12 @@ import { Button, Table } from 'reactstrap';
 import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './reservation.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const Reservation = () => {
   const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ export const Reservation = () => {
   const reservationList = useAppSelector(state => state.reservation.entities);
   const loading = useAppSelector(state => state.reservation.loading);
   const totalItems = useAppSelector(state => state.reservation.totalItems);
+  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
 
   const getAllEntities = () => {
     dispatch(
@@ -88,11 +90,13 @@ export const Reservation = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.reservation.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/reservation/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="libraryApp.reservation.home.createLabel">Create new Reservation</Translate>
-          </Link>
+          {isLibrarian ? (
+            <Link to="/reservation/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp;
+              <Translate contentKey="libraryApp.reservation.home.createLabel">Create new Reservation</Translate>
+            </Link>
+          ) : null}
         </div>
       </h2>
       <div className="table-responsive">
@@ -148,6 +152,17 @@ export const Reservation = () => {
                           </span>
                         </Button>
                       )}
+                      {/* <Button
+                        tag={Link}
+                        to={`/reservation/${reservation.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        size="sm"
+                        data-cy="editButton"
+                      >
+                        <FontAwesomeIcon icon="pencil-alt"/>{' '}
+                        <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.edit">Edit</Translate>
+                          </span>
+                      </Button> */}
                       <Button
                         tag={Link}
                         to={`/reservation/${reservation.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

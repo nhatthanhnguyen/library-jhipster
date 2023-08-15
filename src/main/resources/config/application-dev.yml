@@ -50,6 +50,12 @@ spring:
     port: 587
     username: nhatthanhlep26@gmail.com
     password: zsqnwkbleunmdnxw
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:

@@ -2,11 +2,10 @@ package com.thanh.library.service;
 
 import com.thanh.library.domain.*;
 import com.thanh.library.domain.enumeration.Type;
-import com.thanh.library.repository.CheckoutRepository;
-import com.thanh.library.repository.NotificationRepository;
-import com.thanh.library.repository.QueueRepository;
-import com.thanh.library.repository.ReservationRepository;
+import com.thanh.library.repository.*;
+import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.ReservationDTO;
+import com.thanh.library.service.dto.request.HoldBookRequestDTO;
 import com.thanh.library.service.mapper.ReservationMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
@@ -36,6 +35,12 @@ public class ReservationService {
 
     private final NotificationRepository notificationRepository;
 
+    private final UserRepository userRepository;
+
+    private final BookRepository bookRepository;
+
+    private final BookCopyRepository bookCopyRepository;
+
     private final ReservationMapper reservationMapper;
 
     private final MailService mailService;
@@ -45,6 +50,9 @@ public class ReservationService {
         CheckoutRepository checkoutRepository,
         QueueRepository queueRepository,
         NotificationRepository notificationRepository,
+        UserRepository userRepository,
+        BookRepository bookRepository,
+        BookCopyRepository bookCopyRepository,
         ReservationMapper reservationMapper,
         MailService mailService
     ) {
@@ -52,13 +60,36 @@ public class ReservationService {
         this.checkoutRepository = checkoutRepository;
         this.queueRepository = queueRepository;
         this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.bookCopyRepository = bookCopyRepository;
         this.reservationMapper = reservationMapper;
         this.mailService = mailService;
     }
 
-    public ReservationDTO save(ReservationDTO reservationDTO) {
-        log.debug("Request to save Reservation : {}", reservationDTO);
-        Reservation reservation = reservationMapper.toEntity(reservationDTO);
+    public ReservationDTO save(HoldBookRequestDTO requestDTO) {
+        log.debug("Request to save Reservation : {}", requestDTO);
+        User user = userRepository
+            .findById(requestDTO.getUserId())
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "idnotfound"));
+        if (!user.isActivated()) {
+            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
+        }
+        Book book = bookRepository
+            .findById(requestDTO.getBookId())
+            .orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
+        if (book.getIsDeleted()) {
+            throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
+        }
+
+        List<BookCopy> bookCopies = bookCopyRepository.findBookCopiesAvailableByBookId(requestDTO.getBookId());
+        if (bookCopies.isEmpty()) {
+            throw new BadRequestAlertException("Book Copy is not available", "BookCopy", "bookcopynotavailable");
+        }
+        Reservation reservation = new Reservation();
+        reservation.setStartTime(Instant.now());
+        reservation.setUser(user);
+        reservation.setBookCopy(bookCopies.get(0));
         reservation = reservationRepository.save(reservation);
         return reservationMapper.toDto(reservation);
     }
@@ -85,9 +116,19 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ReservationDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Reservations");
-        return reservationRepository.findAll(pageable).map(reservationMapper::toDto);
+    public Page<ReservationDTO> getAllPagination(Pageable pageable) {
+        String login = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Login not found", "User", "loginnotfound"));
+        User currentUser = userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        Authority librarianRole = new Authority();
+        librarianRole.setName("ROLE_LIBRARIAN");
+        if (currentUser.getAuthorities().contains(librarianRole)) {
+            return reservationRepository.findAll(pageable).map(reservationMapper::toDto);
+        }
+        return reservationRepository.getAllByUserPagination(currentUser.getId(), pageable).map(reservationMapper::toDto);
     }
 
     public Page<ReservationDTO> findAllWithEagerRelationships(Pageable pageable) {

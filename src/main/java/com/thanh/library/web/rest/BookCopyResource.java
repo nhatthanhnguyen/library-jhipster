@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -46,13 +45,6 @@ public class BookCopyResource {
         this.bookCopyRepository = bookCopyRepository;
     }
 
-    /**
-     * {@code POST  /book-copies} : Create a new bookCopy.
-     *
-     * @param bookCopyDTO the bookCopyDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new bookCopyDTO, or with status {@code 400 (Bad Request)} if the bookCopy has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/book-copies")
     public ResponseEntity<BookCopyDTO> createBookCopy(@RequestBody BookCopyDTO bookCopyDTO) throws URISyntaxException {
         log.debug("REST request to save BookCopy : {}", bookCopyDTO);
@@ -66,16 +58,6 @@ public class BookCopyResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /book-copies/:id} : Updates an existing bookCopy.
-     *
-     * @param id the id of the bookCopyDTO to save.
-     * @param bookCopyDTO the bookCopyDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bookCopyDTO,
-     * or with status {@code 400 (Bad Request)} if the bookCopyDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the bookCopyDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/book-copies/{id}")
     public ResponseEntity<BookCopyDTO> updateBookCopy(
         @PathVariable(value = "id", required = false) final Long id,
@@ -100,17 +82,6 @@ public class BookCopyResource {
             .body(result);
     }
 
-    /**
-     * {@code PATCH  /book-copies/:id} : Partial updates given fields of an existing bookCopy, field will ignore if it is null
-     *
-     * @param id the id of the bookCopyDTO to save.
-     * @param bookCopyDTO the bookCopyDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bookCopyDTO,
-     * or with status {@code 400 (Bad Request)} if the bookCopyDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the bookCopyDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the bookCopyDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/book-copies/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<BookCopyDTO> partialUpdateBookCopy(
         @PathVariable(value = "id", required = false) final Long id,
@@ -136,15 +107,8 @@ public class BookCopyResource {
         );
     }
 
-    /**
-     * {@code GET  /book-copies} : get all the bookCopies.
-     *
-     * @param pageable the pagination information.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of bookCopies in body.
-     */
     @GetMapping("/book-copies")
-    public ResponseEntity<List<BookCopyDTO>> getAllBookCopies(
+    public ResponseEntity<List<BookCopyDTO>> getAllBookCopiesPagination(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false, defaultValue = "false") boolean eagerload
     ) {
@@ -153,18 +117,17 @@ public class BookCopyResource {
         if (eagerload) {
             page = bookCopyService.findAllWithEagerRelationships(pageable);
         } else {
-            page = bookCopyService.findAll(pageable);
+            page = bookCopyService.getAllBookCopiesPagination(pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /book-copies/:id} : get the "id" bookCopy.
-     *
-     * @param id the id of the bookCopyDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bookCopyDTO, or with status {@code 404 (Not Found)}.
-     */
+    @GetMapping("/book-copies/all")
+    public ResponseEntity<List<BookCopyDTO>> getAllBookCopies() {
+        return ResponseEntity.ok().body(bookCopyService.getAllBookCopies());
+    }
+
     @GetMapping("/book-copies/{id}")
     public ResponseEntity<BookCopyDTO> getBookCopy(@PathVariable Long id) {
         log.debug("REST request to get BookCopy : {}", id);
@@ -172,12 +135,6 @@ public class BookCopyResource {
         return ResponseUtil.wrapOrNotFound(bookCopyDTO);
     }
 
-    /**
-     * {@code DELETE  /book-copies/:id} : delete the "id" bookCopy.
-     *
-     * @param id the id of the bookCopyDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/book-copies/{id}")
     public ResponseEntity<Void> deleteBookCopy(@PathVariable Long id) {
         log.debug("REST request to delete BookCopy : {}", id);

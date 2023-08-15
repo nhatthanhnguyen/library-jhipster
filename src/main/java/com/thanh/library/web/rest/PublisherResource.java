@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -48,13 +47,6 @@ public class PublisherResource {
         this.publisherRepository = publisherRepository;
     }
 
-    /**
-     * {@code POST  /publishers} : Create a new publisher.
-     *
-     * @param publisherDTO the publisherDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new publisherDTO, or with status {@code 400 (Bad Request)} if the publisher has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/publishers")
     public ResponseEntity<PublisherDTO> createPublisher(@Valid @RequestBody PublisherDTO publisherDTO) throws URISyntaxException {
         log.debug("REST request to save Publisher : {}", publisherDTO);
@@ -68,16 +60,6 @@ public class PublisherResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /publishers/:id} : Updates an existing publisher.
-     *
-     * @param id the id of the publisherDTO to save.
-     * @param publisherDTO the publisherDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated publisherDTO,
-     * or with status {@code 400 (Bad Request)} if the publisherDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the publisherDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/publishers/{id}")
     public ResponseEntity<PublisherDTO> updatePublisher(
         @PathVariable(value = "id", required = false) final Long id,
@@ -102,17 +84,6 @@ public class PublisherResource {
             .body(result);
     }
 
-    /**
-     * {@code PATCH  /publishers/:id} : Partial updates given fields of an existing publisher, field will ignore if it is null
-     *
-     * @param id the id of the publisherDTO to save.
-     * @param publisherDTO the publisherDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated publisherDTO,
-     * or with status {@code 400 (Bad Request)} if the publisherDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the publisherDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the publisherDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/publishers/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<PublisherDTO> partialUpdatePublisher(
         @PathVariable(value = "id", required = false) final Long id,
@@ -138,26 +109,19 @@ public class PublisherResource {
         );
     }
 
-    /**
-     * {@code GET  /publishers} : get all the publishers.
-     *
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of publishers in body.
-     */
     @GetMapping("/publishers")
-    public ResponseEntity<List<PublisherDTO>> getAllPublishers(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<PublisherDTO>> getAllPublishersPagination(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Publishers");
-        Page<PublisherDTO> page = publisherService.findAll(pageable);
+        Page<PublisherDTO> page = publisherService.getAllPagination(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /publishers/:id} : get the "id" publisher.
-     *
-     * @param id the id of the publisherDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the publisherDTO, or with status {@code 404 (Not Found)}.
-     */
+    @GetMapping("/publishers/all")
+    public ResponseEntity<List<PublisherDTO>> getAllPublishers() {
+        return ResponseEntity.ok().body(publisherService.getAll());
+    }
+
     @GetMapping("/publishers/{id}")
     public ResponseEntity<PublisherDTO> getPublisher(@PathVariable Long id) {
         log.debug("REST request to get Publisher : {}", id);
@@ -165,12 +129,6 @@ public class PublisherResource {
         return ResponseUtil.wrapOrNotFound(publisherDTO);
     }
 
-    /**
-     * {@code DELETE  /publishers/:id} : delete the "id" publisher.
-     *
-     * @param id the id of the publisherDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/publishers/{id}")
     public ResponseEntity<Void> deletePublisher(@PathVariable Long id) {
         log.debug("REST request to delete Publisher : {}", id);

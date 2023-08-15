@@ -4,6 +4,7 @@ import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { defaultValue, ICheckout, ICheckoutBorrow, ICheckoutReturn } from 'app/shared/model/checkout.model';
+import { IWaitBook } from 'app/shared/model/queue.model';
 
 const initialState: EntityState<ICheckout> = {
   loading: false,
@@ -96,8 +97,8 @@ export const returnBook = createAsyncThunk(
 
 export const addToQueue = createAsyncThunk(
   'checkout/add_to_queue',
-  async (id: string | number, thunkAPI) => {
-    return await axios.post<ICheckout>(`${apiUrl}/books/${id}/wait`);
+  async (entity: IWaitBook, thunkAPI) => {
+    return await axios.post<ICheckout>(`${apiUrl}/wait`, cleanEntity(entity));
   },
   { serializeError: serializeAxiosError }
 );

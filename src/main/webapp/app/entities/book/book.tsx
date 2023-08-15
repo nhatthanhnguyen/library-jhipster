@@ -1,6 +1,6 @@
-import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Input, InputGroup, Table } from 'reactstrap';
+import { Button, Input, InputGroup, Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap';
 import { JhiItemCount, JhiPagination, TextFormat, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -8,8 +8,10 @@ import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { getCurrentSortState, overridePaginationStateWithQueryParamsWithSearch } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntities } from './book.reducer';
+import { addToQueue, getEntities, getEntity, holdBook } from './book.reducer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { toNumber } from 'lodash';
+import { IHoldBook } from 'app/shared/model/reservation.model';
 
 export const Book = () => {
   const dispatch = useAppDispatch();
@@ -21,11 +23,16 @@ export const Book = () => {
     overridePaginationStateWithQueryParamsWithSearch(getCurrentSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
   const [searchText, setSearchText] = useState<string>(paginationState.search ?? '');
+  const [confirmModal, setConfirmModal] = useState<boolean>(false);
+  const [waitModal, setWaitModal] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<number>(0);
 
   const bookList = useAppSelector(state => state.book.entities);
   const loading = useAppSelector(state => state.book.loading);
   const totalItems = useAppSelector(state => state.book.totalItems);
   const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
+  const bookEntity = useAppSelector(state => state.book.entity);
+  const currentUser = useAppSelector(state => state.authentication.account);
 
   const getAllEntities = () => {
     dispatch(
@@ -109,6 +116,48 @@ export const Book = () => {
       search: '',
     });
     setSearchText('');
+  };
+
+  const handleCloseWaitModal = () => {
+    setWaitModal(false);
+    handleSyncList();
+  };
+
+  const handleCloseConfirmModal = () => {
+    setConfirmModal(false);
+    handleSyncList();
+  };
+
+  const confirmHold = () => {
+    const entity: IHoldBook = {
+      userId: toNumber(currentUser?.id),
+      bookId: toNumber(selectedId),
+    };
+    dispatch(holdBook(entity)).then(response => {
+      if (response.type.includes('rejected')) {
+        setConfirmModal(false);
+        setWaitModal(true);
+      } else {
+        handleCloseConfirmModal();
+      }
+    });
+  };
+
+  const holdThisBook = bookId => {
+    dispatch(getEntity(bookId)).then(() => {
+      setSelectedId(bookId);
+      setConfirmModal(true);
+      setWaitModal(false);
+    });
+  };
+  const confirmAddToQueue = () => {
+    const entity = {
+      userId: currentUser?.id,
+      bookId: selectedId,
+    };
+    dispatch(addToQueue(entity)).then(() => {
+      handleCloseWaitModal();
+    });
   };
 
   return (
@@ -238,9 +287,7 @@ export const Book = () => {
                               data-cy="entityDeleteButton"
                             >
                               <FontAwesomeIcon icon="trash" />{' '}
-                              <span className="d-none d-md-inline">
-                                <Translate contentKey="entity.action.delete">Delete</Translate>
-                              </span>
+                              <span className="d-none d-md-inline">{translate('entity.action.delete')}</span>
                             </Button>
                           ) : (
                             <Button
@@ -251,16 +298,15 @@ export const Book = () => {
                               data-cy="entityRestoreButton"
                             >
                               <FontAwesomeIcon icon="rotate-left" />{' '}
-                              <span className="d-none d-md-inline">
-                                <Translate contentKey="entity.action.restore">Restore</Translate>
-                              </span>
+                              <span className="d-none d-md-inline">{translate('entity.action.restore')}</span>
                             </Button>
                           )}
                         </>
                       ) : (
                         <>
-                          <Button tag={Link} color="primary" size="sm" data-cy="HoldBookButton" to={`/book/${book.id}/hold`}>
-                            <FontAwesomeIcon icon="book-bookmark" /> <Translate contentKey="entity.action.hold">Hold this book</Translate>
+                          <Button color="primary" size="sm" data-cy="HoldBookButton" onClick={() => holdThisBook(book.id)}>
+                            <FontAwesomeIcon icon="book-bookmark" />
+                            <Translate contentKey="entity.action.hold">Hold this book</Translate>
                           </Button>
                           <Button tag={Link} to={`/book/${book.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                             <FontAwesomeIcon icon="eye" />{' '}
@@ -302,6 +348,50 @@ export const Book = () => {
       ) : (
         ''
       )}
+      <Modal isOpen={confirmModal} toggle={handleCloseConfirmModal}>
+        <ModalHeader toggle={handleCloseConfirmModal} data-cy="bookReservationDialogHeading">
+          <Translate contentKey="libraryApp.book.hold.title">Confirm hold operation</Translate>
+        </ModalHeader>
+        <ModalBody id="libraryApp.book.hold.question">
+          <Translate contentKey="libraryApp.book.hold.question" interpolate={{ title: bookEntity.title }}>
+            Are you sure you want to hold this Book?
+          </Translate>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={handleCloseConfirmModal}>
+            <FontAwesomeIcon icon="ban" />
+            &nbsp;
+            <Translate contentKey="entity.action.cancel">Cancel</Translate>
+          </Button>
+          <Button id="jhi-confirm-hold-book" data-cy="entityConfirmHoldButton" color="success" onClick={confirmHold}>
+            <FontAwesomeIcon icon="book-bookmark" />
+            &nbsp;
+            <Translate contentKey="entity.action.hold">Hold</Translate>
+          </Button>
+        </ModalFooter>
+      </Modal>
+      <Modal isOpen={waitModal} toggle={handleCloseWaitModal}>
+        <ModalHeader toggle={handleCloseWaitModal} data-cy="bookWaitDialogHeading">
+          <Translate contentKey="libraryApp.book.wait.title">Confirm add to queue operation</Translate>
+        </ModalHeader>
+        <ModalBody id="libraryApp.book.wait.question">
+          <Translate contentKey="libraryApp.book.wait.question" interpolate={{ title: bookEntity?.title }}>
+            Are you sure you want to add to Queue of this Book?
+          </Translate>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={handleCloseWaitModal}>
+            <FontAwesomeIcon icon="ban" />
+            &nbsp;
+            <Translate contentKey="entity.action.cancel">Cancel</Translate>
+          </Button>
+          <Button id="jhi-confirm-restore-book" data-cy="bookWaitButton" color="success" onClick={confirmAddToQueue}>
+            <FontAwesomeIcon icon="check" />
+            &nbsp;
+            <Translate contentKey="entity.action.wait">Add to queue</Translate>
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 };

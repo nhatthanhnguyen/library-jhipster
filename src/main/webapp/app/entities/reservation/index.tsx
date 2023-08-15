@@ -8,11 +8,12 @@ import ReservationDetail from './reservation-detail';
 import ReservationUpdate from './reservation-update';
 import ReservationDeleteDialog from './reservation-delete-dialog';
 import ReservationBorrowDialog from 'app/entities/reservation/reservation-borrow-dialog';
+import ReservationCreate from 'app/entities/reservation/reservation-create';
 
 const ReservationRoutes = () => (
   <ErrorBoundaryRoutes>
     <Route index element={<Reservation />} />
-    <Route path="new" element={<ReservationUpdate />} />
+    <Route path="new" element={<ReservationCreate />} />
     <Route path=":id">
       <Route index element={<ReservationDetail />} />
       <Route path="edit" element={<ReservationUpdate />} />

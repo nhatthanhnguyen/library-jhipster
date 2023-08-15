@@ -3,7 +3,7 @@ import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { defaultValue, IReservation } from 'app/shared/model/reservation.model';
+import { defaultValue, IHoldBook, IReservation } from 'app/shared/model/reservation.model';
 
 const initialState: EntityState<IReservation> = {
   loading: false,
@@ -35,7 +35,7 @@ export const getEntity = createAsyncThunk(
 
 export const createEntity = createAsyncThunk(
   'reservation/create_entity',
-  async (entity: IReservation, thunkAPI) => {
+  async (entity: IHoldBook, thunkAPI) => {
     const result = await axios.post<IReservation>(apiUrl, cleanEntity(entity));
     thunkAPI.dispatch(getEntities({}));
     return result;
@@ -100,12 +100,6 @@ export const ReservationSlice = createEntitySlice({
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
-      })
-      .addCase(borrowBook.fulfilled, state => {
-        state.updateSuccess = true;
-        state.updating = false;
-        state.entity = {};
-        state.errorMessage = null;
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
         const { data, headers } = action.payload;

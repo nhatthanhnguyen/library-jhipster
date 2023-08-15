@@ -38,7 +38,7 @@ export const CheckoutReturnDialog = () => {
   const confirmReturn = (success: boolean) => {
     dispatch(
       returnBook({
-        id: checkoutEntity.bookCopy.id,
+        id: checkoutEntity.id,
         success,
       })
     );
@@ -50,7 +50,7 @@ export const CheckoutReturnDialog = () => {
         <Translate contentKey="entity.return.title">Confirm delete operation</Translate>
       </ModalHeader>
       <ModalBody id="libraryApp.checkout.return.question">
-        <Translate contentKey="libraryApp.checkout.return.question" interpolate={{ id: checkoutEntity.bookCopy.id }}>
+        <Translate contentKey="libraryApp.checkout.return.question" interpolate={{ id: checkoutEntity?.bookCopy?.id }}>
           Are you sure you want to borrow Book Copy?
         </Translate>
       </ModalBody>

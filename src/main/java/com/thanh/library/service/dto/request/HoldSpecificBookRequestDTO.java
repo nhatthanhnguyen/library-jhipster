@@ -2,15 +2,14 @@ package com.thanh.library.service.dto.request;
 
 import java.util.Objects;
 
-public class BorrowBookRequestDTO {
+public class HoldSpecificBookRequestDTO {
 
     private Long userId;
-
     private Long bookCopyId;
 
-    public BorrowBookRequestDTO() {}
+    public HoldSpecificBookRequestDTO() {}
 
-    public BorrowBookRequestDTO(Long userId, Long bookCopyId) {
+    public HoldSpecificBookRequestDTO(Long userId, Long bookCopyId) {
         this.userId = userId;
         this.bookCopyId = bookCopyId;
     }
@@ -35,12 +34,17 @@ public class BorrowBookRequestDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BorrowBookRequestDTO that = (BorrowBookRequestDTO) o;
+        HoldSpecificBookRequestDTO that = (HoldSpecificBookRequestDTO) o;
         return Objects.equals(userId, that.userId) && Objects.equals(bookCopyId, that.bookCopyId);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(userId, bookCopyId);
+    }
+
+    @Override
+    public String toString() {
+        return "HoldSpecificBookRequestDTO{" + "userId=" + userId + ", bookCopyId=" + bookCopyId + '}';
     }
 }

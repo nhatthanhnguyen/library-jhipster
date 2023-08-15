@@ -9,4 +9,9 @@ export interface IQueue {
   book?: IBook | null;
 }
 
+export interface IWaitBook {
+  userId?: number;
+  bookId?: number;
+}
+
 export const defaultValue: Readonly<IQueue> = {};

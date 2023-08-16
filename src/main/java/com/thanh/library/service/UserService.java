@@ -9,6 +9,8 @@ import com.thanh.library.security.AuthoritiesConstants;
 import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.AdminUserDTO;
 import com.thanh.library.service.dto.UserDTO;
+import com.thanh.library.web.rest.errors.BadRequestAlertException;
+import com.thanh.library.web.rest.errors.LoginAlreadyUsedException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,22 @@ import tech.jhipster.security.RandomUtil;
 @Service
 @Transactional
 public class UserService {
+
+    private static final List<String> ALLOWED_ORDERED_PROPERTIES = Collections.unmodifiableList(
+        Arrays.asList(
+            "id",
+            "login",
+            "firstName",
+            "lastName",
+            "email",
+            "activated",
+            "langKey",
+            "createdBy",
+            "createdDate",
+            "lastModifiedBy",
+            "lastModifiedDate"
+        )
+    );
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
@@ -145,7 +164,48 @@ public class UserService {
         return true;
     }
 
-    public User createUser(AdminUserDTO userDTO) {
+    public User createUser(AdminUserDTO userDTO, String userType) {
+        if (!userType.equalsIgnoreCase("librarian") && !userType.equalsIgnoreCase("reader")) {
+            throw new BadRequestAlertException("Bad request", "userManagement", "internalServerError");
+        }
+        if (userDTO.getId() != null) {
+            throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
+        }
+        if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
+            throw new LoginAlreadyUsedException();
+        }
+        if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
+            throw new com.thanh.library.web.rest.errors.EmailAlreadyUsedException();
+        }
+        String login = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Login not found", "User", "loginnotfound"));
+        User currentUser = userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        Authority librarianAuthority = new Authority();
+        librarianAuthority.setName(AuthoritiesConstants.LIBRARIAN);
+        Authority adminAuthority = new Authority();
+        adminAuthority.setName(AuthoritiesConstants.ADMIN);
+        boolean isAdmin =
+            !currentUser.getAuthorities().contains(librarianAuthority) && currentUser.getAuthorities().contains(adminAuthority);
+        boolean isLibrarian = currentUser.getAuthorities().contains(librarianAuthority);
+        boolean isReader =
+            !currentUser.getAuthorities().contains(librarianAuthority) && !currentUser.getAuthorities().contains(adminAuthority);
+        if (userType.equalsIgnoreCase("librarian")) {
+            Set<String> authorities = Set.of(AuthoritiesConstants.LIBRARIAN, AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER);
+            userDTO.setAuthorities(authorities);
+            if (isLibrarian || isReader) {
+                throw new BadRequestAlertException("You does not have permission to do this action", "User", "userdoesnothavepermission");
+            }
+        }
+        if (userType.equalsIgnoreCase("reader")) {
+            Set<String> authorities = Set.of(AuthoritiesConstants.USER);
+            userDTO.setAuthorities(authorities);
+            if (isAdmin || isReader) {
+                throw new BadRequestAlertException("You does not have permission to do this action", "User", "userdoesnothavepermission");
+            }
+        }
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
@@ -202,15 +262,15 @@ public class UserService {
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
-                Set<Authority> managedAuthorities = user.getAuthorities();
-                managedAuthorities.clear();
-                userDTO
-                    .getAuthorities()
-                    .stream()
-                    .map(authorityRepository::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(managedAuthorities::add);
+                //                Set<Authority> managedAuthorities = user.getAuthorities();
+                //                managedAuthorities.clear();
+                //                userDTO
+                //                    .getAuthorities()
+                //                    .stream()
+                //                    .map(authorityRepository::findById)
+                //                    .filter(Optional::isPresent)
+                //                    .map(Optional::get)
+                //                    .forEach(managedAuthorities::add);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
@@ -273,7 +333,36 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(AdminUserDTO::new);
+        log.debug("REST request to get all User for an admin");
+        if (!onlyContainsAllowedProperties(pageable)) {
+            throw new BadRequestAlertException("", "", "");
+        }
+        String login = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Login not found", "User", "loginnotfound"));
+        User currentUser = userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        Authority librarianAuthority = new Authority();
+        librarianAuthority.setName(AuthoritiesConstants.LIBRARIAN);
+        Page<AdminUserDTO> page;
+        if (currentUser.getAuthorities().contains(librarianAuthority)) page = getAllReaderUsers(pageable); else page =
+            getAllLibrarianUsers(pageable);
+        return page;
+    }
+
+    private boolean onlyContainsAllowedProperties(Pageable pageable) {
+        return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminUserDTO> getAllLibrarianUsers(Pageable pageable) {
+        return userRepository.getLibrarianUsers(pageable).map(AdminUserDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminUserDTO> getAllReaderUsers(Pageable pageable) {
+        return userRepository.getReaderUsers(pageable).map(AdminUserDTO::new);
     }
 
     @Transactional(readOnly = true)
@@ -309,6 +398,7 @@ public class UserService {
 
     /**
      * Gets a list of all the authorities.
+     *
      * @return a list of all the authorities.
      */
     @Transactional(readOnly = true)

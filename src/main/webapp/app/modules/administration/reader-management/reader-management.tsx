@@ -7,10 +7,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
-import { getUsersAsAdmin, updateUser } from './user-management.reducer';
+import { getUsersAsAdmin, updateUser } from '../user-management/user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export const UserManagement = () => {
+export const ReaderManagement = () => {
   const dispatch = useAppDispatch();
 
   const location = useLocation();
@@ -212,4 +212,4 @@ export const UserManagement = () => {
   );
 };
 
-export default UserManagement;
+export default ReaderManagement;

@@ -1,9 +1,11 @@
 package com.thanh.library.web.rest;
 
 import com.thanh.library.config.Constants;
+import com.thanh.library.domain.Authority;
 import com.thanh.library.domain.User;
 import com.thanh.library.repository.UserRepository;
 import com.thanh.library.security.AuthoritiesConstants;
+import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.MailService;
 import com.thanh.library.service.UserService;
 import com.thanh.library.service.dto.AdminUserDTO;
@@ -13,7 +15,6 @@ import com.thanh.library.web.rest.errors.LoginAlreadyUsedException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.Collections;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import org.slf4j.Logger;
@@ -60,22 +61,6 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api/admin")
 public class UserResource {
 
-    private static final List<String> ALLOWED_ORDERED_PROPERTIES = Collections.unmodifiableList(
-        Arrays.asList(
-            "id",
-            "login",
-            "firstName",
-            "lastName",
-            "email",
-            "activated",
-            "langKey",
-            "createdBy",
-            "createdDate",
-            "lastModifiedBy",
-            "lastModifiedDate"
-        )
-    );
-
     private final Logger log = LoggerFactory.getLogger(UserResource.class);
 
     @Value("${jhipster.clientApp.name}")
@@ -102,10 +87,10 @@ public class UserResource {
      *
      * @param userDTO the user to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new user, or with status {@code 400 (Bad Request)} if the login or email is already in use.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @throws URISyntaxException       if the Location URI syntax is incorrect.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
      */
-    @PostMapping("/users")
+    /*@PostMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<User> createUser(@Valid @RequestBody AdminUserDTO userDTO) throws URISyntaxException {
         log.debug("REST request to save User : {}", userDTO);
@@ -125,6 +110,18 @@ public class UserResource {
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.getLogin()))
                 .body(newUser);
         }
+    }*/
+    @PostMapping("/users/{type}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<User> createReaderUser(@PathVariable("type") String userType, @Valid @RequestBody AdminUserDTO userDTO)
+        throws URISyntaxException {
+        log.debug("REST request to save User : {}", userDTO);
+        User newUser = userService.createUser(userDTO, userType);
+        mailService.sendCreationEmail(newUser);
+        return ResponseEntity
+            .created(new URI("/api/admin/users/" + newUser.getLogin()))
+            .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.getLogin()))
+            .body(newUser);
     }
 
     /**
@@ -164,18 +161,9 @@ public class UserResource {
     @GetMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<List<AdminUserDTO>> getAllUsers(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
-        log.debug("REST request to get all User for an admin");
-        if (!onlyContainsAllowedProperties(pageable)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        final Page<AdminUserDTO> page = userService.getAllManagedUsers(pageable);
+        Page<AdminUserDTO> page = userService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
-
-    private boolean onlyContainsAllowedProperties(Pageable pageable) {
-        return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
     }
 
     /**

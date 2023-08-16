@@ -27,6 +27,7 @@
         "logout": "Đăng xuất",
         "register": "Đăng ký"
       },
+      "readerManagement": "Quản lý tài khoản độc giả",
       "admin": {
         "main": "Quản trị",
         "userManagement": "Quản lý tài khoản",

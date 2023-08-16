@@ -8,7 +8,7 @@ import userManagement, {
   getUsersAsAdmin,
   getRoles,
   getUser,
-  createUser,
+  createLibrarianUser,
   updateUser,
   deleteUser,
   reset,
@@ -68,7 +68,7 @@ describe('User management reducer tests', () => {
     });
 
     it('should set state to updating', () => {
-      testMultipleTypes([createUser.pending.type, updateUser.pending.type, deleteUser.pending.type], {}, state => {
+      testMultipleTypes([createLibrarianUser.pending.type, updateUser.pending.type, deleteUser.pending.type], {}, state => {
         expect(state).toMatchObject({
           errorMessage: null,
           updateSuccess: false,
@@ -86,7 +86,7 @@ describe('User management reducer tests', () => {
           getUsers.rejected.type,
           getUser.rejected.type,
           getRoles.rejected.type,
-          createUser.rejected.type,
+          createLibrarianUser.rejected.type,
           updateUser.rejected.type,
           deleteUser.rejected.type,
         ],
@@ -138,7 +138,7 @@ describe('User management reducer tests', () => {
     });
 
     it('should set state to successful update', () => {
-      testMultipleTypes([createUser.fulfilled.type, updateUser.fulfilled.type], { data: 'some handsome user' }, types => {
+      testMultipleTypes([createLibrarianUser.fulfilled.type, updateUser.fulfilled.type], { data: 'some handsome user' }, types => {
         expect(types).toMatchObject({
           updating: false,
           updateSuccess: true,
@@ -284,17 +284,17 @@ describe('User management reducer tests', () => {
     it('dispatches CREATE_USER_PENDING and CREATE_USER_FULFILLED actions', async () => {
       const expectedActions = [
         {
-          type: createUser.pending.type,
+          type: createLibrarianUser.pending.type,
         },
         {
           type: getUsersAsAdmin.pending.type,
         },
         {
-          type: createUser.fulfilled.type,
+          type: createLibrarianUser.fulfilled.type,
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(createUser({}));
+      await store.dispatch(createLibrarianUser({}));
       expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
       expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
       expect(store.getActions()[2]).toMatchObject(expectedActions[2]);

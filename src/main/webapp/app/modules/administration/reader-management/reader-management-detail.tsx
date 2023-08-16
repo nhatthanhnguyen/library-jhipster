@@ -6,10 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import { languages } from 'app/config/translation';
-import { getUser } from './user-management.reducer';
+import { getUser } from '../user-management/user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export const UserManagementDetail = () => {
+export const ReaderManagementDetail = () => {
   const dispatch = useAppDispatch();
 
   const { login } = useParams<'login'>();
@@ -94,7 +94,7 @@ export const UserManagementDetail = () => {
           </dd>
         </dl>
       </Row>
-      <Button tag={Link} to="/admin/librarian-management" replace color="info">
+      <Button tag={Link} to="/librarian/reader-management" replace color="info">
         <FontAwesomeIcon icon="arrow-left" />{' '}
         <span className="d-none d-md-inline">
           <Translate contentKey="entity.action.back">Back</Translate>
@@ -104,4 +104,4 @@ export const UserManagementDetail = () => {
   );
 };
 
-export default UserManagementDetail;
+export default ReaderManagementDetail;

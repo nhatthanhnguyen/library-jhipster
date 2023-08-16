@@ -1,18 +1,20 @@
 import './header.scss';
 
 import React, { useState } from 'react';
-import { Translate, Storage } from 'react-jhipster';
-import { Navbar, Nav, NavbarToggler, Collapse } from 'reactstrap';
+import { Storage, Translate } from 'react-jhipster';
+import { Collapse, Nav, Navbar, NavbarToggler } from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
 
-import { Home, Brand } from './header-components';
-import { AdminMenu, EntitiesMenu, AccountMenu, LocaleMenu } from '../menus';
+import { Brand, Home } from './header-components';
+import { AccountMenu, AdminMenu, EntitiesMenu, LocaleMenu } from '../menus';
 import { useAppDispatch } from 'app/config/store';
 import { setLocale } from 'app/shared/reducers/locale';
+import LibrarianMenu from 'app/shared/layout/menus/lirbarian';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isLibrarian: boolean;
   ribbonEnv: string;
   isInProduction: boolean;
   isOpenAPIEnabled: boolean;
@@ -40,6 +42,7 @@ const Header = (props: IHeaderProps) => {
     ) : null;
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+  const isAdminAuthority = props.isAdmin && !props.isLibrarian;
 
   /* jhipster-needle-add-element-to-menu - JHipster will add new menu items here */
 
@@ -53,8 +56,9 @@ const Header = (props: IHeaderProps) => {
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ms-auto" navbar>
             <Home />
-            {props.isAuthenticated && <EntitiesMenu />}
-            {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
+            {props.isAuthenticated && !isAdminAuthority && <EntitiesMenu />}
+            {props.isAuthenticated && isAdminAuthority && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
+            {props.isAuthenticated && props.isLibrarian && <LibrarianMenu />}
             <LocaleMenu currentLocale={props.currentLocale} onClick={handleLocaleChange} />
             <AccountMenu isAuthenticated={props.isAuthenticated} />
           </Nav>

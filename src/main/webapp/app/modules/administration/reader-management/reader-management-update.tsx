@@ -5,10 +5,10 @@ import { Translate, translate, ValidatedField, ValidatedForm, isEmail } from 're
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { locales, languages } from 'app/config/translation';
-import { getUser, getRoles, updateUser, createLibrarianUser, reset } from './user-management.reducer';
+import { getUser, getRoles, updateUser, createReaderUser, reset } from '../user-management/user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export const UserManagementUpdate = () => {
+export const ReaderManagementUpdate = () => {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -29,12 +29,12 @@ export const UserManagementUpdate = () => {
   }, [login]);
 
   const handleClose = () => {
-    navigate('/admin/librarian-management');
+    navigate('/librarian/reader-management');
   };
 
   const saveUser = values => {
     if (isNew) {
-      dispatch(createLibrarianUser(values));
+      dispatch(createReaderUser(values));
     } else {
       dispatch(updateUser(values));
     }
@@ -161,7 +161,7 @@ export const UserManagementUpdate = () => {
                   </option>
                 ))}
               </ValidatedField>
-              <Button tag={Link} to="/admin/librarian-management" replace color="info">
+              <Button tag={Link} to="/librarian/reader-management" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
                 <span className="d-none d-md-inline">
@@ -182,4 +182,4 @@ export const UserManagementUpdate = () => {
   );
 };
 
-export default UserManagementUpdate;
+export default ReaderManagementUpdate;

@@ -195,7 +195,7 @@ export const Book = () => {
       </InputGroup>
       <div className="table-responsive">
         {bookList && bookList.length > 0 ? (
-          <Table responsive>
+          <Table responsive striped>
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>

@@ -27,6 +27,7 @@
         "logout": "Sign out",
         "register": "Register"
       },
+      "readerManagement": "Reader management",
       "admin": {
         "main": "Administration",
         "userManagement": "User management",

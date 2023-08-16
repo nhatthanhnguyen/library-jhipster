@@ -4,10 +4,10 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { getUser, deleteUser } from './user-management.reducer';
+import { getUser, deleteUser } from '../user-management/user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export const UserManagementDeleteDialog = () => {
+export const ReaderManagementDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export const UserManagementDeleteDialog = () => {
 
   const handleClose = event => {
     event.stopPropagation();
-    navigate('/admin/librarian-management');
+    navigate('/librarian/reader-management');
   };
 
   const user = useAppSelector(state => state.userManagement.user);
@@ -55,4 +55,4 @@ export const UserManagementDeleteDialog = () => {
   );
 };
 
-export default UserManagementDeleteDialog;
+export default ReaderManagementDeleteDialog;

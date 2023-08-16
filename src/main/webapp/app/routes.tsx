@@ -27,6 +27,11 @@ const Admin = Loadable({
   loading: () => loading,
 });
 
+const Librarian = Loadable({
+  loader: () => import('app/modules/administration'),
+  loading: () => loading,
+});
+
 const AppRoutes = () => {
   return (
     <div className="view-routes">
@@ -55,6 +60,14 @@ const AppRoutes = () => {
           element={
             <PrivateRoute hasAnyAuthorities={[AUTHORITIES.ADMIN]}>
               <Admin />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="librarian/*"
+          element={
+            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.LIBRARIAN]}>
+              <Librarian />
             </PrivateRoute>
           }
         />

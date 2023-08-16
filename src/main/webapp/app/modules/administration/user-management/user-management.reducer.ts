@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createAsyncThunk, createSlice, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
 
-import { IUser, defaultValue } from 'app/shared/model/user.model';
+import { defaultValue, IUser } from 'app/shared/model/user.model';
 import { IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 
 const initialState = {
@@ -43,10 +43,22 @@ export const getUser = createAsyncThunk(
   { serializeError: serializeAxiosError }
 );
 
-export const createUser = createAsyncThunk(
+export const createLibrarianUser = createAsyncThunk(
   'userManagement/create_user',
   async (user: IUser, thunkAPI) => {
-    const result = await axios.post<IUser>(adminUrl, user);
+    const requestUrl = `${adminUrl}/librarian`;
+    const result = await axios.post<IUser>(requestUrl, user);
+    thunkAPI.dispatch(getUsersAsAdmin({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const createReaderUser = createAsyncThunk(
+  'userManagement/create_user',
+  async (user: IUser, thunkAPI) => {
+    const requestUrl = `${adminUrl}/reader`;
+    const result = await axios.post<IUser>(requestUrl, user);
     thunkAPI.dispatch(getUsersAsAdmin({}));
     return result;
   },
@@ -103,7 +115,7 @@ export const UserManagementSlice = createSlice({
         state.users = action.payload.data;
         state.totalItems = parseInt(action.payload.headers['x-total-count'], 10);
       })
-      .addMatcher(isFulfilled(createUser, updateUser), (state, action) => {
+      .addMatcher(isFulfilled(createLibrarianUser, createReaderUser, updateUser), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
@@ -114,17 +126,20 @@ export const UserManagementSlice = createSlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createUser, updateUser, deleteUser), state => {
+      .addMatcher(isPending(createLibrarianUser, updateUser, deleteUser), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;
       })
-      .addMatcher(isRejected(getUsers, getUsersAsAdmin, getUser, getRoles, createUser, updateUser, deleteUser), (state, action) => {
-        state.loading = false;
-        state.updating = false;
-        state.updateSuccess = false;
-        state.errorMessage = action.error.message;
-      });
+      .addMatcher(
+        isRejected(getUsers, getUsersAsAdmin, getUser, getRoles, createLibrarianUser, createReaderUser, updateUser, deleteUser),
+        (state, action) => {
+          state.loading = false;
+          state.updating = false;
+          state.updateSuccess = false;
+          state.errorMessage = action.error.message;
+        }
+      );
   },
 });
 

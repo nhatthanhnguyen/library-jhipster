@@ -25,6 +25,21 @@
       "detail": {
         "title": "Checkout"
       },
+      "filter": {
+        "user": {
+          "title": "Type here to filter by user"
+        },
+        "bookCopy": {
+          "title": "Type here to filter by bookCopy"
+        },
+        "state": {
+          "title": "Type here to filter by state",
+          "all": "All",
+          "borrowing": "Borrowing",
+          "returnSuccess": "Return",
+          "returnFailed": "Missing"
+        }
+      },
       "id": "ID",
       "startTime": "Start Time",
       "endTime": "End Time",

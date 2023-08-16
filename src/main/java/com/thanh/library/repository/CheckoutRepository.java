@@ -52,46 +52,102 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Long> {
     List<Checkout> findAllThatBookCopyIsBorrowed(@Param("bookCopyId") Long bookCopyId);
 
     @Query(
-        value = "select c from Checkout c where " +
-        "(:bookCopyId is null or c.bookCopy.id = :bookCopyId) and " +
-        "(:userId is null or c.user.id = :userId) and " +
-        "c.isReturned = :isReturned and c.endTime is not null",
+        value = "select c from Checkout c join fetch c.bookCopy join fetch c.user where " +
+        "(:bookCopy is null " +
+        "or cast(c.bookCopy.id as string) = :bookCopy " +
+        "or cast(c.bookCopy.book.id as string) like concat('%', :bookCopy, '%') " +
+        "or c.bookCopy.book.title like concat('%', :bookCopy, '%')) " +
+        "and " +
+        "(:user is null " +
+        "or cast(c.user.id as string) = :user " +
+        "or c.user.email like concat('%', :user, '%') " +
+        "or c.user.firstName like concat('%', :user, '%') " +
+        "or c.user.lastName like concat('%', :user, '%')) " +
+        "and " +
+        "c.isReturned = :isReturned " +
+        "and c.endTime is not null",
         countQuery = "select count(c) from Checkout c where " +
-        "(:bookCopyId is null or c.bookCopy.id = :bookCopyId) and " +
-        "(:userId is null or c.user.id = :userId) and " +
-        "c.isReturned = :isReturned and c.endTime is not null"
+        "(:bookCopy is null " +
+        "or cast(c.bookCopy.id as string) = :bookCopy " +
+        "or cast(c.bookCopy.book.id as string) like concat('%', :bookCopy, '%') " +
+        "or c.bookCopy.book.title like concat('%', :bookCopy, '%')) " +
+        "and " +
+        "(:user is null " +
+        "or cast(c.user.id as string) = :user " +
+        "or c.user.email like concat('%', :user, '%') " +
+        "or c.user.firstName like concat('%', :user, '%') " +
+        "or c.user.lastName like concat('%', :user, '%')) " +
+        "and " +
+        "c.isReturned = :isReturned " +
+        "and c.endTime is not null"
     )
     Page<Checkout> findAllWithEndTimeNotNull(
-        @Param("userId") Long userId,
-        @Param("bookCopyId") Long bookCopyId,
+        @Param("user") String user,
+        @Param("bookCopy") String bookCopy,
         @Param("isReturned") Boolean isReturned,
         Pageable pageable
     );
 
     @Query(
-        value = "select c from Checkout c where " +
-        "(:bookCopyId is null or c.bookCopy.id = :bookCopyId) and " +
-        "(:userId is null or c.user.id = :userId) and " +
-        "c.isReturned = :isReturned and c.endTime is null",
+        value = "select c from Checkout c join fetch c.bookCopy join fetch c.user where " +
+        "(:bookCopy is null " +
+        "or cast(c.bookCopy.id as string) = :bookCopy " +
+        "or cast(c.bookCopy.book.id as string) like concat('%', :bookCopy, '%') " +
+        "or c.bookCopy.book.title like concat('%', :bookCopy, '%')) " +
+        "and " +
+        "(:user is null " +
+        "or cast(c.user.id as string) = :user " +
+        "or c.user.email like concat('%', :user, '%') " +
+        "or c.user.firstName like concat('%', :user, '%') " +
+        "or c.user.lastName like concat('%', :user, '%')) " +
+        "and " +
+        "c.isReturned = :isReturned " +
+        "and c.endTime is null",
         countQuery = "select count(c) from Checkout c where " +
-        "(:bookCopyId is null or c.bookCopy.id = :bookCopyId) and " +
-        "(:userId is null or c.user.id = :userId) and " +
-        "c.isReturned = :isReturned and c.endTime is null"
+        "(:bookCopy is null " +
+        "or cast(c.bookCopy.id as string) = :bookCopy " +
+        "or cast(c.bookCopy.book.id as string) like concat('%', :bookCopy, '%') " +
+        "or c.bookCopy.book.title like concat('%', :bookCopy, '%')) " +
+        "and " +
+        "(:user is null " +
+        "or cast(c.user.id as string) = :user " +
+        "or c.user.email like concat('%', :user, '%') " +
+        "or c.user.firstName like concat('%', :user, '%') " +
+        "or c.user.lastName like concat('%', :user, '%')) " +
+        "and " +
+        "c.isReturned = :isReturned " +
+        "and c.endTime is null"
     )
     Page<Checkout> findAllWithEndTimeNull(
-        @Param("userId") Long userId,
-        @Param("bookCopyId") Long bookCopyId,
+        @Param("user") String user,
+        @Param("bookCopy") String bookCopy,
         @Param("isReturned") Boolean isReturned,
         Pageable pageable
     );
 
     @Query(
-        value = "select c from Checkout c where " +
-        "(:userId is null or c.user.id = :userId) and " +
-        "(:bookCopyId is null or c.bookCopy.id = :bookCopyId)",
+        value = "select c from Checkout c join fetch c.bookCopy join fetch c.user where " +
+        "(:bookCopy is null " +
+        "or cast(c.bookCopy.id as string) = :bookCopy " +
+        "or cast(c.bookCopy.book.id as string) like concat('%', :bookCopy, '%') " +
+        "or c.bookCopy.book.title like concat('%', :bookCopy, '%')) " +
+        "and " +
+        "(:user is null " +
+        "or cast(c.user.id as string) = :user " +
+        "or c.user.email like concat('%', :user, '%') " +
+        "or c.user.firstName like concat('%', :user, '%') " +
+        "or c.user.lastName like concat('%', :user, '%'))",
         countQuery = "select count(c) from Checkout c where " +
-        "(:userId is null or c.user.id = :userId) and " +
-        "(:bookCopyId is null or c.bookCopy.id = :bookCopyId)"
+        "(:bookCopy is null " +
+        "or cast(c.bookCopy.id as string) = :bookCopy " +
+        "or cast(c.bookCopy.book.id as string) like concat('%', :bookCopy, '%') " +
+        "or c.bookCopy.book.title like concat('%', :bookCopy, '%')) " +
+        "and " +
+        "(:user is null " +
+        "or cast(c.user.id as string) = :user " +
+        "or c.user.email like concat('%', :user, '%') " +
+        "or c.user.firstName like concat('%', :user, '%') " +
+        "or c.user.lastName like concat('%', :user, '%')) "
     )
-    Page<Checkout> findAllWithCondition(@Param("userId") Long userId, @Param("bookCopyId") Long bookCopyId, Pageable pageable);
+    Page<Checkout> findAllWithCondition(@Param("user") String user, @Param("bookCopy") String bookCopy, Pageable pageable);
 }

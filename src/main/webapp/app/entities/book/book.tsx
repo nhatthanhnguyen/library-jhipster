@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
-import { getCurrentSortState, overridePaginationStateWithQueryParamsWithSearch } from 'app/shared/util/entity-utils';
+import { getSortStateWithSearch, overridePaginationStateWithQueryParamsAndSearch } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { addToQueue, getEntities, getEntity, holdBook } from './book.reducer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
@@ -20,7 +20,7 @@ export const Book = () => {
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParamsWithSearch(getCurrentSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParamsAndSearch(getSortStateWithSearch(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
   const [searchText, setSearchText] = useState<string>(paginationState.search ?? '');
   const [confirmModal, setConfirmModal] = useState<boolean>(false);

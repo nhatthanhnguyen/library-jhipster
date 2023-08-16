@@ -1,5 +1,6 @@
 import pick from 'lodash/pick';
 import { getUrlParameter, IPaginationBaseState } from 'react-jhipster';
+import { STATE_CHECKOUT_VALUES } from 'app/config/constants';
 
 /**
  * Removes fields with an 'id' field that equals ''.
@@ -22,22 +23,29 @@ export const cleanEntity = entity => {
  */
 export const mapIdList = (idList: ReadonlyArray<any>) => idList.filter((id: any) => id !== '').map((id: any) => ({ id }));
 
-export interface IPaginationState extends IPaginationBaseState {
+export interface IPaginationSearchState extends IPaginationBaseState {
   search: string;
 }
 
-export const getCurrentSortState = (
+export interface IPaginationFilterState extends IPaginationBaseState {
+  user: string;
+  bookCopy: string;
+  state: string;
+}
+
+export const getSortStateWithSearch = (
   location: { search: string },
   itemsPerPage: number,
   sortField = 'id',
   sortOrder = 'asc',
   searchText = ''
-): IPaginationState => {
+): IPaginationSearchState => {
   const pageParam = getUrlParameter('page', location.search);
   const sortParam = getUrlParameter('sort', location.search);
   const searchParam = getUrlParameter('search', location.search);
   let sort = sortField;
   let order = sortOrder;
+  let query = searchText;
   let activePage = 1;
   if (pageParam !== '' && !isNaN(parseInt(pageParam, 10))) {
     activePage = parseInt(pageParam, 10);
@@ -46,15 +54,65 @@ export const getCurrentSortState = (
     sort = sortParam.split(',')[0];
     order = sortParam.split(',')[1];
   }
-  return { itemsPerPage, sort, order, activePage, search: searchParam };
+  if (searchParam !== '') {
+    query = searchParam;
+  }
+  return { itemsPerPage, sort, order, activePage, search: query };
 };
 
-export const overridePaginationStateWithQueryParamsWithSearch = (paginationState: IPaginationState, locationSearch: string) => {
+export const getSortStateWithFilter = (
+  location: { search: string },
+  itemsPerPage: number,
+  sortField = 'id',
+  sortOrder = 'asc',
+  userFilter = '',
+  bookCopyFilter = '',
+  stateFilter = 'ALL'
+): IPaginationFilterState => {
+  const pageParam = getUrlParameter('page', location.search);
+  const sortParam = getUrlParameter('sort', location.search);
+  const userFilterParam = getUrlParameter('user', location.search);
+  const bookCopyFilterParam = getUrlParameter('bookCopy', location.search);
+  const stateFilterParam = getUrlParameter('state', location.search);
+  let sort = sortField;
+  let order = sortOrder;
+  let user = userFilter;
+  let bookCopy = bookCopyFilter;
+  let state = stateFilter;
+  let activePage = 1;
+  if (pageParam !== '' && !isNaN(parseInt(pageParam, 10))) {
+    activePage = parseInt(pageParam, 10);
+  }
+  if (sortParam !== '') {
+    sort = sortParam.split(',')[0];
+    order = sortParam.split(',')[1];
+  }
+  if (userFilterParam !== '') {
+    user = userFilterParam;
+  }
+  if (bookCopyFilterParam !== '') {
+    bookCopy = bookCopyFilterParam;
+  }
+  if (stateFilterParam !== '' && STATE_CHECKOUT_VALUES.find(it => it === stateFilterParam)) {
+    state = stateFilterParam;
+  }
+  return {
+    itemsPerPage,
+    sort,
+    order,
+    activePage,
+    user,
+    bookCopy,
+    state,
+  };
+};
+
+export const overridePaginationStateWithQueryParamsAndSearch = (paginationState: IPaginationSearchState, locationSearch: string) => {
   const params = new URLSearchParams(locationSearch);
   const page = params.get('page');
   const sort = params.get('sort');
   const search = params.get('search');
-  if (page && sort && search) {
+  if (page && sort) {
     const sortSplit = sort.split(',');
     paginationState.activePage = +page;
     paginationState.sort = sortSplit[0];
@@ -73,6 +131,25 @@ export const overridePaginationStateWithQueryParams = (paginationState: IPaginat
     paginationState.activePage = +page;
     paginationState.sort = sortSplit[0];
     paginationState.order = sortSplit[1];
+  }
+  return paginationState;
+};
+
+export const overridePaginationStateWithQueryParamsAndFilter = (paginationState: IPaginationFilterState, locationSearch: string) => {
+  const params = new URLSearchParams(locationSearch);
+  const page = params.get('page');
+  const sort = params.get('sort');
+  const user = params.get('user');
+  const bookCopy = params.get('bookCopy');
+  const state = params.get('state');
+  if (page && sort) {
+    const sortSplit = sort.split(',');
+    paginationState.activePage = +page;
+    paginationState.sort = sortSplit[0];
+    paginationState.order = sortSplit[1];
+    paginationState.user = user ?? '';
+    paginationState.bookCopy = bookCopy ?? '';
+    paginationState.state = STATE_CHECKOUT_VALUES.find(it => it === state) ?? 'ALL';
   }
   return paginationState;
 };

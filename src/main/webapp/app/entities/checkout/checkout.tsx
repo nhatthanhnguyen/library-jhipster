@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
+import { Button, Col, Input, Row, Table } from 'reactstrap';
+import { JhiItemCount, JhiPagination, TextFormat, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES, STATE_CHECKOUT_VALUES, STATE_I18_VALUES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
-import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import { getSortStateWithFilter, overridePaginationStateWithQueryParamsAndFilter } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './checkout.reducer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
@@ -18,13 +18,18 @@ export const Checkout = () => {
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParamsAndFilter(getSortStateWithFilter(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
+  const [userFilter, setUserFilter] = useState<string>(paginationState.user);
+  const [bookCopyFilter, setBookCopyFilter] = useState<string>(paginationState.bookCopy);
+  const [stateFilter, setStateFilter] = useState<string>(paginationState.state);
 
   const checkoutList = useAppSelector(state => state.checkout.entities);
   const loading = useAppSelector(state => state.checkout.loading);
   const totalItems = useAppSelector(state => state.checkout.totalItems);
-  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
+  const librarianAuthority = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
+  const adminAuthority = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
+  const isReader = !librarianAuthority && !adminAuthority;
 
   const getAllEntities = () => {
     dispatch(
@@ -32,13 +37,19 @@ export const Checkout = () => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
+        user: paginationState.user,
+        bookCopy: paginationState.bookCopy,
+        state: paginationState.state,
       })
     );
   };
 
   const sortEntities = () => {
     getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    const filterRequest = `${paginationState.user ? `&user=${paginationState.user}` : ''}${
+      paginationState.bookCopy ? `&bookCopy=${paginationState.bookCopy}` : ''
+    }${paginationState.state ? `&state=${paginationState.state}` : ''}`;
+    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}${filterRequest}`;
     if (location.search !== endURL) {
       navigate(`${location.pathname}${endURL}`);
     }
@@ -46,12 +57,22 @@ export const Checkout = () => {
 
   useEffect(() => {
     sortEntities();
-  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+  }, [
+    paginationState.activePage,
+    paginationState.order,
+    paginationState.sort,
+    paginationState.user,
+    paginationState.bookCopy,
+    paginationState.state,
+  ]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
+    const user = params.get('user');
+    const bookCopy = params.get('bookCopy');
+    const state = params.get('state');
     if (page && sort) {
       const sortSplit = sort.split(',');
       setPaginationState({
@@ -59,6 +80,9 @@ export const Checkout = () => {
         activePage: +page,
         sort: sortSplit[0],
         order: sortSplit[1],
+        user: user ?? '',
+        bookCopy: bookCopy ?? '',
+        state: STATE_CHECKOUT_VALUES.find(it => it === state) ?? 'ALL',
       });
     }
   }, [location.search]);
@@ -81,6 +105,15 @@ export const Checkout = () => {
     sortEntities();
   };
 
+  const handleFilter = () => {
+    setPaginationState({
+      ...paginationState,
+      user: userFilter,
+      bookCopy: bookCopyFilter,
+      state: stateFilter,
+    });
+  };
+
   return (
     <div>
       <h2 id="checkout-heading" data-cy="CheckoutHeading">
@@ -90,7 +123,7 @@ export const Checkout = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.checkout.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          {isLibrarian ? (
+          {librarianAuthority ? (
             <Link to="/checkout/borrow" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
               <FontAwesomeIcon icon="plus" />
               &nbsp;
@@ -99,6 +132,45 @@ export const Checkout = () => {
           ) : undefined}
         </div>
       </h2>
+      <Row>
+        {isReader ? null : (
+          <Col>
+            <Input
+              type="text"
+              value={userFilter}
+              onChange={e => setUserFilter(e.target.value)}
+              placeholder={translate('libraryApp.checkout.filter.user.title')}
+            />
+          </Col>
+        )}
+        <Col>
+          <Input
+            type="text"
+            value={bookCopyFilter}
+            onChange={e => setBookCopyFilter(e.target.value)}
+            placeholder={translate('libraryApp.checkout.filter.bookCopy.title')}
+          />
+        </Col>
+        <Col>
+          <Input
+            type="select"
+            value={stateFilter}
+            onChange={e => setStateFilter(e.target.value)}
+            placeholder={translate('libraryApp.checkout.filter.state.title')}
+          >
+            {STATE_CHECKOUT_VALUES.map((state, i) => (
+              <option key={i} value={state}>
+                {translate(STATE_I18_VALUES[i])}
+              </option>
+            ))}
+          </Input>
+        </Col>
+        <Col className="text-end">
+          <Button onClick={handleFilter}>
+            <FontAwesomeIcon icon="filter" /> Filter
+          </Button>
+        </Col>
+      </Row>
       <div className="table-responsive">
         {checkoutList && checkoutList.length > 0 ? (
           <Table responsive>

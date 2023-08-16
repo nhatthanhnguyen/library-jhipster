@@ -98,7 +98,7 @@ public class CheckoutService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CheckoutDTO> getAllPaginationWithCondition(Long userId, Long bookCopyId, String status, Pageable pageable) {
+    public Page<CheckoutDTO> getAllPaginationWithCondition(String user, String bookCopy, String status, Pageable pageable) {
         log.debug("Request to get all Checkouts");
         String login = SecurityUtils
             .getCurrentUserLogin()
@@ -115,24 +115,24 @@ public class CheckoutService {
         // if current user is librarian
         if (currentUser.getAuthorities().contains(roleLibrarian)) {
             if (status.equalsIgnoreCase("borrowing")) {
-                return checkoutRepository.findAllWithEndTimeNull(userId, bookCopyId, isReturned, pageable).map(checkoutMapper::toDto);
+                return checkoutRepository.findAllWithEndTimeNull(user, bookCopy, isReturned, pageable).map(checkoutMapper::toDto);
             }
             if (status.equalsIgnoreCase("all")) {
-                return checkoutRepository.findAllWithCondition(userId, bookCopyId, pageable).map(checkoutMapper::toDto);
+                return checkoutRepository.findAllWithCondition(user, bookCopy, pageable).map(checkoutMapper::toDto);
             }
-            return checkoutRepository.findAllWithEndTimeNotNull(userId, bookCopyId, isReturned, pageable).map(checkoutMapper::toDto);
+            return checkoutRepository.findAllWithEndTimeNotNull(user, bookCopy, isReturned, pageable).map(checkoutMapper::toDto);
         }
         // if current user is reader
         if (status.equalsIgnoreCase("borrowing")) {
             return checkoutRepository
-                .findAllWithEndTimeNull(currentUser.getId(), bookCopyId, isReturned, pageable)
+                .findAllWithEndTimeNull(currentUser.getId().toString(), bookCopy, isReturned, pageable)
                 .map(checkoutMapper::toDto);
         }
         if (status.equalsIgnoreCase("all")) {
-            return checkoutRepository.findAllWithCondition(currentUser.getId(), bookCopyId, pageable).map(checkoutMapper::toDto);
+            return checkoutRepository.findAllWithCondition(currentUser.getId().toString(), bookCopy, pageable).map(checkoutMapper::toDto);
         }
         return checkoutRepository
-            .findAllWithEndTimeNotNull(currentUser.getId(), bookCopyId, isReturned, pageable)
+            .findAllWithEndTimeNotNull(currentUser.getId().toString(), bookCopy, isReturned, pageable)
             .map(checkoutMapper::toDto);
     }
 

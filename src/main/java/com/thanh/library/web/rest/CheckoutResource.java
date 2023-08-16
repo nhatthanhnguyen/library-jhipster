@@ -1,7 +1,6 @@
 package com.thanh.library.web.rest;
 
 import com.thanh.library.domain.Checkout;
-import com.thanh.library.domain.enumeration.Status;
 import com.thanh.library.repository.CheckoutRepository;
 import com.thanh.library.service.CheckoutService;
 import com.thanh.library.service.dto.CheckoutDTO;
@@ -116,12 +115,12 @@ public class CheckoutResource {
     public ResponseEntity<List<CheckoutDTO>> getAllCheckouts(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false, defaultValue = "false") boolean eagerload,
-        @RequestParam(required = false, value = "userId") Long userId,
-        @RequestParam(required = false, value = "bookCopyId") Long bookCopyId,
-        @RequestParam(required = false, value = "status", defaultValue = "ALL") Status status
+        @RequestParam(required = false, value = "user") String user,
+        @RequestParam(required = false, value = "bookCopy") String bookCopy,
+        @RequestParam(required = false, value = "state", defaultValue = "ALL") String status
     ) {
         log.debug("REST request to get a page of Checkouts");
-        Page<CheckoutDTO> page = checkoutService.getAllPaginationWithCondition(userId, bookCopyId, status.toString(), pageable);
+        Page<CheckoutDTO> page = checkoutService.getAllPaginationWithCondition(user, bookCopy, status, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

@@ -154,13 +154,13 @@ export const ReaderManagementUpdate = () => {
                   </option>
                 ))}
               </ValidatedField>
-              <ValidatedField type="select" name="authorities" multiple label={translate('userManagement.profiles')}>
+              {/* <ValidatedField type="select" name="authorities" multiple label={translate('userManagement.profiles')}>
                 {authorities.map(role => (
                   <option value={role} key={role}>
                     {role}
                   </option>
                 ))}
-              </ValidatedField>
+              </ValidatedField> */}
               <Button tag={Link} to="/librarian/reader-management" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

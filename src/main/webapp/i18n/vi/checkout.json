@@ -2,7 +2,7 @@
   "libraryApp": {
     "checkout": {
       "home": {
-        "title": "Mượn trả",
+        "title": "Danh sách mượn trả",
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một lượt Mượn trả",
         "createOrEditLabel": "Thêm mới hoặc cập nhật lượt Mượn trả",
@@ -24,6 +24,21 @@
       },
       "detail": {
         "title": "Thông tin lượt Mượn trả"
+      },
+      "filter": {
+        "user": {
+          "title": "Nhập vào đây để lọc theo người dùng"
+        },
+        "bookCopy": {
+          "title": "Nhập vào đây để lọc theo bản sao của sách"
+        },
+        "state": {
+          "title": "Nhập vào đây để lọc theo trang thái",
+          "all": "Tất cả",
+          "borrowing": "Đang mượn",
+          "returnSuccess": "Đã trả",
+          "returnFailed": "Bị mất"
+        }
       },
       "id": "ID",
       "startTime": "Thời gian bắt đầu",

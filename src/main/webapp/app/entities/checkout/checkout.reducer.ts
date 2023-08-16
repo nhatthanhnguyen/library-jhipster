@@ -2,7 +2,7 @@ import axios from 'axios';
 import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { createEntitySlice, EntityState, IFilterParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { defaultValue, ICheckout, ICheckoutBorrow, ICheckoutReturn } from 'app/shared/model/checkout.model';
 import { IWaitBook } from 'app/shared/model/queue.model';
 
@@ -20,10 +20,16 @@ const apiUrl = 'api/checkouts';
 
 // Actions
 
-export const getEntities = createAsyncThunk('checkout/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
-  return axios.get<ICheckout[]>(requestUrl);
-});
+export const getEntities = createAsyncThunk(
+  'checkout/fetch_entity_list',
+  async ({ page, size, sort, user, bookCopy, state }: IFilterParams) => {
+    const filterRequest = `${user ? `&user=${user}` : ''}${bookCopy ? `&bookCopy=${bookCopy}` : ''}${state ? `&state=${state}` : ''}`;
+    const requestUrl = `${apiUrl}${
+      sort ? `?page=${page}&size=${size}&sort=${sort}${filterRequest}&` : '?'
+    }cacheBuster=${new Date().getTime()}`;
+    return axios.get<ICheckout[]>(requestUrl);
+  }
+);
 
 export const getEntity = createAsyncThunk(
   'checkout/fetch_entity',

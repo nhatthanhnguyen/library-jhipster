@@ -140,11 +140,7 @@ export const Author = () => {
             <tbody>
               {authorList.map((author: IAuthor, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/author/${author.id}`} color="link" size="sm">
-                      {author.id}
-                    </Button>
-                  </td>
+                  <td>{author.id}</td>
                   <td>{author.lastName}</td>
                   <td>{author.firstName}</td>
                   {isLibrarian ? (

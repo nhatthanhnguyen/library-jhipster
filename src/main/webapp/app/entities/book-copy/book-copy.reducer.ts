@@ -79,6 +79,17 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError }
 );
 
+export const restoreEntity = createAsyncThunk(
+  'bookCopy/restore_entity',
+  async (id: string | number, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}/restore`;
+    const result = await axios.put<IBookCopy>(requestUrl);
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
 // slice
 
 export const BookCopySlice = createEntitySlice({
@@ -91,6 +102,11 @@ export const BookCopySlice = createEntitySlice({
         state.entity = action.payload.data;
       })
       .addCase(deleteEntity.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = true;
+        state.entity = {};
+      })
+      .addCase(restoreEntity.fulfilled, state => {
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
@@ -124,7 +140,7 @@ export const BookCopySlice = createEntitySlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity, restoreEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

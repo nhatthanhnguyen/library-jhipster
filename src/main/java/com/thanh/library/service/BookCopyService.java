@@ -10,6 +10,7 @@ import com.thanh.library.repository.NotificationRepository;
 import com.thanh.library.repository.QueueRepository;
 import com.thanh.library.service.dto.BookCopyDTO;
 import com.thanh.library.service.mapper.BookCopyMapper;
+import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -102,8 +103,12 @@ public class BookCopyService {
         return bookCopyRepository.findAll(pageable).map(bookCopyMapper::toDto);
     }
 
-    public List<BookCopyDTO> getAllBookCopies() {
-        return bookCopyRepository.findAll(Sort.by("id")).stream().map(bookCopyMapper::toDto).collect(Collectors.toList());
+    public List<BookCopyDTO> getAllAvailableBookCopies() {
+        return bookCopyRepository
+            .findAllBookCopiesThatIsNotDeleted(Sort.by("id"))
+            .stream()
+            .map(bookCopyMapper::toDto)
+            .collect(Collectors.toList());
     }
 
     public Page<BookCopyDTO> findAllWithEagerRelationships(Pageable pageable) {
@@ -118,6 +123,24 @@ public class BookCopyService {
 
     public void delete(Long id) {
         log.debug("Request to delete BookCopy : {}", id);
-        bookCopyRepository.deleteById(id);
+        BookCopy bookCopy = bookCopyRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
+        if (bookCopy.getIsDeleted()) {
+            throw new BadRequestAlertException("Book Copy already deleted", "BookCopy", "bookcopyalreadydeleted");
+        }
+        bookCopy.setIsDeleted(true);
+        bookCopyRepository.save(bookCopy);
+    }
+
+    public void restore(Long id) {
+        BookCopy bookCopy = bookCopyRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
+        if (!bookCopy.getIsDeleted()) {
+            throw new BadRequestAlertException("Book Copy already restored", "BookCopy", "bookcopyalreadyrestored");
+        }
+        bookCopy.setIsDeleted(false);
+        bookCopyRepository.save(bookCopy);
     }
 }

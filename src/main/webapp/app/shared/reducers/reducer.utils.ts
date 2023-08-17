@@ -13,13 +13,20 @@ import { AxiosError } from 'axios';
  * Model for redux actions with pagination
  */
 export type IQueryParams = { query?: string; page?: number; size?: number; sort?: string };
-export type IFilterParams = {
+export type IFilterCheckoutParams = {
   page?: number;
   size?: number;
   sort?: string;
   user?: string;
   bookCopy?: string;
   state?: string;
+};
+export type IFilterReservationParams = {
+  page?: number;
+  size?: number;
+  sort?: string;
+  user?: string;
+  bookCopy?: string;
 };
 
 /**

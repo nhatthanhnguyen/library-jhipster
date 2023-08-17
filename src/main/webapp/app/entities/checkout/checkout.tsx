@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, AUTHORITIES, STATE_CHECKOUT_VALUES, STATE_I18_VALUES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
-import { getSortStateWithFilter, overridePaginationStateWithQueryParamsAndFilter } from 'app/shared/util/entity-utils';
+import { getSortStateWithCheckoutFilter, overridePaginationStateWithQueryParamsAndCheckoutFilter } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './checkout.reducer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
@@ -18,7 +18,7 @@ export const Checkout = () => {
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParamsAndFilter(getSortStateWithFilter(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParamsAndCheckoutFilter(getSortStateWithCheckoutFilter(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
   const [userFilter, setUserFilter] = useState<string>(paginationState.user);
   const [bookCopyFilter, setBookCopyFilter] = useState<string>(paginationState.bookCopy);
@@ -46,9 +46,10 @@ export const Checkout = () => {
 
   const sortEntities = () => {
     getAllEntities();
-    const filterRequest = `${paginationState.user ? `&user=${paginationState.user}` : ''}${
-      paginationState.bookCopy ? `&bookCopy=${paginationState.bookCopy}` : ''
-    }${paginationState.state ? `&state=${paginationState.state}` : ''}`;
+    const filterRequest =
+      `${paginationState.user ? `&user=${paginationState.user}` : ''}` +
+      `${paginationState.bookCopy ? `&bookCopy=${paginationState.bookCopy}` : ''}` +
+      `${paginationState.state ? `&state=${paginationState.state}` : ''}`;
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}${filterRequest}`;
     if (location.search !== endURL) {
       navigate(`${location.pathname}${endURL}`);
@@ -185,12 +186,11 @@ export const Checkout = () => {
                 <th className="hand" onClick={sort('endTime')}>
                   <Translate contentKey="libraryApp.checkout.endTime">End Time</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                {/* <th className="hand" onClick={sort('isReturned')}>
-                  <Translate contentKey="libraryApp.checkout.isReturned">Is Returned</Translate> <FontAwesomeIcon icon="sort" />
-                </th> */}
-                <th className="hand" onClick={sort('user.id')}>
-                  <Translate contentKey="libraryApp.checkout.user">User</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
+                {isReader ? null : (
+                  <th className="hand" onClick={sort('user.id')}>
+                    <Translate contentKey="libraryApp.checkout.user">User</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                )}
                 <th className="hand" onClick={sort('bookCopy.id')}>
                   <Translate contentKey="libraryApp.checkout.bookCopy">Book Copy</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -203,23 +203,15 @@ export const Checkout = () => {
             <tbody>
               {checkoutList.map((checkout, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/checkout/${checkout.id}`} color="link" size="sm">
-                      {checkout.id}
-                    </Button>
-                  </td>
+                  <td>{checkout.id}</td>
                   <td>{checkout.startTime ? <TextFormat type="date" value={checkout.startTime} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{checkout.endTime ? <TextFormat type="date" value={checkout.endTime} format={APP_DATE_FORMAT} /> : null}</td>
                   {/* <td>{checkout.isReturned ? 'true' : 'false'}</td> */}
-                  <td>{checkout.user ? `${checkout.user.lastName} ${checkout.user.firstName}` : ''}</td>
+                  {isReader ? null : <td>{checkout.user ? `${checkout.user.lastName} ${checkout.user.firstName}` : ''}</td>}
                   <td>
-                    {checkout.bookCopy ? (
-                      <Link
-                        to={`/book-copy/${checkout.bookCopy.id}`}
-                      >{`${checkout.bookCopy.id} - ${checkout.bookCopy.book.title} - ${checkout.bookCopy.book.publisher.name}`}</Link>
-                    ) : (
-                      ''
-                    )}
+                    {checkout.bookCopy
+                      ? `${checkout.bookCopy.id} - ${checkout.bookCopy?.book?.title} - ${checkout.bookCopy?.book?.publisher?.name}`
+                      : ''}
                   </td>
                   <td>
                     {checkout.endTime === null ? (
@@ -232,7 +224,7 @@ export const Checkout = () => {
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      {checkout.endTime ? undefined : (
+                      {isReader ? null : checkout.endTime ? undefined : (
                         <Button
                           tag={Link}
                           to={`/checkout/${checkout.id}/return?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

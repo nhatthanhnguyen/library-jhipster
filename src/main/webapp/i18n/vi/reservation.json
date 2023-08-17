@@ -21,6 +21,14 @@
       "detail": {
         "title": "Lượt Đặt trước"
       },
+      "filter": {
+        "user": {
+          "title": "Nhập vào đây để lọc theo người dùng"
+        },
+        "bookCopy": {
+          "title": "Nhập vào đây để lọc theo bản sao của sách"
+        }
+      },
       "id": "ID",
       "startTime": "Thời gian bắt đầu",
       "endTime": "Thời gian kết thúc",

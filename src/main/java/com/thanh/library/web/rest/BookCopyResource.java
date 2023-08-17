@@ -3,6 +3,7 @@ package com.thanh.library.web.rest;
 import com.thanh.library.repository.BookCopyRepository;
 import com.thanh.library.service.BookCopyService;
 import com.thanh.library.service.dto.BookCopyDTO;
+import com.thanh.library.util.LibraryHeaderUtil;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -125,7 +126,7 @@ public class BookCopyResource {
 
     @GetMapping("/book-copies/all")
     public ResponseEntity<List<BookCopyDTO>> getAllBookCopies() {
-        return ResponseEntity.ok().body(bookCopyService.getAllBookCopies());
+        return ResponseEntity.ok().body(bookCopyService.getAllAvailableBookCopies());
     }
 
     @GetMapping("/book-copies/{id}")
@@ -142,6 +143,15 @@ public class BookCopyResource {
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
+    }
+
+    @PutMapping("/book-copies/{id}/restore")
+    public ResponseEntity<Void> restoreBookCopy(@PathVariable("id") Long id) {
+        bookCopyService.restore(id);
+        return ResponseEntity
+            .noContent()
+            .headers(LibraryHeaderUtil.createEntityRestoreAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
 }

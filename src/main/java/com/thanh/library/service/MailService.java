@@ -89,7 +89,7 @@ public class MailService {
         Locale locale = Locale.forLanguageTag(user.getLangKey());
         Context context = new Context(locale);
         context.setVariable(USER, user);
-        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        context.setVariable(BASE_URL, "127.0.0.1:9000");
         String content = templateEngine.process(templateName, context);
         String subject = messageSource.getMessage(titleKey, null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
@@ -134,7 +134,8 @@ public class MailService {
         Locale locale = Locale.forLanguageTag(user.getLangKey());
         Context context = new Context(locale);
         context.setVariable(USER, user);
-        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        //        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        context.setVariable(BASE_URL, "127.0.0.1:9000");
         context.setVariable(BOOK, book);
         String content = templateEngine.process(templateName, context);
         String subject = messageSource.getMessage(titleKey, null, locale);

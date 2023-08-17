@@ -116,19 +116,23 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ReservationDTO> getAllPagination(Pageable pageable) {
+    public Page<ReservationDTO> getAllPaginationWithCondition(String user, String bookCopy, Pageable pageable) {
         String login = SecurityUtils
             .getCurrentUserLogin()
             .orElseThrow(() -> new BadRequestAlertException("Login not found", "User", "loginnotfound"));
         User currentUser = userRepository
             .findOneByLogin(login)
             .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
-        Authority librarianRole = new Authority();
-        librarianRole.setName("ROLE_LIBRARIAN");
-        if (currentUser.getAuthorities().contains(librarianRole)) {
-            return reservationRepository.findAll(pageable).map(reservationMapper::toDto);
+        Authority librarianAuthority = new Authority();
+        librarianAuthority.setName("ROLE_LIBRARIAN");
+        Authority adminAuthority = new Authority();
+        adminAuthority.setName("ROLE_ADMIN");
+        if (currentUser.getAuthorities().contains(librarianAuthority) || currentUser.getAuthorities().contains(adminAuthority)) {
+            return reservationRepository.getAllWithConditionPagination(user, bookCopy, pageable).map(reservationMapper::toDto);
         }
-        return reservationRepository.getAllByUserPagination(currentUser.getId(), pageable).map(reservationMapper::toDto);
+        return reservationRepository
+            .getAllWithConditionPagination(currentUser.getId().toString(), bookCopy, pageable)
+            .map(reservationMapper::toDto);
     }
 
     public Page<ReservationDTO> findAllWithEagerRelationships(Pageable pageable) {

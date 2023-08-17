@@ -25,6 +25,11 @@ export const getUsers = createAsyncThunk('userManagement/fetch_users', async ({ 
   return axios.get<IUser[]>(requestUrl);
 });
 
+export const getReaderUsers = createAsyncThunk('userManagement/fetch_reader_users', async () => {
+  const requestUrl = `${adminUrl}/reader`;
+  return axios.get<IUser[]>(requestUrl);
+});
+
 export const getUsersAsAdmin = createAsyncThunk('userManagement/fetch_users_as_admin', async ({ page, size, sort }: IQueryParams) => {
   const requestUrl = `${adminUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return axios.get<IUser[]>(requestUrl);
@@ -110,7 +115,7 @@ export const UserManagementSlice = createSlice({
         state.updateSuccess = true;
         state.user = defaultValue;
       })
-      .addMatcher(isFulfilled(getUsers, getUsersAsAdmin), (state, action) => {
+      .addMatcher(isFulfilled(getUsers, getUsersAsAdmin, getReaderUsers), (state, action) => {
         state.loading = false;
         state.users = action.payload.data;
         state.totalItems = parseInt(action.payload.headers['x-total-count'], 10);
@@ -121,7 +126,7 @@ export const UserManagementSlice = createSlice({
         state.updateSuccess = true;
         state.user = action.payload.data;
       })
-      .addMatcher(isPending(getUsers, getUsersAsAdmin, getUser), state => {
+      .addMatcher(isPending(getUsers, getUsersAsAdmin, getUser, getReaderUsers), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;
@@ -132,7 +137,17 @@ export const UserManagementSlice = createSlice({
         state.updating = true;
       })
       .addMatcher(
-        isRejected(getUsers, getUsersAsAdmin, getUser, getRoles, createLibrarianUser, createReaderUser, updateUser, deleteUser),
+        isRejected(
+          getUsers,
+          getUsersAsAdmin,
+          getUser,
+          getRoles,
+          createLibrarianUser,
+          createReaderUser,
+          updateUser,
+          deleteUser,
+          getReaderUsers
+        ),
         (state, action) => {
           state.loading = false;
           state.updating = false;

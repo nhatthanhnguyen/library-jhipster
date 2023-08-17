@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { getSortState, JhiItemCount, JhiPagination, Translate } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
@@ -103,9 +103,6 @@ export const BookCopy = () => {
                 <th className="hand" onClick={sort('id')}>
                   <Translate contentKey="libraryApp.bookCopy.id">ID</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('isDeleted')}>
-                  <Translate contentKey="libraryApp.bookCopy.isDeleted">Is Deleted</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('book.title')}>
                   <Translate contentKey="libraryApp.bookCopy.book">Book</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -118,32 +115,11 @@ export const BookCopy = () => {
             <tbody>
               {bookCopyList.map((bookCopy, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/book-copy/${bookCopy.id}`} color="link" size="sm">
-                      {bookCopy.id}
-                    </Button>
-                  </td>
-                  <td>{bookCopy.isDeleted ? 'true' : 'false'}</td>
+                  <td>{bookCopy.id}</td>
                   <td>{bookCopy.book ? <Link to={`/book/${bookCopy.book.id}`}>{bookCopy.book.title}</Link> : ''}</td>
-                  <td>
-                    {bookCopy.book ? (
-                      bookCopy.book.publisher ? (
-                        <Link to={`/publisher/${bookCopy.book.publisher.id}`}>{bookCopy.book.publisher.name}</Link>
-                      ) : (
-                        ''
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </td>
+                  <td>{bookCopy?.book?.publisher?.name}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/book-copy/${bookCopy.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
                       <Button
                         tag={Link}
                         to={`/book-copy/${bookCopy.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
@@ -156,18 +132,28 @@ export const BookCopy = () => {
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
                       </Button>
-                      <Button
-                        tag={Link}
-                        to={`/book-copy/${bookCopy.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
-                        </span>
-                      </Button>
+                      {bookCopy.isDeleted ? (
+                        <Button
+                          tag={Link}
+                          to={`/book-copy/${bookCopy.id}/restore?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          color="success"
+                          size="sm"
+                          data-cy="entityRestoreButton"
+                        >
+                          <FontAwesomeIcon icon="rotate-left" />{' '}
+                          <span className="d-none d-md-inline">{translate('entity.action.restore')}</span>
+                        </Button>
+                      ) : (
+                        <Button
+                          tag={Link}
+                          to={`/book-copy/${bookCopy.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          color="danger"
+                          size="sm"
+                          data-cy="entityDeleteButton"
+                        >
+                          <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">{translate('entity.action.delete')}</span>
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>

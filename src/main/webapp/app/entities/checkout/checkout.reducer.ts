@@ -2,7 +2,7 @@ import axios from 'axios';
 import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { createEntitySlice, EntityState, IFilterParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { createEntitySlice, EntityState, IFilterCheckoutParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { defaultValue, ICheckout, ICheckoutBorrow, ICheckoutReturn } from 'app/shared/model/checkout.model';
 import { IWaitBook } from 'app/shared/model/queue.model';
 
@@ -22,7 +22,7 @@ const apiUrl = 'api/checkouts';
 
 export const getEntities = createAsyncThunk(
   'checkout/fetch_entity_list',
-  async ({ page, size, sort, user, bookCopy, state }: IFilterParams) => {
+  async ({ page, size, sort, user, bookCopy, state }: IFilterCheckoutParams) => {
     const filterRequest = `${user ? `&user=${user}` : ''}${bookCopy ? `&bookCopy=${bookCopy}` : ''}${state ? `&state=${state}` : ''}`;
     const requestUrl = `${apiUrl}${
       sort ? `?page=${page}&size=${size}&sort=${sort}${filterRequest}&` : '?'
@@ -101,14 +101,6 @@ export const returnBook = createAsyncThunk(
   { serializeError: serializeAxiosError }
 );
 
-export const addToQueue = createAsyncThunk(
-  'checkout/add_to_queue',
-  async (entity: IWaitBook, thunkAPI) => {
-    return await axios.post<ICheckout>(`${apiUrl}/wait`, cleanEntity(entity));
-  },
-  { serializeError: serializeAxiosError }
-);
-
 // slice
 
 export const CheckoutSlice = createEntitySlice({
@@ -141,12 +133,6 @@ export const CheckoutSlice = createEntitySlice({
         state.updating = false;
         state.updateSuccess = false;
         state.entity = {};
-      })
-      .addCase(addToQueue.fulfilled, state => {
-        state.updating = false;
-        state.updateSuccess = false;
-        state.entity = {};
-        state.errorMessage = null;
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
         const { data, headers } = action.payload;

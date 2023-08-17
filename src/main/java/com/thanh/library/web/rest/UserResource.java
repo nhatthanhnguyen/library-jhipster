@@ -1,11 +1,9 @@
 package com.thanh.library.web.rest;
 
 import com.thanh.library.config.Constants;
-import com.thanh.library.domain.Authority;
 import com.thanh.library.domain.User;
 import com.thanh.library.repository.UserRepository;
 import com.thanh.library.security.AuthoritiesConstants;
-import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.MailService;
 import com.thanh.library.service.UserService;
 import com.thanh.library.service.dto.AdminUserDTO;
@@ -14,7 +12,8 @@ import com.thanh.library.web.rest.errors.EmailAlreadyUsedException;
 import com.thanh.library.web.rest.errors.LoginAlreadyUsedException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -160,10 +158,15 @@ public class UserResource {
      */
     @GetMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<List<AdminUserDTO>> getAllUsers(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<AdminUserDTO>> getAllUsersPagination(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         Page<AdminUserDTO> page = userService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/reader")
+    public ResponseEntity<List<AdminUserDTO>> getAllReaderUsers() {
+        return ResponseEntity.ok().body(userService.getAllReaderUsers());
     }
 
     /**

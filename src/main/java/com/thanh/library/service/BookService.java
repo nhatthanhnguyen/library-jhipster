@@ -94,11 +94,11 @@ public class BookService {
 
     public Page<BookDTO> getAllAvailablePagination(String search, Pageable pageable) {
         log.debug("Request to get all available Books");
-        return bookRepository.findAllAvailable(search, pageable).map(bookMapper::toDto);
+        return bookRepository.findAllAvailablePagination(search, pageable).map(bookMapper::toDto);
     }
 
-    public List<BookDTO> getAllBooks() {
-        return bookRepository.findAll(Sort.by("id")).stream().map(bookMapper::toDto).collect(Collectors.toList());
+    public List<BookDTO> getAllBooksAvailable() {
+        return bookRepository.findAllAvailable(Sort.by("id")).stream().map(bookMapper::toDto).collect(Collectors.toList());
     }
 
     public Page<BookDTO> findAllWithEagerRelationships(Pageable pageable) {

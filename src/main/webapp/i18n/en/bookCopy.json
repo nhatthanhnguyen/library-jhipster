@@ -11,12 +11,16 @@
       "created": "A new Book Copy is created with identifier {{ param }}",
       "updated": "A Book Copy is updated with identifier {{ param }}",
       "deleted": "A Book Copy is deleted with identifier {{ param }}",
+      "restored": "A Book Copy is restore with identifier {{ param }}",
       "hold": "A Book Copy is hold with identifier {{ param }}",
       "borrowed": "A Book Copy is borrowed with identifier {{ param }}",
       "returnedSuccessfully": "A Book Copy is returned with identifier {{ param }}",
       "returnedFailed": "A Book Copy is not returned because it is missing with identifier {{ param }}",
       "delete": {
         "question": "Are you sure you want to delete Book Copy {{ id }}?"
+      },
+      "restore": {
+        "question": "Are you sure you want to restore Book Copy {{ id }}?"
       },
       "detail": {
         "title": "Book Copy"

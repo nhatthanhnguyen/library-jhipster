@@ -132,7 +132,7 @@ public class BookResource {
 
     @GetMapping("/books/all")
     public ResponseEntity<List<BookDTO>> getAllBooks() {
-        return ResponseEntity.ok().body(bookService.getAllBooks());
+        return ResponseEntity.ok().body(bookService.getAllBooksAvailable());
     }
 
     @GetMapping("/books/{id}")

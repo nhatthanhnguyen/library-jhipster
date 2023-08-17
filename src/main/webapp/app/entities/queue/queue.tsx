@@ -19,7 +19,7 @@ export const Queue = () => {
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'createdAt'), location.search)
   );
 
   const queueList = useAppSelector(state => state.queue.entities);
@@ -90,11 +90,11 @@ export const Queue = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.queue.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/queue/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          {/* <Link to="/queue/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="libraryApp.queue.home.createLabel">Create new Queue</Translate>
-          </Link>
+          </Link> */}
         </div>
       </h2>
       <div className="table-responsive">
@@ -102,9 +102,6 @@ export const Queue = () => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="libraryApp.queue.id">ID</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('createdAt')}>
                   <Translate contentKey="libraryApp.queue.createdAt">Created At</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -120,17 +117,12 @@ export const Queue = () => {
             <tbody>
               {queueList.map((queue, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/queue/${queue.id}`} color="link" size="sm">
-                      {queue.id}
-                    </Button>
-                  </td>
                   <td>{queue.createdAt ? <TextFormat type="date" value={queue.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{queue.user ? queue.user.login : ''}</td>
-                  <td>{queue.book ? <Link to={`/book/${queue.book.id}`}>{queue.book.title}</Link> : ''}</td>
+                  <td>{queue.user ? `${queue.user.id} - ${queue.user.login} - ${queue.user.lastName} ${queue.user.firstName}` : ''}</td>
+                  <td>{queue.book ? `${queue.book.id} - ${queue.book.title} - ${queue.book.publisher.name}` : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/queue/${queue.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      {/* <Button tag={Link} to={`/queue/${queue.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
@@ -147,7 +139,7 @@ export const Queue = () => {
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
-                      </Button>
+                      </Button> */}
                       <Button
                         tag={Link}
                         to={`/queue/${queue.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

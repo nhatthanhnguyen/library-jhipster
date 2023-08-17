@@ -135,11 +135,7 @@ export const Category = () => {
             <tbody>
               {categoryList.map((category, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/category/${category.id}`} color="link" size="sm">
-                      {category.id}
-                    </Button>
-                  </td>
+                  <td>{category.id}</td>
                   <td>{category.name}</td>
                   {isLibrarian ? (
                     <>

@@ -135,11 +135,7 @@ export const Publisher = () => {
             <tbody>
               {publisherList.map((publisher, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/publisher/${publisher.id}`} color="link" size="sm">
-                      {publisher.id}
-                    </Button>
-                  </td>
+                  <td>{publisher.id}</td>
                   <td>{publisher.name}</td>
                   {isLibrarian ? (
                     <>

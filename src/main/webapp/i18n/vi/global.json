@@ -45,6 +45,8 @@
     "form": {
       "username.label": "Tên tài khoản",
       "username.placeholder": "Nhập tên tài khoản của bạn",
+      "currentpassword.label": "Mật khẩu hiện tại",
+      "currentpassword.placeholder": "Mật khẩu hiện tại",
       "newpassword.label": "Mật khẩu mới",
       "newpassword.placeholder": "Nhập mật khẩu mới",
       "confirmpassword.label": "Xác nhận mật khẩu mới",
@@ -161,6 +163,8 @@
     "bookcopynotavailable": "Bản sao của Đầu sách không đủ",
     "usernotactivated": "Người dùng chưa được kích hoạt",
     "bookcopyisdeleted": "Bản sao của Đầu Sách không còn trong thư viện",
+    "bookcopyalreadydeleted": "Bản sao của Đầu Sách đã bị xóa",
+    "bookcopyalreadyrestored": "Bản sao của Đầu Sách đã được khôi phục",
     "alreadyinqueue": "Người dùng và Đầu Sách đang ở trong hàng đợi",
     "userdoesnothavepermission": "Người dùng không có quyền để thực hiện hành động này",
     "file": {

@@ -6,6 +6,7 @@ import com.thanh.library.service.CheckoutService;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
 import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
+import com.thanh.library.service.dto.request.WaitBookRequestDTO;
 import com.thanh.library.util.LibraryHeaderUtil;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.net.URI;

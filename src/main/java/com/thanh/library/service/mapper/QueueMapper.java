@@ -18,14 +18,8 @@ public interface QueueMapper extends EntityMapper<QueueDTO, Queue> {
     QueueDTO toDto(Queue s);
 
     @Named("userLogin")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "login", source = "login")
     UserDTO toDtoUserLogin(User user);
 
     @Named("bookTitle")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "title", source = "title")
     BookDTO toDtoBookTitle(Book book);
 }

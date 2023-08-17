@@ -110,10 +110,12 @@ public class CheckoutService {
         if (status.equalsIgnoreCase("returnsuccess")) {
             isReturned = true;
         }
-        Authority roleLibrarian = new Authority();
-        roleLibrarian.setName("ROLE_LIBRARIAN");
-        // if current user is librarian
-        if (currentUser.getAuthorities().contains(roleLibrarian)) {
+        Authority librarianAuthority = new Authority();
+        librarianAuthority.setName("ROLE_LIBRARIAN");
+        Authority adminAuthority = new Authority();
+        adminAuthority.setName("ROLE_ADMIN");
+        // if current user is librarian or an admin
+        if (currentUser.getAuthorities().contains(librarianAuthority) || currentUser.getAuthorities().contains(adminAuthority)) {
             if (status.equalsIgnoreCase("borrowing")) {
                 return checkoutRepository.findAllWithEndTimeNull(user, bookCopy, isReturned, pageable).map(checkoutMapper::toDto);
             }
@@ -220,33 +222,5 @@ public class CheckoutService {
             notificationRepository.save(notification);
             mailService.sendBookRequestIsAvailable(notification.getUser(), notification.getBookCopy().getBook());
         });
-    }
-
-    public void addToQueue(WaitBookRequestDTO requestDTO) {
-        User user = userRepository
-            .findById(requestDTO.getUserId())
-            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
-        if (!user.isActivated()) {
-            throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
-        }
-
-        Book book = bookRepository
-            .findById(requestDTO.getBookId())
-            .orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "booknotfound"));
-        if (book.getIsDeleted()) {
-            throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
-        }
-        QueueId queueId = new QueueId();
-        queueId.setBookId(book.getId());
-        queueId.setUserId(user.getId());
-        if (queueRepository.existsById(queueId)) {
-            throw new BadRequestAlertException("Currently in queue", "Queue", "alreadyinqueue");
-        }
-        Queue queue = new Queue();
-        queue.setId(queueId);
-        queue.setBook(book);
-        queue.setUser(user);
-        queue.setCreatedAt(Instant.now());
-        queueRepository.save(queue);
     }
 }

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
+import { Button, Col, Input, Row, Table } from 'reactstrap';
+import { JhiItemCount, JhiPagination, TextFormat, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
-import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import {
+  getSortStateWithReservationFilter,
+  overridePaginationStateWithQueryParamsAndReservationFilter,
+} from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './reservation.reducer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
@@ -18,13 +21,20 @@ export const Reservation = () => {
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParamsAndReservationFilter(
+      getSortStateWithReservationFilter(location, ITEMS_PER_PAGE, 'id'),
+      location.search
+    )
   );
+  const [userFilter, setUserFilter] = useState<string>(paginationState.user);
+  const [bookCopyFilter, setBookCopyFilter] = useState<string>(paginationState.bookCopy);
 
   const reservationList = useAppSelector(state => state.reservation.entities);
   const loading = useAppSelector(state => state.reservation.loading);
   const totalItems = useAppSelector(state => state.reservation.totalItems);
-  const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
+  const librarianAuthority = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
+  const adminAuthority = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
+  const isReader = !librarianAuthority && !adminAuthority;
 
   const getAllEntities = () => {
     dispatch(
@@ -32,13 +42,18 @@ export const Reservation = () => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
+        user: paginationState.user,
+        bookCopy: paginationState.bookCopy,
       })
     );
   };
 
   const sortEntities = () => {
     getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    const filterRequest =
+      `${paginationState.user ? `&user=${paginationState.user}` : ''}` +
+      `${paginationState.bookCopy ? `&bookCopy=${paginationState.bookCopy}` : ''}`;
+    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}${filterRequest}`;
     if (location.search !== endURL) {
       navigate(`${location.pathname}${endURL}`);
     }
@@ -46,12 +61,14 @@ export const Reservation = () => {
 
   useEffect(() => {
     sortEntities();
-  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+  }, [paginationState.activePage, paginationState.order, paginationState.sort, paginationState.user, paginationState.bookCopy]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
+    const user = params.get('user');
+    const bookCopy = params.get('bookCopy');
     if (page && sort) {
       const sortSplit = sort.split(',');
       setPaginationState({
@@ -59,6 +76,8 @@ export const Reservation = () => {
         activePage: +page,
         sort: sortSplit[0],
         order: sortSplit[1],
+        user: user ?? '',
+        bookCopy: bookCopy ?? '',
       });
     }
   }, [location.search]);
@@ -81,6 +100,14 @@ export const Reservation = () => {
     sortEntities();
   };
 
+  const handleFilter = () => {
+    setPaginationState({
+      ...paginationState,
+      user: userFilter,
+      bookCopy: bookCopyFilter,
+    });
+  };
+
   return (
     <div>
       <h2 id="reservation-heading" data-cy="ReservationHeading">
@@ -90,7 +117,7 @@ export const Reservation = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.reservation.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          {isLibrarian ? (
+          {librarianAuthority ? (
             <Link to="/reservation/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
               <FontAwesomeIcon icon="plus" />
               &nbsp;
@@ -99,6 +126,31 @@ export const Reservation = () => {
           ) : null}
         </div>
       </h2>
+      <Row>
+        {isReader ? null : (
+          <Col>
+            <Input
+              type="text"
+              value={userFilter}
+              onChange={e => setUserFilter(e.currentTarget.value)}
+              placeholder={translate('libraryApp.reservation.filter.user.title')}
+            />
+          </Col>
+        )}
+        <Col>
+          <Input
+            type="text"
+            value={bookCopyFilter}
+            onChange={e => setBookCopyFilter(e.currentTarget.value)}
+            placeholder={translate('libraryApp.reservation.filter.bookCopy.title')}
+          />
+        </Col>
+        <Col className="text-end">
+          <Button onClick={handleFilter}>
+            <FontAwesomeIcon icon="filter" /> Filter
+          </Button>
+        </Col>
+      </Row>
       <div className="table-responsive">
         {reservationList && reservationList.length > 0 ? (
           <Table responsive>
@@ -113,9 +165,11 @@ export const Reservation = () => {
                 <th className="hand" onClick={sort('endTime')}>
                   <Translate contentKey="libraryApp.reservation.endTime">End Time</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  <Translate contentKey="libraryApp.reservation.user">User</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
+                {isReader ? null : (
+                  <th>
+                    <Translate contentKey="libraryApp.reservation.user">User</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                )}
                 <th>
                   <Translate contentKey="libraryApp.reservation.bookCopy">Book Copy</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -125,20 +179,22 @@ export const Reservation = () => {
             <tbody>
               {reservationList.map((reservation, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/reservation/${reservation.id}`} color="link" size="sm">
-                      {reservation.id}
-                    </Button>
-                  </td>
+                  <td>{reservation.id}</td>
                   <td>
                     {reservation.startTime ? <TextFormat type="date" value={reservation.startTime} format={APP_DATE_FORMAT} /> : null}
                   </td>
                   <td>{reservation.endTime ? <TextFormat type="date" value={reservation.endTime} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{reservation.user ? reservation.user.login : ''}</td>
-                  <td>{reservation.bookCopy ? <Link to={`/book-copy/${reservation.bookCopy.id}`}>{reservation.bookCopy.id}</Link> : ''}</td>
+                  {isReader ? null : (
+                    <td>{reservation.user ? `${reservation.user.id} - ${reservation.user.lastName} ${reservation.user.firstName}` : ''}</td>
+                  )}
+                  <td>
+                    {reservation.bookCopy
+                      ? `${reservation.bookCopy.id} - ${reservation.bookCopy.book.title} - ${reservation.bookCopy.book.publisher.name}`
+                      : ''}
+                  </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      {reservation.endTime ? null : (
+                      {isReader ? null : reservation.endTime ? null : (
                         <Button
                           tag={Link}
                           to={`/reservation/${reservation.id}/borrow/${reservation.bookCopy.id}?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

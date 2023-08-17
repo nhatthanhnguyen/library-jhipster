@@ -15,8 +15,8 @@ const ReservationRoutes = () => (
     <Route index element={<Reservation />} />
     <Route path="new" element={<ReservationCreate />} />
     <Route path=":id">
-      <Route index element={<ReservationDetail />} />
-      <Route path="edit" element={<ReservationUpdate />} />
+      {/* <Route index element={<ReservationDetail />} />
+      <Route path="edit" element={<ReservationUpdate />} /> */}
       <Route path="borrow/:bookCopyId" element={<ReservationBorrowDialog />} />
       <Route path="delete" element={<ReservationDeleteDialog />} />
     </Route>

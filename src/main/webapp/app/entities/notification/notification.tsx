@@ -90,11 +90,11 @@ export const Notification = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.notification.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/notification/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          {/* <Link to="/notification/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
             <Translate contentKey="libraryApp.notification.home.createLabel">Create new Notification</Translate>
-          </Link>
+          </Link> */}
         </div>
       </h2>
       <div className="table-responsive">
@@ -123,11 +123,7 @@ export const Notification = () => {
             <tbody>
               {notificationList.map((notification, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/notification/${notification.id}`} color="link" size="sm">
-                      {notification.id}
-                    </Button>
-                  </td>
+                  <td>{notification.id}</td>
                   <td>{notification.sentAt ? <TextFormat type="date" value={notification.sentAt} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>
                     <Translate contentKey={`libraryApp.Type.${notification.type}`} />
@@ -138,7 +134,7 @@ export const Notification = () => {
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/notification/${notification.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      {/* <Button tag={Link} to={`/notification/${notification.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
@@ -155,7 +151,7 @@ export const Notification = () => {
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
-                      </Button>
+                      </Button> */}
                       <Button
                         tag={Link}
                         to={`/notification/${notification.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -39,9 +40,13 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
     Optional<BookCopy> findOneWithToOneRelationships(@Param("id") Long id);
 
     @Query(
-        value = "select bc from BookCopy bc join fetch bc.book where bc.book.id = :bookId and " +
+        value = "select bc from BookCopy bc join fetch bc.book " +
+        "where bc.book.id = :bookId and bc.isDeleted = false and bc.book.isDeleted = false and " +
         "((bc.id not in (select r.bookCopy.id from Reservation r where r.endTime is null)) and " +
         "(bc.id not in (select c.bookCopy.id from Checkout c where c.endTime is null)))"
     )
     List<BookCopy> findBookCopiesAvailableByBookId(@Param("bookId") Long bookId);
+
+    @Query("select bc from BookCopy bc join fetch bc.book where bc.book.isDeleted = false and bc.isDeleted = false")
+    List<BookCopy> findAllBookCopiesThatIsNotDeleted(Sort sort);
 }

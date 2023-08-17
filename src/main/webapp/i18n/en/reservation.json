@@ -21,6 +21,14 @@
       "detail": {
         "title": "Reservation"
       },
+      "filter": {
+        "user": {
+          "title": "Type here to filter by user"
+        },
+        "bookCopy": {
+          "title": "Type here to filter by bookCopy"
+        }
+      },
       "id": "ID",
       "startTime": "Start Time",
       "endTime": "End Time",

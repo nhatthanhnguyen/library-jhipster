@@ -88,20 +88,12 @@ export const BookCopyUpdate = () => {
                   validate={{ required: true }}
                 />
               ) : null}
-              <ValidatedField
-                label={translate('libraryApp.bookCopy.isDeleted')}
-                id="book-copy-isDeleted"
-                name="isDeleted"
-                data-cy="isDeleted"
-                check
-                type="checkbox"
-              />
               <ValidatedField id="book-copy-book" name="book" data-cy="book" label={translate('libraryApp.bookCopy.book')} type="select">
                 <option value="" key="0" />
                 {books
                   ? books.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.title}
+                        {`${otherEntity.id} - ${otherEntity.title} - ${otherEntity.publisher.name}`}
                       </option>
                     ))
                   : null}

@@ -4,8 +4,8 @@ import { Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 're
 import { Translate, translate, ValidatedField } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { addToQueue, getAllEntities as getBooks } from 'app/entities/book/book.reducer';
+import { getReaderUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { addToQueue, getAllEntities } from 'app/entities/book/book.reducer';
 import { createEntity, reset } from './reservation.reducer';
 import { toNumber } from 'lodash';
 
@@ -29,8 +29,8 @@ export const ReservationCreate = () => {
   useEffect(() => {
     dispatch(reset());
 
-    dispatch(getUsers({}));
-    dispatch(getBooks());
+    dispatch(getReaderUsers());
+    dispatch(getAllEntities());
   }, []);
 
   const saveEntity = () => {
@@ -59,8 +59,8 @@ export const ReservationCreate = () => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="libraryApp.reservation.home.createOrEditLabel" data-cy="ReservationCreateUpdateHeading">
-            <Translate contentKey="libraryApp.reservation.home.createOrEditLabel">Create a Reservation</Translate>
+          <h2 id="libraryApp.reservation.home.createLabel" data-cy="ReservationCreateUpdateHeading">
+            <Translate contentKey="libraryApp.reservation.home.createLabel">Create a Reservation</Translate>
           </h2>
         </Col>
       </Row>
@@ -82,7 +82,7 @@ export const ReservationCreate = () => {
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
+                        {`${otherEntity.id} - ${otherEntity.login} - ${otherEntity.lastName} ${otherEntity.firstName}`}
                       </option>
                     ))
                   : null}
@@ -99,7 +99,7 @@ export const ReservationCreate = () => {
                 {books
                   ? books.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {`${otherEntity?.id} - ${otherEntity?.title} - ${otherEntity?.publisher?.name}`}
                       </option>
                     ))
                   : null}

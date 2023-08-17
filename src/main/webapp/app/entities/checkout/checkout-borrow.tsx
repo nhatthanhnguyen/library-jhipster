@@ -4,9 +4,10 @@ import { Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 're
 import { Translate, translate, ValidatedField } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { getReaderUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getAllEntities as getBookCopies } from 'app/entities/book-copy/book-copy.reducer';
-import { addToQueue, borrowBook, getEntity, reset } from './checkout.reducer';
+import { borrowBook, getEntity, reset } from './checkout.reducer';
+import { addToQueue } from 'app/entities/book/book.reducer';
 import { toNumber } from 'lodash';
 
 export const CheckoutBorrow = () => {
@@ -38,7 +39,7 @@ export const CheckoutBorrow = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getUsers({}));
+    dispatch(getReaderUsers());
     dispatch(getBookCopies());
   }, []);
 

@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IUser } from 'app/shared/model/user.model';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IBookCopy } from 'app/shared/model/book-copy.model';
-import { getEntities as getBookCopies } from 'app/entities/book-copy/book-copy.reducer';
-import { ICheckout } from 'app/shared/model/checkout.model';
-import { getEntity, updateEntity, createEntity, reset } from './checkout.reducer';
+import { getReaderUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { getAllEntities as getBookCopies } from 'app/entities/book-copy/book-copy.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './checkout.reducer';
 
 export const CheckoutUpdate = () => {
   const dispatch = useAppDispatch();
@@ -41,8 +36,8 @@ export const CheckoutUpdate = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getUsers({}));
-    dispatch(getBookCopies({}));
+    dispatch(getReaderUsers());
+    dispatch(getBookCopies());
   }, []);
 
   useEffect(() => {
@@ -87,8 +82,8 @@ export const CheckoutUpdate = () => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="libraryApp.checkout.home.createOrEditLabel" data-cy="CheckoutCreateUpdateHeading">
-            <Translate contentKey="libraryApp.checkout.home.createOrEditLabel">Create or edit a Checkout</Translate>
+          <h2 id="libraryApp.checkout.home.createLabel" data-cy="CheckoutCreateUpdateHeading">
+            <Translate contentKey="libraryApp.checkout.home.createLabel">Create or edit a Checkout</Translate>
           </h2>
         </Col>
       </Row>

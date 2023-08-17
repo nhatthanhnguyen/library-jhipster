@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -50,4 +51,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
         "and 'ROLE_LIRBARIAN' not in (select r.name from u.authorities r)"
     )
     Page<User> getReaderUsers(Pageable pageable);
+
+    @Query(
+        "select u from User u where 'ROLE_USER' in (select r.name from u.authorities r) " +
+        "and 'ROLE_ADMIN' not in (select r.name from u.authorities r) " +
+        "and 'ROLE_LIRBARIAN' not in (select r.name from u.authorities r)"
+    )
+    List<User> getAllReaderUsers(Sort sort);
 }

@@ -7,33 +7,21 @@ import BookCopy from './book-copy';
 import BookCopyDetail from './book-copy-detail';
 import BookCopyUpdate from './book-copy-update';
 import BookCopyDeleteDialog from './book-copy-delete-dialog';
-import PrivateRoute from 'app/shared/auth/private-route';
-import { AUTHORITIES } from 'app/config/constants';
+import BookCopyRestoreDialog from 'app/entities/book-copy/book-copy-restore-dialog';
 
-const BookCopyRoutes = () => (
-  <ErrorBoundaryRoutes>
-    <Route
-      index
-      element={
-        <PrivateRoute hasAnyAuthorities={[AUTHORITIES.LIBRARIAN]}>
-          <BookCopy />
-        </PrivateRoute>
-      }
-    />
-    <Route
-      path="new"
-      element={
-        <PrivateRoute hasAnyAuthorities={[AUTHORITIES.LIBRARIAN]}>
-          <BookCopyUpdate />
-        </PrivateRoute>
-      }
-    />
-    <Route path=":id">
-      <Route index element={<BookCopyDetail />} />
-      <Route path="edit" element={<BookCopyUpdate />} />
-      <Route path="delete" element={<BookCopyDeleteDialog />} />
-    </Route>
-  </ErrorBoundaryRoutes>
-);
+const BookCopyRoutes = () => {
+  return (
+    <ErrorBoundaryRoutes>
+      <Route index element={<BookCopy />} />
+      <Route path="new" element={<BookCopyUpdate />} />
+      <Route path=":id">
+        <Route index element={<BookCopyDetail />} />
+        <Route path="edit" element={<BookCopyUpdate />} />
+        <Route path="restore" element={<BookCopyRestoreDialog />} />
+        <Route path="delete" element={<BookCopyDeleteDialog />} />
+      </Route>
+    </ErrorBoundaryRoutes>
+  );
+};
 
 export default BookCopyRoutes;

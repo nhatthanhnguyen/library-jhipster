@@ -164,6 +164,8 @@
     "bookcopynotavailable": "Book Copy is not enough",
     "usernotactivated": "User is not activated",
     "bookcopyisdeleted": "Book Copy is deleted",
+    "bookcopyalreadydeleted": "Book Copy is already deleted",
+    "bookcopyalreadyrestored": "Book Copy already restored",
     "alreadyinqueue": "User and Book are currently in Queue",
     "userdoesnothavepermission": "User does not have permission to do this action",
     "file": {

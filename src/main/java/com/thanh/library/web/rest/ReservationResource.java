@@ -109,10 +109,12 @@ public class ReservationResource {
     @GetMapping("/reservations")
     public ResponseEntity<List<ReservationDTO>> getAllReservations(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @RequestParam(required = false, defaultValue = "false") boolean eagerload,
+        @RequestParam(required = false, value = "user") String user,
+        @RequestParam(required = false, value = "bookCopy") String bookCopy
     ) {
         log.debug("REST request to get a page of Reservations");
-        Page<ReservationDTO> page = reservationService.getAllPagination(pageable);
+        Page<ReservationDTO> page = reservationService.getAllPaginationWithCondition(user, bookCopy, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

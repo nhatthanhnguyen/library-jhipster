@@ -27,10 +27,15 @@ export interface IPaginationSearchState extends IPaginationBaseState {
   search: string;
 }
 
-export interface IPaginationFilterState extends IPaginationBaseState {
+export interface IPaginationCheckoutFilterState extends IPaginationBaseState {
   user: string;
   bookCopy: string;
   state: string;
+}
+
+export interface IPaginationReservationFilterState extends IPaginationBaseState {
+  user: string;
+  bookCopy: string;
 }
 
 export const getSortStateWithSearch = (
@@ -60,7 +65,7 @@ export const getSortStateWithSearch = (
   return { itemsPerPage, sort, order, activePage, search: query };
 };
 
-export const getSortStateWithFilter = (
+export const getSortStateWithCheckoutFilter = (
   location: { search: string },
   itemsPerPage: number,
   sortField = 'id',
@@ -68,7 +73,7 @@ export const getSortStateWithFilter = (
   userFilter = '',
   bookCopyFilter = '',
   stateFilter = 'ALL'
-): IPaginationFilterState => {
+): IPaginationCheckoutFilterState => {
   const pageParam = getUrlParameter('page', location.search);
   const sortParam = getUrlParameter('sort', location.search);
   const userFilterParam = getUrlParameter('user', location.search);
@@ -107,6 +112,46 @@ export const getSortStateWithFilter = (
   };
 };
 
+export const getSortStateWithReservationFilter = (
+  location: { search: string },
+  itemsPerPage: number,
+  sortField = 'id',
+  sortOrder = 'asc',
+  userFilter = '',
+  bookCopyFilter = ''
+): IPaginationReservationFilterState => {
+  const pageParam = getUrlParameter('page', location.search);
+  const sortParam = getUrlParameter('sort', location.search);
+  const userFilterParam = getUrlParameter('user', location.search);
+  const bookCopyFilterParam = getUrlParameter('bookCopy', location.search);
+  let sort = sortField;
+  let order = sortOrder;
+  let user = userFilter;
+  let bookCopy = bookCopyFilter;
+  let activePage = 1;
+  if (pageParam !== '' && !isNaN(parseInt(pageParam, 10))) {
+    activePage = parseInt(pageParam, 10);
+  }
+  if (sortParam !== '') {
+    sort = sortParam.split(',')[0];
+    order = sortParam.split(',')[1];
+  }
+  if (userFilterParam !== '') {
+    user = userFilterParam;
+  }
+  if (bookCopyFilterParam !== '') {
+    bookCopy = bookCopyFilterParam;
+  }
+  return {
+    itemsPerPage,
+    sort,
+    order,
+    activePage,
+    user,
+    bookCopy,
+  };
+};
+
 export const overridePaginationStateWithQueryParamsAndSearch = (paginationState: IPaginationSearchState, locationSearch: string) => {
   const params = new URLSearchParams(locationSearch);
   const page = params.get('page');
@@ -135,7 +180,10 @@ export const overridePaginationStateWithQueryParams = (paginationState: IPaginat
   return paginationState;
 };
 
-export const overridePaginationStateWithQueryParamsAndFilter = (paginationState: IPaginationFilterState, locationSearch: string) => {
+export const overridePaginationStateWithQueryParamsAndCheckoutFilter = (
+  paginationState: IPaginationCheckoutFilterState,
+  locationSearch: string
+) => {
   const params = new URLSearchParams(locationSearch);
   const page = params.get('page');
   const sort = params.get('sort');
@@ -150,6 +198,26 @@ export const overridePaginationStateWithQueryParamsAndFilter = (paginationState:
     paginationState.user = user ?? '';
     paginationState.bookCopy = bookCopy ?? '';
     paginationState.state = STATE_CHECKOUT_VALUES.find(it => it === state) ?? 'ALL';
+  }
+  return paginationState;
+};
+
+export const overridePaginationStateWithQueryParamsAndReservationFilter = (
+  paginationState: IPaginationReservationFilterState,
+  locationSearch: string
+) => {
+  const params = new URLSearchParams(locationSearch);
+  const page = params.get('page');
+  const sort = params.get('sort');
+  const user = params.get('user');
+  const bookCopy = params.get('bookCopy');
+  if (page && sort) {
+    const sortSplit = sort.split(',');
+    paginationState.activePage = +page;
+    paginationState.sort = sortSplit[0];
+    paginationState.order = sortSplit[1];
+    paginationState.user = user ?? '';
+    paginationState.bookCopy = bookCopy ?? '';
   }
   return paginationState;
 };

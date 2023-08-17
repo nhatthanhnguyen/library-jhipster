@@ -154,6 +154,10 @@ public class UserService {
         return newUser;
     }
 
+    public List<AdminUserDTO> getAllReaderUsers() {
+        return userRepository.getAllReaderUsers(Sort.by("id")).stream().map(AdminUserDTO::new).collect(Collectors.toList());
+    }
+
     private boolean removeNonActivatedUser(User existingUser) {
         if (existingUser.isActivated()) {
             return false;

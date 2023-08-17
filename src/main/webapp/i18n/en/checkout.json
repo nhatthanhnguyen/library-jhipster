@@ -36,7 +36,7 @@
           "title": "Type here to filter by state",
           "all": "All",
           "borrowing": "Borrowing",
-          "returnSuccess": "Return",
+          "returnSuccess": "Returned",
           "returnFailed": "Missing"
         }
       },
@@ -45,7 +45,13 @@
       "endTime": "End Time",
       "isReturned": "Is Returned",
       "user": "User",
-      "bookCopy": "Book Copy"
+      "bookCopy": "Book Copy",
+      "state": {
+        "title": "State",
+        "borrowing": "Borrowing",
+        "returnSuccess": "Returned",
+        "returnFailed": "Missing"
+      }
     }
   }
 }

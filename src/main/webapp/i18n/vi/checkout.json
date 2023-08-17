@@ -45,7 +45,13 @@
       "endTime": "Thời gian kết thúc",
       "isReturned": "Hoàn trả thành công",
       "user": "Người dùng",
-      "bookCopy": "Bản copy đầu sách"
+      "bookCopy": "Bản copy đầu sách",
+      "state": {
+        "title": "Trạng thái",
+        "borrowing": "Đang mượn",
+        "returnSuccess": "Đã trả",
+        "returnFailed": "Bị mất"
+      }
     }
   }
 }

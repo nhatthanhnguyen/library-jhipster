@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Col, Input, Row, Table } from 'reactstrap';
+import { Badge, Button, Col, Input, Row, Table } from 'reactstrap';
 import { JhiItemCount, JhiPagination, TextFormat, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -185,14 +185,17 @@ export const Checkout = () => {
                 <th className="hand" onClick={sort('endTime')}>
                   <Translate contentKey="libraryApp.checkout.endTime">End Time</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('isReturned')}>
+                {/* <th className="hand" onClick={sort('isReturned')}>
                   <Translate contentKey="libraryApp.checkout.isReturned">Is Returned</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
+                </th> */}
+                <th className="hand" onClick={sort('user.id')}>
                   <Translate contentKey="libraryApp.checkout.user">User</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
+                <th className="hand" onClick={sort('bookCopy.id')}>
                   <Translate contentKey="libraryApp.checkout.bookCopy">Book Copy</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="libraryApp.checkout.state.title">State</Translate>
                 </th>
                 <th />
               </tr>
@@ -207,7 +210,7 @@ export const Checkout = () => {
                   </td>
                   <td>{checkout.startTime ? <TextFormat type="date" value={checkout.startTime} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{checkout.endTime ? <TextFormat type="date" value={checkout.endTime} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{checkout.isReturned ? 'true' : 'false'}</td>
+                  {/* <td>{checkout.isReturned ? 'true' : 'false'}</td> */}
                   <td>{checkout.user ? `${checkout.user.lastName} ${checkout.user.firstName}` : ''}</td>
                   <td>
                     {checkout.bookCopy ? (
@@ -216,6 +219,15 @@ export const Checkout = () => {
                       >{`${checkout.bookCopy.id} - ${checkout.bookCopy.book.title} - ${checkout.bookCopy.book.publisher.name}`}</Link>
                     ) : (
                       ''
+                    )}
+                  </td>
+                  <td>
+                    {checkout.endTime === null ? (
+                      <Badge>{translate('libraryApp.checkout.state.borrowing')}</Badge>
+                    ) : checkout.isReturned ? (
+                      <Badge color="success">{translate('libraryApp.checkout.state.returnSuccess')}</Badge>
+                    ) : (
+                      <Badge color="danger">{translate('libraryApp.checkout.state.returnFailed')}</Badge>
                     )}
                   </td>
                   <td className="text-end">
@@ -234,18 +246,18 @@ export const Checkout = () => {
                           </span>
                         </Button>
                       )}
-                      <Button
-                        tag={Link}
-                        to={`/checkout/${checkout.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
+                      {/* <Button
+                      tag={Link}
+                      to={`/checkout/${checkout.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                      color="primary"
+                      size="sm"
+                      data-cy="entityEditButton"
+                    >
+                      <FontAwesomeIcon icon="pencil-alt"/>{' '}
+                      <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
-                      </Button>
+                    </Button> */}
                       <Button
                         tag={Link}
                         to={`/checkout/${checkout.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

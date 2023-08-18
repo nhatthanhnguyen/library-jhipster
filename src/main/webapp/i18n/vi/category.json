@@ -2,7 +2,7 @@
   "libraryApp": {
     "category": {
       "home": {
-        "title": "Thể loại",
+        "title": "Danh sách Thể loại",
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Thể loại",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Thể loại",
@@ -15,7 +15,7 @@
         "question": "Bạn có chắc là muốn xóa Thể loại {{ id }}?"
       },
       "detail": {
-        "title": "Thể loại"
+        "title": "Thông tin Thể loại"
       },
       "id": "ID",
       "name": "Tên thể loại",

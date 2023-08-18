@@ -51,4 +51,10 @@ public interface BookRepository extends BookRepositoryWithBagRelationships, JpaR
 
     @Query("select b from Book b where b.isDeleted = false")
     List<Book> findAllAvailable(Sort sort);
+
+    @Query(
+        value = "select distinct b from Book b join b.categories c where c.id = :categoryId",
+        countQuery = "select count(distinct b) from Book b join b.categories c where c.id = :categoryId"
+    )
+    Page<Book> findAllByCategory(@Param("categoryId") Long categoryId, Pageable pageable);
 }

@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -126,6 +127,16 @@ public class BookResource {
         } else {
             page = bookService.getAllAvailablePagination(search, pageable);
         }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/books/category/{categoryId}")
+    public ResponseEntity<List<BookDTO>> getAllBooksByCategoryPagination(
+        @PathVariable("categoryId") Long categoryId,
+        @ParameterObject Pageable pageable
+    ) {
+        Page<BookDTO> page = bookService.getAllPaginationByCategory(categoryId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

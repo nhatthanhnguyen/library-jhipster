@@ -2,7 +2,7 @@
   "libraryApp": {
     "book": {
       "home": {
-        "title": "Đầu sách",
+        "title": "Danh sách Đầu sách",
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Đầu sách",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Đầu sách",

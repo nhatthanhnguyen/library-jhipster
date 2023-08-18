@@ -1,7 +1,9 @@
 package com.thanh.library.config;
 
 import com.thanh.library.domain.Checkout;
+import com.thanh.library.domain.Notification;
 import com.thanh.library.domain.User;
+import com.thanh.library.domain.enumeration.Type;
 import com.thanh.library.repository.CheckoutRepository;
 import com.thanh.library.repository.NotificationRepository;
 import com.thanh.library.repository.UserRepository;
@@ -44,6 +46,12 @@ public class CheckReturnBookTask {
             Instant currentTime = Instant.now();
             long minutesDifference = ChronoUnit.MINUTES.between(checkout.getStartTime(), currentTime);
             if (minutesDifference >= 5 && minutesDifference <= 10 && checkout.getUser().isActivated()) {
+                Notification notification = new Notification();
+                notification.setBookCopy(checkout.getBookCopy());
+                notification.setUser(checkout.getUser());
+                notification.setType(Type.RETURN);
+                notification.setSentAt(Instant.now());
+                notificationRepository.save(notification);
                 mailService.sendReminderToReturnBook(checkout.getUser(), checkout.getBookCopy().getBook());
             }
             if (minutesDifference > 15 && checkout.getUser().isActivated()) {

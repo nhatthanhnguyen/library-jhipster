@@ -6,6 +6,7 @@ import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 import Category from './category';
 import CategoryUpdate from './category-update';
 import CategoryDeleteDialog from './category-delete-dialog';
+import CategoryDetail from './category-detail';
 import { useAppSelector } from 'app/config/store';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
@@ -21,7 +22,7 @@ const CategoryRoutes = () => {
           <Route index element={<Category />} />
           <Route path="new" element={<CategoryUpdate />} />
           <Route path=":id">
-            {/* <Route index element={<CategoryDetail/>}/> */}
+            <Route index element={<CategoryDetail />} />
             {librarianAuthority ? (
               <>
                 <Route path="edit" element={<CategoryUpdate />} />

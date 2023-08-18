@@ -1,7 +1,7 @@
 import {
+  ActionReducerMapBuilder,
   AnyAction,
   AsyncThunk,
-  ActionReducerMapBuilder,
   createSlice,
   SerializedError,
   SliceCaseReducers,
@@ -12,7 +12,13 @@ import { AxiosError } from 'axios';
 /**
  * Model for redux actions with pagination
  */
-export type IQueryParams = { query?: string; page?: number; size?: number; sort?: string };
+export type IQueryParams = {
+  query?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+};
+export type IQueryParamsCategory = IQueryParams & { categoryId?: number | string };
 export type IFilterCheckoutParams = {
   page?: number;
   size?: number;

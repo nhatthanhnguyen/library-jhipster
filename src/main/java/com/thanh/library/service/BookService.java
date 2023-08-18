@@ -40,6 +40,8 @@ public class BookService {
 
     private final QueueRepository queueRepository;
 
+    private final CategoryRepository categoryRepository;
+
     private final BookMapper bookMapper;
 
     public BookService(
@@ -48,6 +50,7 @@ public class BookService {
         UserRepository userRepository,
         ReservationRepository reservationRepository,
         QueueRepository queueRepository,
+        CategoryRepository categoryRepository,
         BookMapper bookMapper
     ) {
         this.bookRepository = bookRepository;
@@ -55,6 +58,7 @@ public class BookService {
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
         this.queueRepository = queueRepository;
+        this.categoryRepository = categoryRepository;
         this.bookMapper = bookMapper;
     }
 
@@ -90,6 +94,14 @@ public class BookService {
     public Page<BookDTO> getAllPagination(String search, Pageable pageable) {
         log.debug("Request to get all Books");
         return bookRepository.findAll(search, pageable).map(bookMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BookDTO> getAllPaginationByCategory(Long categoryId, Pageable pageable) {
+        categoryRepository
+            .findById(categoryId)
+            .orElseThrow(() -> new BadRequestAlertException("Category not found", "Category", "idnotfound"));
+        return bookRepository.findAllByCategory(categoryId, pageable).map(bookMapper::toDto);
     }
 
     public Page<BookDTO> getAllAvailablePagination(String search, Pageable pageable) {

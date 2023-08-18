@@ -67,6 +67,7 @@ public class CategoryService {
         return categoryRepository.findAll(pageable).map(categoryMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryDTO> getAll() {
         return categoryRepository.findAll(Sort.by("id")).stream().map(categoryMapper::toDto).collect(Collectors.toList());
     }

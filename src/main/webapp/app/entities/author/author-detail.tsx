@@ -22,44 +22,40 @@ export const AuthorDetail = () => {
   const isLibrarian = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
 
   return (
-    <Row>
-      <Col md="8">
-        <h2 data-cy="authorDetailsHeading">
-          <Translate contentKey="libraryApp.author.detail.title">Author</Translate>
-        </h2>
-        <dl className="jh-entity-details">
-          <dt>
-            <span id="id">
-              <Translate contentKey="global.field.id">ID</Translate>
-            </span>
-          </dt>
-          <dd>{authorEntity.id}</dd>
-          <dt>
-            <span id="fullName">
-              <Translate contentKey="libraryApp.author.fullName">Full Name</Translate>
-            </span>
-          </dt>
-          <dd>{`${authorEntity.lastName} ${authorEntity.firstName}`}</dd>
-        </dl>
-        <Button tag={Link} to="/author" replace color="info" data-cy="entityDetailsBackButton">
-          <FontAwesomeIcon icon="arrow-left" />{' '}
-          <span className="d-none d-md-inline">
-            <Translate contentKey="entity.action.back">Back</Translate>
-          </span>
-        </Button>
-        {isLibrarian ? (
-          <>
-            &nbsp;
-            <Button tag={Link} to={`/author/${authorEntity.id}/edit`} replace color="primary">
-              <FontAwesomeIcon icon="pencil-alt" />{' '}
-              <span className="d-none d-md-inline">
-                <Translate contentKey="entity.action.edit">Edit</Translate>
+    <div>
+      <h2 data-cy="authorDetailsHeading">
+        <Translate contentKey="libraryApp.author.detail.title">Author</Translate>
+      </h2>
+      <Row xs="1" sm="2">
+        <Col>
+          <dl className="jh-entity-details">
+            <dt>
+              <span id="fullName">
+                <Translate contentKey="libraryApp.author.fullName">Full Name</Translate>
               </span>
-            </Button>
-          </>
-        ) : undefined}
-      </Col>
-    </Row>
+            </dt>
+            <dd>{`${authorEntity.lastName} ${authorEntity.firstName}`}</dd>
+          </dl>
+          <Button tag={Link} to="/author" replace color="info" data-cy="entityDetailsBackButton">
+            <FontAwesomeIcon icon="arrow-left" />{' '}
+            <span className="d-none d-md-inline">
+              <Translate contentKey="entity.action.back">Back</Translate>
+            </span>
+          </Button>
+          {isLibrarian ? (
+            <>
+              &nbsp;
+              <Button tag={Link} to={`/author/${authorEntity.id}/edit`} replace color="primary">
+                <FontAwesomeIcon icon="pencil-alt" />{' '}
+                <span className="d-none d-md-inline">
+                  <Translate contentKey="entity.action.edit">Edit</Translate>
+                </span>
+              </Button>
+            </>
+          ) : undefined}
+        </Col>
+      </Row>
+    </div>
   );
 };
 

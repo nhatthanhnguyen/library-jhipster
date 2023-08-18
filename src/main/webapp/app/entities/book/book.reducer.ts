@@ -2,7 +2,14 @@ import axios from 'axios';
 import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { createEntitySlice, EntityState, IQueryParams, IQueryParamsCategory, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import {
+  createEntitySlice,
+  EntityState,
+  IQueryParams,
+  IQueryParamsCategory,
+  IQueryParamsPublisher,
+  serializeAxiosError,
+} from 'app/shared/reducers/reducer.utils';
 import { defaultValue, IBook } from 'app/shared/model/book.model';
 import { IHoldBook } from 'app/shared/model/reservation.model';
 import { IWaitBook } from 'app/shared/model/queue.model';
@@ -31,9 +38,19 @@ export const getEntities = createAsyncThunk('book/fetch_entity_list', async ({ p
 export const getEntitiesByCategory = createAsyncThunk(
   'book/fetch_entity_list_by_category',
   async ({ page, size, sort, query, categoryId }: IQueryParamsCategory) => {
-    const requestUrl = `${apiUrl}/category/${categoryId}${
-      sort ? `?page=${page}&size=${size}&sort=${sort}${query ? `&search=${query}` : ''}&` : '?'
-    }cacheBuster=${new Date().getTime()}`;
+    const requestUrl =
+      `${apiUrl}/category/${categoryId}` +
+      `${sort ? `?page=${page}&size=${size}&sort=${sort}${query ? `&search=${query}` : ''}&` : '?'}cacheBuster=${new Date().getTime()}`;
+    return axios.get<IBook[]>(requestUrl);
+  }
+);
+
+export const getEntitiesByPublisher = createAsyncThunk(
+  'book/fetch_entity_list_by_publisher',
+  async ({ page, size, sort, query, publisherId }: IQueryParamsPublisher) => {
+    const requestUrl =
+      `${apiUrl}/publisher/${publisherId}` +
+      `${sort ? `?page=${page}&size=${size}&sort=${sort}${query ? `&search=${query}` : ''}&` : '?'}cacheBuster=${new Date().getTime()}`;
     return axios.get<IBook[]>(requestUrl);
   }
 );
@@ -169,7 +186,7 @@ export const BookSlice = createEntitySlice({
         state.updateSuccess = false;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities, getEntitiesByCategory), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, getEntitiesByCategory, getEntitiesByPublisher), (state, action) => {
         const { data, headers } = action.payload;
 
         return {
@@ -193,7 +210,7 @@ export const BookSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity, getAllEntities, getEntitiesByCategory), state => {
+      .addMatcher(isPending(getEntities, getEntity, getAllEntities, getEntitiesByCategory, getEntitiesByPublisher), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

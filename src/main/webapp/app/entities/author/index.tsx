@@ -6,6 +6,7 @@ import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 import Author from './author';
 import AuthorUpdate from './author-update';
 import AuthorDeleteDialog from './author-delete-dialog';
+import AuthorDetail from './author-detail';
 import { useAppSelector } from 'app/config/store';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
@@ -19,9 +20,9 @@ const AuthorRoutes = () => {
       {isAdmin ? null : (
         <>
           <Route index element={<Author />} />
-          <Route path="new" element={<AuthorUpdate />} />
+          {librarianAuthority ? <Route path="new" element={<AuthorUpdate />} /> : null}
           <Route path=":id">
-            {/* <Route index element={<AuthorDetail/>}/> */}
+            <Route index element={<AuthorDetail />} />
             {librarianAuthority ? (
               <>
                 <Route path="edit" element={<AuthorUpdate />} />

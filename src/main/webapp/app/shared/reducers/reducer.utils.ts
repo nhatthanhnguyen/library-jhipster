@@ -19,6 +19,7 @@ export type IQueryParams = {
   sort?: string;
 };
 export type IQueryParamsCategory = IQueryParams & { categoryId?: number | string };
+export type IQueryParamsPublisher = IQueryParams & { publisherId?: number | string };
 export type IFilterCheckoutParams = {
   page?: number;
   size?: number;

@@ -57,4 +57,10 @@ public interface BookRepository extends BookRepositoryWithBagRelationships, JpaR
         countQuery = "select count(distinct b) from Book b join b.categories c where c.id = :categoryId"
     )
     Page<Book> findAllByCategory(@Param("categoryId") Long categoryId, Pageable pageable);
+
+    @Query(
+        value = "select b from Book b join fetch b.publisher p where p.id = :publisherId",
+        countQuery = "select count(b) from Book b join b.publisher p where p.id = :publisherId"
+    )
+    Page<Book> findAllByPublisher(@Param("publisherId") Long publisherId, Pageable pageable);
 }

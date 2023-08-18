@@ -20,7 +20,7 @@ const CategoryRoutes = () => {
       {isAdmin ? null : (
         <>
           <Route index element={<Category />} />
-          <Route path="new" element={<CategoryUpdate />} />
+          {librarianAuthority ? <Route path="new" element={<CategoryUpdate />} /> : null}
           <Route path=":id">
             <Route index element={<CategoryDetail />} />
             {librarianAuthority ? (

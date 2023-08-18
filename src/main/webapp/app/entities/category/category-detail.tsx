@@ -102,12 +102,6 @@ export const CategoryDetail = () => {
             <Translate contentKey="libraryApp.category.detail.title">Category</Translate>
           </h2>
           <dl className="jh-entity-details">
-            {/* <dt>
-            <span id="id">
-              <Translate contentKey="global.field.id">ID</Translate>
-            </span>
-            </dt>
-            <dd>{categoryEntity.id}</dd> */}
             <dt>
               <span id="name">
                 <Translate contentKey="libraryApp.category.name">Name</Translate>

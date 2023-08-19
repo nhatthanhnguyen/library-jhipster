@@ -207,6 +207,10 @@ export const Book = () => {
                 <th>
                   <Translate contentKey="libraryApp.book.publisher">Publisher</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('yearPublished')}>
+                  <Translate contentKey="libraryApp.book.yearPublished">Year published</Translate>
+                  <FontAwesomeIcon icon="sort" />
+                </th>
                 {isLibrarian ? (
                   <>
                     <th className="hand" onClick={sort('createdBy')}>
@@ -240,6 +244,7 @@ export const Book = () => {
                   </td>
                   <td>{book.title}</td>
                   <td>{book.publisher ? <Link to={`/publisher/${book.publisher.id}`}>{book.publisher.name}</Link> : ''}</td>
+                  <td>{book.yearPublished}</td>
                   {isLibrarian ? (
                     <>
                       <td>{book.createdBy}</td>

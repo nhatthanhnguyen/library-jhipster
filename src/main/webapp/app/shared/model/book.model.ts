@@ -7,6 +7,7 @@ export interface IBook {
   title?: string;
   isDeleted?: boolean | null;
   publisher?: IPublisher | null;
+  yearPublished?: number | string;
   authors?: IAuthor[] | null;
   categories?: ICategory[] | null;
   createdBy?: string;

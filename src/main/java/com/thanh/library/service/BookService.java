@@ -105,25 +105,47 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BookDTO> getAllPaginationByCategory(Long categoryId, Pageable pageable) {
+    public Page<BookDTO> getAllPaginationByCategory(Long categoryId, String search, Pageable pageable) {
         categoryRepository
             .findById(categoryId)
             .orElseThrow(() -> new BadRequestAlertException("Category not found", "Category", "idnotfound"));
-        return bookRepository.findAllByCategory(categoryId, pageable).map(bookMapper::toDto);
+        return bookRepository.findAllByCategory(categoryId, search, pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public Page<BookDTO> getAllPaginationByPublisher(Long publisherId, Pageable pageable) {
+    public Page<BookDTO> getAllAvailablePaginationByCategory(Long categoryId, String search, Pageable pageable) {
+        categoryRepository
+            .findById(categoryId)
+            .orElseThrow(() -> new BadRequestAlertException("Category not found", "Category", "idnotfound"));
+        return bookRepository.findAllAvailableByCategory(categoryId, search, pageable).map(bookMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BookDTO> getAllPaginationByPublisher(Long publisherId, String search, Pageable pageable) {
         publisherRepository
             .findById(publisherId)
             .orElseThrow(() -> new BadRequestAlertException("Publisher not found", "Publisher", "idnotfound"));
-        return bookRepository.findAllByPublisher(publisherId, pageable).map(bookMapper::toDto);
+        return bookRepository.findAllByPublisher(publisherId, search, pageable).map(bookMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public Page<BookDTO> getAllPaginationByAuthor(Long authorId, Pageable pageable) {
+    public Page<BookDTO> getAllAvailablePaginationByPublisher(Long publisherId, String search, Pageable pageable) {
+        publisherRepository
+            .findById(publisherId)
+            .orElseThrow(() -> new BadRequestAlertException("Publisher not found", "Publisher", "idnotfound"));
+        return bookRepository.findAllAvailableByPublisher(publisherId, search, pageable).map(bookMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BookDTO> getAllPaginationByAuthor(Long authorId, String search, Pageable pageable) {
         authorRepository.findById(authorId).orElseThrow(() -> new BadRequestAlertException("Author not found", "Author", "idnotfound"));
-        return bookRepository.findAllByAuthor(authorId, pageable).map(bookMapper::toDto);
+        return bookRepository.findAllByAuthor(authorId, search, pageable).map(bookMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BookDTO> getAllAvailablePaginationByAuthor(Long authorId, String search, Pageable pageable) {
+        authorRepository.findById(authorId).orElseThrow(() -> new BadRequestAlertException("Author not found", "Author", "idnotfound"));
+        return bookRepository.findAllAvailableByAuthor(authorId, search, pageable).map(bookMapper::toDto);
     }
 
     public Page<BookDTO> getAllAvailablePagination(String search, Pageable pageable) {

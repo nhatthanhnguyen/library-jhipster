@@ -134,9 +134,13 @@ public class BookResource {
     @GetMapping("/books/category/{categoryId}")
     public ResponseEntity<List<BookDTO>> getAllBooksByCategoryPagination(
         @PathVariable("categoryId") Long categoryId,
+        @RequestParam(required = false) String search,
         @ParameterObject Pageable pageable
     ) {
-        Page<BookDTO> page = bookService.getAllPaginationByCategory(categoryId, pageable);
+        Page<BookDTO> page;
+        if (SecurityUtils.hasCurrentUserThisAuthority("ROLE_LIBRARIAN")) page =
+            bookService.getAllPaginationByCategory(categoryId, search, pageable); else page =
+            bookService.getAllAvailablePaginationByCategory(categoryId, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -144,9 +148,13 @@ public class BookResource {
     @GetMapping("/books/publisher/{publisherId}")
     public ResponseEntity<List<BookDTO>> getAllBooksByPublisherPagination(
         @PathVariable("publisherId") Long publisherId,
+        @RequestParam(required = false) String search,
         @ParameterObject Pageable pageable
     ) {
-        Page<BookDTO> page = bookService.getAllPaginationByPublisher(publisherId, pageable);
+        Page<BookDTO> page;
+        if (SecurityUtils.hasCurrentUserThisAuthority("ROLE_LIBRARIAN")) page =
+            bookService.getAllPaginationByPublisher(publisherId, search, pageable); else page =
+            bookService.getAllAvailablePaginationByPublisher(publisherId, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -154,9 +162,13 @@ public class BookResource {
     @GetMapping("/books/author/{authorId}")
     public ResponseEntity<List<BookDTO>> getAllBooksByAuthorPagination(
         @PathVariable("authorId") Long authorId,
+        @RequestParam(required = false) String search,
         @ParameterObject Pageable pageable
     ) {
-        Page<BookDTO> page = bookService.getAllPaginationByAuthor(authorId, pageable);
+        Page<BookDTO> page;
+        if (SecurityUtils.hasCurrentUserThisAuthority("ROLE_LIBRARIAN")) page =
+            bookService.getAllPaginationByAuthor(authorId, search, pageable); else page =
+            bookService.getAllAvailablePaginationByAuthor(authorId, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

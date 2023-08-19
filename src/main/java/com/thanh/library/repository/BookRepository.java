@@ -43,30 +43,81 @@ public interface BookRepository extends BookRepositoryWithBagRelationships, JpaR
     @Query("select book from Book book left join fetch book.publisher where book.id =:id")
     Optional<Book> findOneWithToOneRelationships(@Param("id") Long id);
 
-    @Query("select b from Book b " + "where :search is null or b.title like concat('%', :search, '%') ")
+    @Query(
+        "select b from Book b where :search is null or b.title like concat('%', :search, '%') or " +
+        "cast(b.id as string) like concat('%', :search, '%') or " +
+        "cast(b.yearPublished as string) like concat('%', :search, '%') or " +
+        "cast(b.id as string) like concat('%', :search, '%') or " +
+        "b.publisher.name like concat('%', :search, '%')"
+    )
     Page<Book> findAll(@Param("search") String search, Pageable pageable);
 
-    @Query("select b from Book b " + "where b.isDeleted = false " + "and (:search is null or b.title like concat('%', :search, '%'))")
+    @Query(
+        "select b from Book b where b.isDeleted = false and " +
+        "(:search is null or b.title like concat('%', :search, '%') or " +
+        "cast(b.id as string) like concat('%', :search, '%') or " +
+        "cast(b.yearPublished as string) like concat('%', :search, '%') or " +
+        "cast(b.id as string) like concat('%', :search, '%') or " +
+        "b.publisher.name like concat('%', :search, '%'))"
+    )
     Page<Book> findAllAvailablePagination(@Param("search") String search, Pageable pageable);
 
     @Query("select b from Book b where b.isDeleted = false")
     List<Book> findAllAvailable(Sort sort);
 
     @Query(
-        value = "select distinct b from Book b join b.categories c where c.id = :categoryId",
-        countQuery = "select count(distinct b) from Book b join b.categories c where c.id = :categoryId"
+        value = "select distinct b from Book b join b.categories c where c.id = :categoryId and " +
+        "(:search is null or b.title like concat('%', :search, '%') " +
+        "or cast(b.id as string) like concat('%', :search, '%') " +
+        "or cast(b.yearPublished as string) like concat('%', :search, '%') " +
+        "or cast(b.publisher.id as string) like concat('%', :search, '%') " +
+        "or b.publisher.name like concat('%', :search, '%'))"
     )
-    Page<Book> findAllByCategory(@Param("categoryId") Long categoryId, Pageable pageable);
+    Page<Book> findAllByCategory(@Param("categoryId") Long categoryId, @Param("search") String search, Pageable pageable);
 
     @Query(
-        value = "select b from Book b join fetch b.publisher p where p.id = :publisherId",
-        countQuery = "select count(b) from Book b join b.publisher p where p.id = :publisherId"
+        "select distinct b from Book b join b.categories c where c.id = :categoryId and b.isDeleted = false and " +
+        "(:search is null or b.title like concat('%', :search, '%') " +
+        "or cast(b.id as string) like concat('%', :search, '%') " +
+        "or cast(b.yearPublished as string) like concat('%', :search, '%') " +
+        "or cast(b.publisher.id as string) like concat('%', :search, '%') " +
+        "or b.publisher.name like concat('%', :search, '%'))"
     )
-    Page<Book> findAllByPublisher(@Param("publisherId") Long publisherId, Pageable pageable);
+    Page<Book> findAllAvailableByCategory(@Param("categoryId") Long categoryId, @Param("search") String search, Pageable pageable);
 
     @Query(
-        value = "select distinct b from Book b join b.authors a where a.id = :authorId",
-        countQuery = "select count(distinct b) from Book b join b.authors a where a.id = :authorId"
+        value = "select b from Book b join b.publisher p where p.id = :publisherId and " +
+        "(:search is null or b.title like concat('%', :search, '%') " +
+        "or cast(b.id as string) like concat('%', :search, '%') " +
+        "or cast(b.yearPublished as string) like concat('%', :search, '%'))"
     )
-    Page<Book> findAllByAuthor(@Param("authorId") Long authorId, Pageable pageable);
+    Page<Book> findAllByPublisher(@Param("publisherId") Long publisherId, @Param("search") String search, Pageable pageable);
+
+    @Query(
+        "select b from Book b join b.publisher p where p.id = :publisherId and b.isDeleted = false and" +
+        "(:search is null or b.title like concat('%', :search, '%') " +
+        "or cast(b.id as string) like concat('%', :search, '%') " +
+        "or cast(b.yearPublished as string) like concat('%', :search, '%'))"
+    )
+    Page<Book> findAllAvailableByPublisher(@Param("publisherId") Long publisherId, @Param("search") String search, Pageable pageable);
+
+    @Query(
+        value = "select distinct b from Book b join b.authors a where a.id = :authorId and " +
+        "(:search is null or b.title like concat('%', :search, '%') " +
+        "or cast(b.id as string) like concat('%', :search, '%') " +
+        "or cast(b.yearPublished as string) like concat('%', :search, '%') " +
+        "or cast(b.publisher.id as string) like concat('%', :search, '%') " +
+        "or b.publisher.name like concat('%', :search, '%'))"
+    )
+    Page<Book> findAllByAuthor(@Param("authorId") Long authorId, @Param("search") String search, Pageable pageable);
+
+    @Query(
+        value = "select distinct b from Book b join b.authors a where a.id = :authorId and b.isDeleted = false and " +
+        "(:search is null or b.title like concat('%', :search, '%') " +
+        "or cast(b.id as string) like concat('%', :search, '%') " +
+        "or cast(b.yearPublished as string) like concat('%', :search, '%') " +
+        "or cast(b.publisher.id as string) like concat('%', :search, '%') " +
+        "or b.publisher.name like concat('%', :search, '%'))"
+    )
+    Page<Book> findAllAvailableByAuthor(@Param("authorId") Long authorId, @Param("search") String search, Pageable pageable);
 }

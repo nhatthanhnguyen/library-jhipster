@@ -141,6 +141,14 @@ export const BookUpdate = () => {
                   : null}
               </ValidatedField>
               <ValidatedField
+                label={translate('libraryApp.book.yearPublished')}
+                id="book-yearPublished"
+                name="yearPublished"
+                data-cy="yearPublished"
+                check
+                type="number"
+              />
+              <ValidatedField
                 label={translate('libraryApp.book.author')}
                 id="book-author"
                 data-cy="author"

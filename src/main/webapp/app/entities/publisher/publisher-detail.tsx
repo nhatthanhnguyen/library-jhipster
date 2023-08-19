@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Button, Col, Row, Table } from 'reactstrap';
-import { JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
+import { Button, Col, Input, InputGroup, Row, Table } from 'reactstrap';
+import { JhiItemCount, JhiPagination, TextFormat, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
@@ -25,6 +25,7 @@ export const PublisherDetail = () => {
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParamsAndSearch(getSortStateWithSearch(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
+  const [searchText, setSearchText] = useState<string>(paginationState.search ?? '');
 
   const publisherEntity = useAppSelector(state => state.publisher.entity);
   const bookList = useAppSelector(state => state.book.entities);
@@ -94,6 +95,30 @@ export const PublisherDetail = () => {
     sortEntities();
   };
 
+  const handleSearch = search =>
+    setPaginationState({
+      ...paginationState,
+      search,
+    });
+
+  const handlePressSearch = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch(searchText);
+    }
+  };
+
+  const handleButtonSearchPressed = () => {
+    handleSearch(searchText);
+  };
+
+  const handleButtonClearSearchPressed = () => {
+    setPaginationState({
+      ...paginationState,
+      search: '',
+    });
+    setSearchText('');
+  };
+
   return (
     <div>
       <h2 data-cy="publisherDetailsHeading">
@@ -137,6 +162,21 @@ export const PublisherDetail = () => {
           </Button>
         </div>
       </h4>
+      <InputGroup>
+        <Input
+          type="text"
+          onKeyDown={handlePressSearch}
+          value={searchText}
+          onChange={e => setSearchText(e.currentTarget.value)}
+          placeholder={translate('libraryApp.book.home.searchLabel')}
+        />
+        <Button onClick={handleButtonClearSearchPressed}>
+          <FontAwesomeIcon icon="xmark" />
+        </Button>
+        <Button onClick={handleButtonSearchPressed}>
+          <FontAwesomeIcon icon="search" />
+        </Button>
+      </InputGroup>
       <div className="table-responsive">
         {bookList && bookList.length > 0 ? (
           <Table responsive striped>

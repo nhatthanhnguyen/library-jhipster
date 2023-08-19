@@ -115,6 +115,10 @@ export const BookDetail = () => {
             </dt>
             <dd>{bookEntity.publisher ? bookEntity.publisher.name : ''}</dd>
             <dt>
+              <Translate contentKey="libraryApp.book.yearPublished">Year published</Translate>
+            </dt>
+            <dd>{bookEntity.yearPublished}</dd>
+            <dt>
               <Translate contentKey="libraryApp.book.author">Author</Translate>
             </dt>
             <dd>

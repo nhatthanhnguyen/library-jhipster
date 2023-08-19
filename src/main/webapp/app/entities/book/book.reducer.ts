@@ -6,6 +6,7 @@ import {
   createEntitySlice,
   EntityState,
   IQueryParams,
+  IQueryParamsAuthor,
   IQueryParamsCategory,
   IQueryParamsPublisher,
   serializeAxiosError,
@@ -50,6 +51,16 @@ export const getEntitiesByPublisher = createAsyncThunk(
   async ({ page, size, sort, query, publisherId }: IQueryParamsPublisher) => {
     const requestUrl =
       `${apiUrl}/publisher/${publisherId}` +
+      `${sort ? `?page=${page}&size=${size}&sort=${sort}${query ? `&search=${query}` : ''}&` : '?'}cacheBuster=${new Date().getTime()}`;
+    return axios.get<IBook[]>(requestUrl);
+  }
+);
+
+export const getEntitiesByAuthor = createAsyncThunk(
+  'book/fetch_entity_list_by_author',
+  async ({ page, size, sort, query, authorId }: IQueryParamsAuthor) => {
+    const requestUrl =
+      `${apiUrl}/author/${authorId}` +
       `${sort ? `?page=${page}&size=${size}&sort=${sort}${query ? `&search=${query}` : ''}&` : '?'}cacheBuster=${new Date().getTime()}`;
     return axios.get<IBook[]>(requestUrl);
   }
@@ -186,7 +197,7 @@ export const BookSlice = createEntitySlice({
         state.updateSuccess = false;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities, getEntitiesByCategory, getEntitiesByPublisher), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, getEntitiesByCategory, getEntitiesByPublisher, getEntitiesByAuthor), (state, action) => {
         const { data, headers } = action.payload;
 
         return {
@@ -210,11 +221,14 @@ export const BookSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity, getAllEntities, getEntitiesByCategory, getEntitiesByPublisher), state => {
-        state.errorMessage = null;
-        state.updateSuccess = false;
-        state.loading = true;
-      })
+      .addMatcher(
+        isPending(getEntities, getEntity, getAllEntities, getEntitiesByCategory, getEntitiesByPublisher, getEntitiesByAuthor),
+        state => {
+          state.errorMessage = null;
+          state.updateSuccess = false;
+          state.loading = true;
+        }
+      )
       .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity, restoreEntity, holdBook, addToQueue), state => {
         state.errorMessage = null;
         state.updateSuccess = false;

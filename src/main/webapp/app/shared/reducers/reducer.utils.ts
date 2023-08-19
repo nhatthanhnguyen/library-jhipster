@@ -20,6 +20,7 @@ export type IQueryParams = {
 };
 export type IQueryParamsCategory = IQueryParams & { categoryId?: number | string };
 export type IQueryParamsPublisher = IQueryParams & { publisherId?: number | string };
+export type IQueryParamsAuthor = IQueryParams & { authorId?: number | string };
 export type IFilterCheckoutParams = {
   page?: number;
   size?: number;

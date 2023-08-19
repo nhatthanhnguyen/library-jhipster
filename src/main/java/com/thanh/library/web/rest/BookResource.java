@@ -151,6 +151,16 @@ public class BookResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/books/author/{authorId}")
+    public ResponseEntity<List<BookDTO>> getAllBooksByAuthorPagination(
+        @PathVariable("authorId") Long authorId,
+        @ParameterObject Pageable pageable
+    ) {
+        Page<BookDTO> page = bookService.getAllPaginationByAuthor(authorId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
     @GetMapping("/books/all")
     public ResponseEntity<List<BookDTO>> getAllBooks() {
         return ResponseEntity.ok().body(bookService.getAllBooksAvailable());

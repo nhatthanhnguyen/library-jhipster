@@ -224,7 +224,7 @@ export const BookDetail = () => {
                           {bookCopy.isDeleted ? (
                             <Button
                               tag={Link}
-                              to={`/book-copy/${bookCopy.id}/restore?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                              to={`/book/${id}/book-copy/${bookCopy.id}/restore?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                               color="success"
                               size="sm"
                               data-cy="entityRestoreButton"
@@ -235,7 +235,7 @@ export const BookDetail = () => {
                           ) : (
                             <Button
                               tag={Link}
-                              to={`/book-copy/${bookCopy.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                              to={`/book/${id}/book-copy/${bookCopy.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                               color="danger"
                               size="sm"
                               data-cy="entityDeleteButton"

@@ -25,11 +25,9 @@ const EntitiesMenu = () => {
       <MenuItem icon="asterisk" to="/publisher">
         <Translate contentKey="global.menu.entities.publisher" />
       </MenuItem>
-      {isReader ? null : (
-        <MenuItem icon="asterisk" to="/book-copy">
-          <Translate contentKey="global.menu.entities.bookCopy" />
-        </MenuItem>
-      )}
+      {/* <MenuItem icon="asterisk" to="/book-copy">
+        <Translate contentKey="global.menu.entities.bookCopy" />
+      </MenuItem> */}
       <MenuItem icon="asterisk" to="/checkout">
         <Translate contentKey="global.menu.entities.checkout" />
       </MenuItem>

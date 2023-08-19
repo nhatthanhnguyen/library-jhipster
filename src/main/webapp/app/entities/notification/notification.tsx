@@ -90,11 +90,6 @@ export const Notification = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="libraryApp.notification.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          {/* <Link to="/notification/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="libraryApp.notification.home.createLabel">Create new Notification</Translate>
-          </Link> */}
         </div>
       </h2>
       <div className="table-responsive">
@@ -128,9 +123,9 @@ export const Notification = () => {
                   <td>
                     <Translate contentKey={`libraryApp.Type.${notification.type}`} />
                   </td>
-                  <td>{notification.user ? notification.user.login : ''}</td>
+                  <td>{`${notification.user?.id} - ${notification.user?.lastName} ${notification.user?.firstName}`}</td>
                   <td>
-                    {notification.bookCopy ? <Link to={`/book-copy/${notification.bookCopy.id}`}>{notification.bookCopy.id}</Link> : ''}
+                    {`${notification.bookCopy?.id} - ${notification.bookCopy?.book?.title} - ${notification.bookCopy?.book?.publisher?.name}`}
                   </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

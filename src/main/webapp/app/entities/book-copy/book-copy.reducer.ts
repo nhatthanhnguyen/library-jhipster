@@ -81,9 +81,7 @@ export const deleteEntity = createAsyncThunk(
   'bookCopy/delete_entity',
   async (id: string | number, thunkAPI) => {
     const requestUrl = `${apiUrl}/${id}`;
-    const result = await axios.delete<IBookCopy>(requestUrl);
-    thunkAPI.dispatch(getEntities({}));
-    return result;
+    return await axios.delete<IBookCopy>(requestUrl);
   },
   { serializeError: serializeAxiosError }
 );
@@ -92,9 +90,7 @@ export const restoreEntity = createAsyncThunk(
   'bookCopy/restore_entity',
   async (id: string | number, thunkAPI) => {
     const requestUrl = `${apiUrl}/${id}/restore`;
-    const result = await axios.put<IBookCopy>(requestUrl);
-    thunkAPI.dispatch(getEntities({}));
-    return result;
+    return await axios.put<IBookCopy>(requestUrl);
   },
   { serializeError: serializeAxiosError }
 );

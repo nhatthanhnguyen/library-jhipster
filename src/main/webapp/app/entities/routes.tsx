@@ -31,7 +31,7 @@ export default () => {
             <Route path="author/*" element={<Author />} />
             <Route path="category/*" element={<Category />} />
             <Route path="publisher/*" element={<Publisher />} />
-            <Route path="book-copy/*" element={<BookCopy />} />
+            {/* <Route path="book-copy/*" element={<BookCopy />} /> */}
             <Route path="checkout/*" element={<Checkout />} />
             <Route path="reservation/*" element={<Reservation />} />
             <Route path="notification/*" element={<Notification />} />

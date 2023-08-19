@@ -110,9 +110,12 @@ public class CategoryResource {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<CategoryDTO>> getAllCategoriesPagination(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<CategoryDTO>> getAllCategoriesPagination(
+        @RequestParam(required = false) String search,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
         log.debug("REST request to get a page of Categories");
-        Page<CategoryDTO> page = categoryService.getAllPagination(pageable);
+        Page<CategoryDTO> page = categoryService.getAllPagination(search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

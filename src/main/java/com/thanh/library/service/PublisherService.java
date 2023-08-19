@@ -33,12 +33,6 @@ public class PublisherService {
         this.publisherMapper = publisherMapper;
     }
 
-    /**
-     * Save a publisher.
-     *
-     * @param publisherDTO the entity to save.
-     * @return the persisted entity.
-     */
     public PublisherDTO save(PublisherDTO publisherDTO) {
         log.debug("Request to save Publisher : {}", publisherDTO);
         Publisher publisher = publisherMapper.toEntity(publisherDTO);
@@ -68,9 +62,9 @@ public class PublisherService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PublisherDTO> getAllPagination(Pageable pageable) {
+    public Page<PublisherDTO> getAllPagination(String search, Pageable pageable) {
         log.debug("Request to get all Publishers");
-        return publisherRepository.findAll(pageable).map(publisherMapper::toDto);
+        return publisherRepository.getAllPagination(search, pageable).map(publisherMapper::toDto);
     }
 
     public List<PublisherDTO> getAll() {

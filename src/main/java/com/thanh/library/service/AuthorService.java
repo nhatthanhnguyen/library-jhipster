@@ -72,20 +72,13 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AuthorDTO> getAllAuthorsPagination(Pageable pageable) {
+    public Page<AuthorDTO> getAllAuthorsPagination(String search, Pageable pageable) {
         log.debug("Request to get all Authors");
         String login = SecurityUtils
             .getCurrentUserLogin()
             .orElseThrow(() -> new BadRequestAlertException("Login not found", "User", "loginnotfound"));
-        User user = userRepository
-            .findOneByLogin(login)
-            .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
-        Authority roleLibrarian = new Authority();
-        roleLibrarian.setName("ROLE_LIBRARIAN");
-        if (user.getAuthorities().contains(roleLibrarian)) {
-            return authorRepository.findAll(pageable).map(authorMapper::toDto);
-        }
-        return authorRepository.findAllAvailable(pageable).map(authorMapper::toDto);
+        userRepository.findOneByLogin(login).orElseThrow(() -> new BadRequestAlertException("User not found", "User", "usernotfound"));
+        return authorRepository.getAllPagination(search, pageable).map(authorMapper::toDto);
     }
 
     @Transactional(readOnly = true)

@@ -13,6 +13,11 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
-    @Query(value = "select distinct a from Author a", countQuery = "select count(distinct a) from Author a")
-    Page<Author> findAllAvailable(Pageable pageable);
+    @Query(
+        "select a from Author a where (:search is null or " +
+        "a.lastName like concat('%', :search, '%') or " +
+        "a.firstName like concat('%', :search, '%') or " +
+        "cast(a.id as string) like concat('%', :search, '%'))"
+    )
+    Page<Author> getAllPagination(@Param("search") String search, Pageable pageable);
 }

@@ -62,9 +62,9 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CategoryDTO> getAllPagination(Pageable pageable) {
+    public Page<CategoryDTO> getAllPagination(String search, Pageable pageable) {
         log.debug("Request to get all Categories");
-        return categoryRepository.findAll(pageable).map(categoryMapper::toDto);
+        return categoryRepository.getAllPagination(search, pageable).map(categoryMapper::toDto);
     }
 
     @Transactional(readOnly = true)

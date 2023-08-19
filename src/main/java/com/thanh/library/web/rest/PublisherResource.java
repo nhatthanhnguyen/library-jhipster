@@ -110,9 +110,12 @@ public class PublisherResource {
     }
 
     @GetMapping("/publishers")
-    public ResponseEntity<List<PublisherDTO>> getAllPublishersPagination(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<PublisherDTO>> getAllPublishersPagination(
+        @RequestParam(required = false) String search,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+    ) {
         log.debug("REST request to get a page of Publishers");
-        Page<PublisherDTO> page = publisherService.getAllPagination(pageable);
+        Page<PublisherDTO> page = publisherService.getAllPagination(search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

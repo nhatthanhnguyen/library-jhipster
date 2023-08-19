@@ -19,8 +19,10 @@ const apiUrl = 'api/authors';
 
 // Actions
 
-export const getEntities = createAsyncThunk('author/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
+export const getEntities = createAsyncThunk('author/fetch_entity_list', async ({ page, size, sort, query }: IQueryParams) => {
+  const requestUrl =
+    `${apiUrl}` +
+    `${sort ? `?page=${page}&size=${size}&sort=${sort}${query ? `&search=${query}` : ''}&` : '?'}cacheBuster=${new Date().getTime()}`;
   return axios.get<IAuthor[]>(requestUrl);
 });
 

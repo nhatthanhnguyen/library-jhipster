@@ -117,14 +117,6 @@ export const BookUpdate = () => {
                 }}
               />
               <ValidatedField
-                label={translate('libraryApp.book.isDeleted')}
-                id="book-isDeleted"
-                name="isDeleted"
-                data-cy="isDeleted"
-                check
-                type="checkbox"
-              />
-              <ValidatedField
                 id="book-publisher"
                 name="publisher"
                 data-cy="publisher"
@@ -142,11 +134,13 @@ export const BookUpdate = () => {
               </ValidatedField>
               <ValidatedField
                 label={translate('libraryApp.book.yearPublished')}
-                id="book-yearPublished"
+                id="book-year-published"
                 name="yearPublished"
-                data-cy="yearPublished"
-                check
+                data-cy="year-published"
                 type="number"
+                validate={{
+                  required: { value: true, message: translate('entity.validation.required') },
+                }}
               />
               <ValidatedField
                 label={translate('libraryApp.book.author')}

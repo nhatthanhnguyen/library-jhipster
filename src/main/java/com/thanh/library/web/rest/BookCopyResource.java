@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -120,6 +121,16 @@ public class BookCopyResource {
         } else {
             page = bookCopyService.getAllBookCopiesPagination(pageable);
         }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/book-copies/book/{bookId}")
+    public ResponseEntity<List<BookCopyDTO>> getAllBookCopiesPaginationByBook(
+        @PathVariable("bookId") Long bookId,
+        @ParameterObject Pageable pageable
+    ) {
+        Page<BookCopyDTO> page = bookCopyService.getAllBookCopiesPaginationByBook(bookId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { createEntitySlice, EntityState, IQueryParams, IQueryParamsBook, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { defaultValue, IBookCopy } from 'app/shared/model/book-copy.model';
 
 const initialState: EntityState<IBookCopy> = {
@@ -23,6 +23,15 @@ export const getEntities = createAsyncThunk('bookCopy/fetch_entity_list', async 
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
   return axios.get<IBookCopy[]>(requestUrl);
 });
+
+export const getEntitiesByBook = createAsyncThunk(
+  'bookCopy/fetch_entity_list_by_book',
+  async ({ page, size, sort, bookId }: IQueryParamsBook) => {
+    const requestUrl =
+      `${apiUrl}/book/${bookId}` + `${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
+    return axios.get<IBookCopy[]>(requestUrl);
+  }
+);
 
 export const getAllEntities = createAsyncThunk('bookCopy/fetch_all_entities', async () => {
   const requestUrl = `${apiUrl}/all`;
@@ -111,7 +120,7 @@ export const BookCopySlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, getEntitiesByBook), (state, action) => {
         const { data, headers } = action.payload;
 
         return {
@@ -135,7 +144,7 @@ export const BookCopySlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity, getAllEntities), state => {
+      .addMatcher(isPending(getEntities, getEntity, getAllEntities, getEntitiesByBook), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

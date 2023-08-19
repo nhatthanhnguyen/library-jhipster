@@ -28,7 +28,11 @@
       "id": "ID",
       "isDeleted": "Is Deleted",
       "book": "Book",
-      "publisher": "Publisher"
+      "publisher": "Publisher",
+      "createdDate": "Created date",
+      "createdBy": "Created by",
+      "lastModifiedDate": "Last modified date",
+      "lastModifiedBy": "Last modified by"
     }
   }
 }

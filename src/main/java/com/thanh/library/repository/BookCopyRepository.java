@@ -47,6 +47,12 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
     )
     List<BookCopy> findBookCopiesAvailableByBookId(@Param("bookId") Long bookId);
 
+    @Query(
+        value = "select bc from BookCopy bc join fetch bc.book b where b.id = :bookId",
+        countQuery = "select count(bc) from BookCopy bc join bc.book b where b.id = :bookId"
+    )
+    Page<BookCopy> findBookCopiesByBookId(@Param("bookId") Long bookId, Pageable pageable);
+
     @Query("select bc from BookCopy bc join fetch bc.book where bc.book.isDeleted = false and bc.isDeleted = false")
     List<BookCopy> findAllBookCopiesThatIsNotDeleted(Sort sort);
 }

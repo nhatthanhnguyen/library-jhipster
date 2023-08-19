@@ -28,7 +28,11 @@
       "id": "ID",
       "isDeleted": "Đã xóa",
       "book": "Đầu sách",
-      "publisher": "Nhà xuất bản"
+      "publisher": "Nhà xuất bản",
+      "createdDate": "Ngày tạo",
+      "createdBy": "Người tạo",
+      "lastModifiedDate": "Ngày chỉnh sửa",
+      "lastModifiedBy": "Người chỉnh sửa"
     }
   }
 }

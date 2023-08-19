@@ -18,9 +18,5 @@ public interface BookCopyMapper extends EntityMapper<BookCopyDTO, BookCopy> {
     BookCopyDTO toDto(BookCopy s);
 
     @Named("bookTitle")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "title", source = "title")
-    @Mapping(target = "publisher", source = "publisher")
     BookDTO toDtoBookTitle(Book book);
 }

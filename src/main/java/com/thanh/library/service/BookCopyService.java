@@ -6,6 +6,7 @@ import com.thanh.library.domain.Notification;
 import com.thanh.library.domain.Queue;
 import com.thanh.library.domain.enumeration.Type;
 import com.thanh.library.repository.BookCopyRepository;
+import com.thanh.library.repository.BookRepository;
 import com.thanh.library.repository.NotificationRepository;
 import com.thanh.library.repository.QueueRepository;
 import com.thanh.library.service.dto.BookCopyDTO;
@@ -34,6 +35,8 @@ public class BookCopyService {
 
     private final BookCopyRepository bookCopyRepository;
 
+    private final BookRepository bookRepository;
+
     private final QueueRepository queueRepository;
 
     private final NotificationRepository notificationRepository;
@@ -44,12 +47,14 @@ public class BookCopyService {
 
     public BookCopyService(
         BookCopyRepository bookCopyRepository,
+        BookRepository bookRepository,
         QueueRepository queueRepository,
         NotificationRepository notificationRepository,
         BookCopyMapper bookCopyMapper,
         MailService mailService
     ) {
         this.bookCopyRepository = bookCopyRepository;
+        this.bookRepository = bookRepository;
         this.queueRepository = queueRepository;
         this.notificationRepository = notificationRepository;
         this.bookCopyMapper = bookCopyMapper;
@@ -101,6 +106,12 @@ public class BookCopyService {
     public Page<BookCopyDTO> getAllBookCopiesPagination(Pageable pageable) {
         log.debug("Request to get all BookCopies");
         return bookCopyRepository.findAll(pageable).map(bookCopyMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BookCopyDTO> getAllBookCopiesPaginationByBook(Long bookId, Pageable pageable) {
+        bookRepository.findById(bookId).orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
+        return bookCopyRepository.findBookCopiesByBookId(bookId, pageable).map(bookCopyMapper::toDto);
     }
 
     public List<BookCopyDTO> getAllAvailableBookCopies() {

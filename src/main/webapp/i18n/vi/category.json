@@ -6,7 +6,8 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Thể loại",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Thể loại",
-        "notFound": "Không một Thể loại nào được tìm thấy"
+        "notFound": "Không một Thể loại nào được tìm thấy",
+        "searchLabel": "Gõ vào đây để tìm kiếm Thể loại"
       },
       "created": "Một Thể loại mới được tạo với định danh {{ param }}",
       "updated": "Một Thể loại cập nhật với định danh {{ param }}",

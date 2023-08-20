@@ -173,6 +173,10 @@ public class BookService {
         if (book.getIsDeleted()) {
             throw new BadRequestAlertException("Book already deleted", "Book", "bookalreadydeleted");
         }
+        List<BookCopy> bookCopies = bookCopyRepository.findBookCopiesAvailableByBookId(id);
+        if (bookCopies.isEmpty()) {
+            throw new BadRequestAlertException("Book copies are borrowed or hold", "BookCopy", "bookcopyisborrowedorhold");
+        }
         book.setIsDeleted(true);
         bookRepository.save(book);
     }
@@ -255,13 +259,14 @@ public class BookService {
             throw new BadRequestAlertException("Book is deleted", "Book", "bookisdeleted");
         }
 
-        Queue queue = new Queue();
         QueueId queueId = new QueueId();
         queueId.setBookId(book.getId());
         queueId.setUserId(user.getId());
         if (queueRepository.existsById(queueId)) {
             throw new BadRequestAlertException("Currently in queue", "Queue", "alreadyinqueue");
         }
+
+        Queue queue = new Queue();
         queue.setId(queueId);
         queue.setBook(book);
         queue.setUser(user);

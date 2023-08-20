@@ -42,8 +42,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("select reservation from Reservation reservation left join fetch reservation.user where reservation.id =:id")
     Optional<Reservation> findOneWithToOneRelationships(@Param("id") Long id);
 
-    @Query("select r from Reservation r where r.bookCopy.id = :bookCopyId and r.endTime is null and r.bookCopy.isDeleted = false")
-    List<Reservation> findAllThatBookCopyIsBorrowed(@Param("bookCopyId") Long bookCopyId);
+    @Query("select r from Reservation r where r.bookCopy.id = :bookCopyId and r.endTime is null")
+    Optional<Reservation> findThatBookCopyIsHold(@Param("bookCopyId") Long bookCopyId);
 
     @Query(
         value = "select r from Reservation r join fetch r.user where r.user.id = :userId",

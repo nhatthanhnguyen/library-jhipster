@@ -25,6 +25,9 @@
       "detail": {
         "title": "Book Copy"
       },
+      "create": {
+        "question": "Are you sure you want to create a Book Copy of Book {{ id }}?"
+      },
       "id": "ID",
       "isDeleted": "Is Deleted",
       "book": "Book",

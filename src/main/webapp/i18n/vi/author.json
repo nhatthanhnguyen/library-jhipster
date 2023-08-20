@@ -6,7 +6,8 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Tác giả",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Tác giả",
-        "notFound": "Không Tác giả nào được tìm thấy"
+        "notFound": "Không Tác giả nào được tìm thấy",
+        "searchLabel": "Gõ vào đây để tìm kiếm Tác giả"
       },
       "created": "Một Tác giả mới được tạo với định danh {{ param }}",
       "updated": "Một Tác giả cập nhật với định danh {{ param }}",

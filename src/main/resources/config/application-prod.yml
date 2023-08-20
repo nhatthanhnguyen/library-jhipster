@@ -43,12 +43,18 @@ spring:
     database-platform: tech.jhipster.domain.util.FixedPostgreSQL10Dialect
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
-    contexts: prod, faker
+    contexts: prod
   mail:
-    host: localhost
-    port: 25
-    username:
-    password:
+    host: smtp.mail.com
+    port: 587
+    username: nhatthanhlep26@gmail.com
+    password: zsqnwkbleunmdnxw
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
   thymeleaf:
     cache: true
 
@@ -109,7 +115,7 @@ jhipster:
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    base-url: http://my-server-url-to-change # Modify according to your server's URL
+    base-url: http://127.0.0.1:8080 # Modify according to your server's URL
   logging:
     use-json-format: false # By default, logs are not in Json format
     logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration

@@ -139,7 +139,7 @@ export const Category = () => {
           onKeyDown={handlePressSearch}
           value={searchText}
           onChange={e => setSearchText(e.currentTarget.value)}
-          placeholder={translate('libraryApp.book.home.searchLabel')}
+          placeholder={translate('libraryApp.category.home.searchLabel')}
         />
         <Button onClick={handleButtonClearSearchPressed}>
           <FontAwesomeIcon icon="xmark" />

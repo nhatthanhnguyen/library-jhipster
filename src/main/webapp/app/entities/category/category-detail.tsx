@@ -191,6 +191,10 @@ export const CategoryDetail = () => {
                 <th>
                   <Translate contentKey="libraryApp.book.publisher">Publisher</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('yearPublished')}>
+                  <Translate contentKey="libraryApp.book.yearPublished">Year published</Translate>
+                  <FontAwesomeIcon icon="sort" />
+                </th>
                 {isLibrarian ? (
                   <>
                     <th className="hand" onClick={sort('createdBy')}>
@@ -224,6 +228,7 @@ export const CategoryDetail = () => {
                   </td>
                   <td>{book.title}</td>
                   <td>{book?.publisher?.name}</td>
+                  <td>{book?.yearPublished}</td>
                   {isLibrarian ? (
                     <>
                       <td>{book.createdBy}</td>

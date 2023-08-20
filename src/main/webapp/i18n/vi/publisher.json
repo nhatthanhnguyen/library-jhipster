@@ -6,7 +6,8 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Nhà xuất bản",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Nhà xuất bản",
-        "notFound": "Không một Nhà xuất bản nào được tìm thấy"
+        "notFound": "Không một Nhà xuất bản nào được tìm thấy",
+        "searchLabel": "Gõ vào đây để tìm kiếm Nhà xuất bản"
       },
       "created": "Một Nhà xuất bản mới được tạo với định danh {{ param }}",
       "updated": "Một Nhà xuất bản cập nhật với định danh {{ param }}",

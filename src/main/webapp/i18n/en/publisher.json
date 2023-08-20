@@ -6,7 +6,8 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Publisher",
         "createOrEditLabel": "Create or edit a Publisher",
-        "notFound": "No Publishers found"
+        "notFound": "No Publishers found",
+        "searchLabel": "Type here to search Publisher(s)"
       },
       "created": "A new Publisher is created with identifier {{ param }}",
       "updated": "A Publisher is updated with identifier {{ param }}",

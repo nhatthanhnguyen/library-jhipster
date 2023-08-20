@@ -15,6 +15,7 @@ import BookWaitDialog from 'app/entities/book/book-wait-dialog';
 import { useAppSelector } from 'app/config/store';
 import BookCopyDeleteDialog from 'app/entities/book/book-detail-book-copy-delete-dialog';
 import BookCopyRestoreDialog from 'app/entities/book/book-detail-book-copy-restore-dialog';
+import BookCopyCreateDialog from 'app/entities/book/book-detail-book-copy-add-dialog';
 
 const BookRoutes = () => {
   const librarianAuthority = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.LIBRARIAN]));
@@ -35,6 +36,7 @@ const BookRoutes = () => {
                 <Route path="restore" element={<BookRestoreDialog />} />
                 <Route path="book-copy/:bookCopyId/delete" element={<BookCopyDeleteDialog />} />
                 <Route path="book-copy/:bookCopyId/restore" element={<BookCopyRestoreDialog />} />
+                <Route path="create" element={<BookCopyCreateDialog />} />
               </>
             ) : null}
             <Route path="hold" element={<BookReservationDialog />} />

@@ -188,8 +188,9 @@ export const PublisherDetail = () => {
                 <th className="hand" onClick={sort('title')}>
                   <Translate contentKey="libraryApp.book.title">Title</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  <Translate contentKey="libraryApp.book.publisher">Publisher</Translate> <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('yearPublished')}>
+                  <Translate contentKey="libraryApp.book.yearPublished">Year published</Translate>
+                  <FontAwesomeIcon icon="sort" />
                 </th>
                 {isLibrarian ? (
                   <>
@@ -223,7 +224,7 @@ export const PublisherDetail = () => {
                     </Button>
                   </td>
                   <td>{book.title}</td>
-                  <td>{book?.publisher?.name}</td>
+                  <td>{book?.yearPublished}</td>
                   {isLibrarian ? (
                     <>
                       <td>{book.createdBy}</td>

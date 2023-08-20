@@ -103,6 +103,7 @@
       "addimage": "Add image",
       "back": "Back",
       "cancel": "Cancel",
+      "create": "Create",
       "delete": "Delete",
       "edit": "Edit",
       "open": "Open",
@@ -114,6 +115,9 @@
       "borrow": "Borrow",
       "return": "Return",
       "wait": "Add to queue"
+    },
+    "create": {
+      "title": "Confirm create operation"
     },
     "detail": {
       "field": "Field",
@@ -168,6 +172,9 @@
     "bookcopyalreadyrestored": "Book Copy already restored",
     "alreadyinqueue": "User and Book are currently in Queue",
     "userdoesnothavepermission": "User does not have permission to do this action",
+    "bookcopyisborrowed": "Book Copy is borrowed",
+    "bookcopyishold": "Book Copy is hold",
+    "bookcopyisborrowedorhold": "Book Copies are borrowed or hold",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

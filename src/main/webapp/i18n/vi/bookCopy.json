@@ -25,6 +25,9 @@
       "detail": {
         "title": "Bản sao đầu sách"
       },
+      "create": {
+        "question": "Bạn có chắc là bạn muốn tạo mới một bản sao cho Đầu sách {{ id }}?"
+      },
       "id": "ID",
       "isDeleted": "Đã xóa",
       "book": "Đầu sách",

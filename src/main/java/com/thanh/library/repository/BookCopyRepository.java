@@ -41,7 +41,7 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
 
     @Query(
         value = "select bc from BookCopy bc join fetch bc.book " +
-        "where bc.book.id = :bookId and bc.isDeleted = false and bc.book.isDeleted = false and " +
+        "where bc.isDeleted = false and bc.book.id = :bookId and bc.book.isDeleted = false and " +
         "((bc.id not in (select r.bookCopy.id from Reservation r where r.endTime is null)) and " +
         "(bc.id not in (select c.bookCopy.id from Checkout c where c.endTime is null)))"
     )

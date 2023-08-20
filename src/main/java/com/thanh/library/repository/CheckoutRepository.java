@@ -48,10 +48,8 @@ public interface CheckoutRepository extends JpaRepository<Checkout, Long> {
     @Query("select checkout from Checkout checkout left join fetch checkout.user where checkout.id =:id")
     Optional<Checkout> findOneWithToOneRelationships(@Param("id") Long id);
 
-    @Query(
-        "select c from Checkout c join fetch c.bookCopy where c.bookCopy.id = :bookCopyId and c.endTime is null and c.bookCopy.isDeleted = false"
-    )
-    List<Checkout> findAllThatBookCopyIsBorrowed(@Param("bookCopyId") Long bookCopyId);
+    @Query("select c from Checkout c join fetch c.bookCopy where c.bookCopy.id = :bookCopyId and c.endTime is null")
+    Optional<Checkout> findThatBookCopyIsBorrowed(@Param("bookCopyId") Long bookCopyId);
 
     @Query(value = "select c from Checkout c where c.endTime is null")
     List<Checkout> findCheckoutsThatNotReturned();

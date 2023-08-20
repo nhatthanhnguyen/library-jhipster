@@ -139,7 +139,7 @@ export const Publisher = () => {
           onKeyDown={handlePressSearch}
           value={searchText}
           onChange={e => setSearchText(e.currentTarget.value)}
-          placeholder={translate('libraryApp.book.home.searchLabel')}
+          placeholder={translate('libraryApp.publisher.home.searchLabel')}
         />
         <Button onClick={handleButtonClearSearchPressed}>
           <FontAwesomeIcon icon="xmark" />

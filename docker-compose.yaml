@@ -1,7 +1,7 @@
 version: '3.8'
 services:
     library-app:
-        image: library/thanhnguyen2001:latest
+        image: library/thanhnguyen2001:0.0.1-SNAPSHOT
         container_name: app
         build:
             dockerfile: Dockerfile
@@ -13,12 +13,6 @@ services:
             - SPRING_LIQUIBASE_URL=jdbc:postgresql://library-postgresql:5432/library
             - JHIPSTER_CACHE_REDIS_SERVER=redis://library-redis:6379
             - JHIPSTER_CACHE_REDIS_CLUSTER=false
-            - SPRING_MAIL_HOST=smtp.mail.com
-            - SPRING_MAIL_PORT=587
-            - SPRING_MAIL_USERNAME=${USERNAME}
-            - SPRING_MAIL_PASSWORD=${PASSWORD}
-            - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true
-            - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
             # - JHIPSTER_CACHE_REDIS_SERVER=redis://library-redis:6379
             # - JHIPSTER_CACHE_REDIS_CLUSTER=true
             - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application

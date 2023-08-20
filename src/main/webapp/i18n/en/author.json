@@ -6,7 +6,8 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Author",
         "createOrEditLabel": "Create or edit a Author",
-        "notFound": "No Authors found"
+        "notFound": "No Authors found",
+        "searchLabel": "Type here to search Author(s)"
       },
       "created": "A new Author is created with identifier {{ param }}",
       "updated": "A Author is updated with identifier {{ param }}",

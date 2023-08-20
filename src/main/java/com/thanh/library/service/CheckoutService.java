@@ -7,7 +7,6 @@ import com.thanh.library.security.SecurityUtils;
 import com.thanh.library.service.dto.CheckoutDTO;
 import com.thanh.library.service.dto.request.BorrowBookRequestDTO;
 import com.thanh.library.service.dto.request.ReturnBookRequestDTO;
-import com.thanh.library.service.dto.request.WaitBookRequestDTO;
 import com.thanh.library.service.mapper.CheckoutMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
@@ -172,27 +171,34 @@ public class CheckoutService {
         User user = userRepository
             .findById(borrowBookRequestDTO.getUserId())
             .orElseThrow(() -> new BadRequestAlertException("User not found", "User", "idnotfound"));
+        // nếu user không được activate thì không cho mượn
         if (!user.isActivated()) {
             throw new BadRequestAlertException("User is not activated", "User", "usernotactivated");
         }
         BookCopy bookCopy = bookCopyRepository
             .findById(borrowBookRequestDTO.getBookCopyId())
             .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
-        if (bookCopy.getIsDeleted()) {
+        // nếu bản sao bị xóa hoặc bản gốc bị xóa thì không cho mượn
+        if (bookCopy.getIsDeleted() || bookCopy.getBook().getIsDeleted()) {
             throw new BadRequestAlertException("Book Copy is deleted", "BookCopy", "bookcopyisdeleted");
         }
 
-        List<Checkout> checkouts = checkoutRepository.findAllThatBookCopyIsBorrowed(bookCopy.getId());
-        List<Reservation> reservations = reservationRepository.findAllThatBookCopyIsBorrowed(bookCopy.getId());
-        if (!checkouts.isEmpty() || !reservations.isEmpty()) {
-            throw new BadRequestAlertException("Book Copy is not available", "BookCopy", "bookcopynotavailable");
+        Checkout checkout = checkoutRepository.findThatBookCopyIsBorrowed(bookCopy.getId()).orElse(null);
+        // nếu bản sao đang được mượn (trong danh sách mượn trả là endtime = null)
+        if (checkout != null) {
+            throw new BadRequestAlertException("Book Copy is borrowed", "BookCopy", "bookcopyisborrowed");
         }
-        Checkout checkout = new Checkout();
-        checkout.setUser(user);
-        checkout.setBookCopy(bookCopy);
-        checkout.setStartTime(Instant.now());
-        checkout.setIsReturned(false);
-        checkoutRepository.save(checkout);
+        Reservation reservation = reservationRepository.findThatBookCopyIsHold(bookCopy.getId()).orElse(null);
+        // nếu bản sao đang được đặt trước
+        if (reservation != null) {
+            throw new BadRequestAlertException("Book Copy is hold", "BookCopy", "bookcopyishold");
+        }
+        Checkout newCheckout = new Checkout();
+        newCheckout.setUser(user);
+        newCheckout.setBookCopy(bookCopy);
+        newCheckout.setStartTime(Instant.now());
+        newCheckout.setIsReturned(false);
+        checkoutRepository.save(newCheckout);
     }
 
     public void returnBook(ReturnBookRequestDTO returnBookRequestDTO) {

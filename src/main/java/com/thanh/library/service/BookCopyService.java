@@ -1,14 +1,8 @@
 package com.thanh.library.service;
 
-import com.thanh.library.domain.Book;
-import com.thanh.library.domain.BookCopy;
-import com.thanh.library.domain.Notification;
-import com.thanh.library.domain.Queue;
+import com.thanh.library.domain.*;
 import com.thanh.library.domain.enumeration.Type;
-import com.thanh.library.repository.BookCopyRepository;
-import com.thanh.library.repository.BookRepository;
-import com.thanh.library.repository.NotificationRepository;
-import com.thanh.library.repository.QueueRepository;
+import com.thanh.library.repository.*;
 import com.thanh.library.service.dto.BookCopyDTO;
 import com.thanh.library.service.mapper.BookCopyMapper;
 import com.thanh.library.web.rest.errors.BadRequestAlertException;
@@ -35,6 +29,10 @@ public class BookCopyService {
 
     private final BookCopyRepository bookCopyRepository;
 
+    private final CheckoutRepository checkoutRepository;
+
+    private final ReservationRepository reservationRepository;
+
     private final BookRepository bookRepository;
 
     private final QueueRepository queueRepository;
@@ -47,6 +45,8 @@ public class BookCopyService {
 
     public BookCopyService(
         BookCopyRepository bookCopyRepository,
+        CheckoutRepository checkoutRepository,
+        ReservationRepository reservationRepository,
         BookRepository bookRepository,
         QueueRepository queueRepository,
         NotificationRepository notificationRepository,
@@ -54,6 +54,8 @@ public class BookCopyService {
         MailService mailService
     ) {
         this.bookCopyRepository = bookCopyRepository;
+        this.checkoutRepository = checkoutRepository;
+        this.reservationRepository = reservationRepository;
         this.bookRepository = bookRepository;
         this.queueRepository = queueRepository;
         this.notificationRepository = notificationRepository;
@@ -63,9 +65,12 @@ public class BookCopyService {
 
     public BookCopyDTO save(BookCopyDTO bookCopyDTO) {
         log.debug("Request to save BookCopy : {}", bookCopyDTO);
-        BookCopy bookCopy = bookCopyMapper.toEntity(bookCopyDTO);
+        Long bookId = bookCopyDTO.getBook().getId();
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BadRequestAlertException("Book not found", "Book", "idnotfound"));
+        BookCopy bookCopy = new BookCopy();
+        bookCopy.setBook(book);
+        bookCopy.setIsDeleted(false);
         bookCopy = bookCopyRepository.save(bookCopy);
-        Book book = bookCopy.getBook();
         List<Queue> queues = queueRepository.findByBookId(book.getId());
         BookCopy finalBookCopy = bookCopy;
         queues.forEach(queue -> {
@@ -139,6 +144,14 @@ public class BookCopyService {
             .orElseThrow(() -> new BadRequestAlertException("Book Copy not found", "BookCopy", "idnotfound"));
         if (bookCopy.getIsDeleted()) {
             throw new BadRequestAlertException("Book Copy already deleted", "BookCopy", "bookcopyalreadydeleted");
+        }
+        Checkout checkout = checkoutRepository.findThatBookCopyIsBorrowed(bookCopy.getId()).orElse(null);
+        if (checkout != null) {
+            throw new BadRequestAlertException("Book Copy is borrowed", "BookCopy", "bookcopyisborrowed");
+        }
+        Reservation reservation = reservationRepository.findThatBookCopyIsHold(bookCopy.getId()).orElse(null);
+        if (reservation != null) {
+            throw new BadRequestAlertException("Book Copy is hold", "BookCopy", "bookcopyishold");
         }
         bookCopy.setIsDeleted(true);
         bookCopyRepository.save(bookCopy);

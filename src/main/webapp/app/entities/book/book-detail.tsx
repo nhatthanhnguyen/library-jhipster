@@ -173,7 +173,12 @@ export const BookDetail = () => {
                 <FontAwesomeIcon icon="sync" spin={loading} />{' '}
                 <Translate contentKey="libraryApp.bookCopy.home.refreshListLabel">Refresh List</Translate>
               </Button>
-              <Link to="/book-copy/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <Link
+                to={`/book/${id}/create`}
+                className="btn btn-primary jh-create-entity"
+                id="jh-create-entity"
+                data-cy="entityCreateButton"
+              >
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;
                 <Translate contentKey="libraryApp.bookCopy.home.createLabel">Create new Book Copy</Translate>

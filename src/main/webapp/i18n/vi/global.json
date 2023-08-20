@@ -103,6 +103,7 @@
       "addimage": "Thêm ảnh",
       "back": "Quay lại",
       "cancel": "Hủy",
+      "create": "Tạo mới",
       "delete": "Xóa",
       "edit": "Sửa",
       "open": "Mở",
@@ -114,6 +115,9 @@
       "borrow": "Mượn sách",
       "return": "Trả sách",
       "wait": "Thêm vào danh sách chờ"
+    },
+    "create": {
+      "title": "Xác nhận hành động tạo mới"
     },
     "detail": {
       "field": "Trường",
@@ -167,6 +171,9 @@
     "bookcopyalreadyrestored": "Bản sao của Đầu Sách đã được khôi phục",
     "alreadyinqueue": "Người dùng và Đầu Sách đang ở trong hàng đợi",
     "userdoesnothavepermission": "Người dùng không có quyền để thực hiện hành động này",
+    "bookcopyisborrowed": "Bản sao đang được mượn",
+    "bookcopyishold": "Bản sao đang được đặt trước",
+    "bookcopyisborrowedorhold": "Bản sao đang được mượn hoặc đang được đặt trước",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

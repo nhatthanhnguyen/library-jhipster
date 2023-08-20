@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { getSortState, JhiItemCount, JhiPagination, TextFormat, Translate } from 'react-jhipster';
+import { Button, Input, InputGroup, Table } from 'reactstrap';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat, translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
-import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import {
+  getSortStateWithSearch,
+  overridePaginationStateWithQueryParams,
+  overridePaginationStateWithQueryParamsAndSearch,
+} from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities } from './category.reducer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
@@ -18,8 +22,9 @@ export const Category = () => {
   const navigate = useNavigate();
 
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(location, ITEMS_PER_PAGE, 'id'), location.search)
+    overridePaginationStateWithQueryParamsAndSearch(getSortStateWithSearch(location, ITEMS_PER_PAGE, 'id'), location.search)
   );
+  const [searchText, setSearchText] = useState<string>(paginationState.search ?? '');
 
   const categoryList = useAppSelector(state => state.category.entities);
   const loading = useAppSelector(state => state.category.loading);
@@ -32,13 +37,16 @@ export const Category = () => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
+        query: paginationState.search ?? '',
       })
     );
   };
 
   const sortEntities = () => {
     getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    const endURL =
+      `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}` +
+      `${paginationState.search ? `&search=${paginationState.search}` : ''}`;
     if (location.search !== endURL) {
       navigate(`${location.pathname}${endURL}`);
     }
@@ -46,12 +54,13 @@ export const Category = () => {
 
   useEffect(() => {
     sortEntities();
-  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+  }, [paginationState.activePage, paginationState.order, paginationState.sort, paginationState.search]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
+    const query = params.get('search');
     if (page && sort) {
       const sortSplit = sort.split(',');
       setPaginationState({
@@ -59,6 +68,7 @@ export const Category = () => {
         activePage: +page,
         sort: sortSplit[0],
         order: sortSplit[1],
+        search: query ?? '',
       });
     }
   }, [location.search]);
@@ -81,6 +91,30 @@ export const Category = () => {
     sortEntities();
   };
 
+  const handleSearch = search =>
+    setPaginationState({
+      ...paginationState,
+      search,
+    });
+
+  const handlePressSearch = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch(searchText);
+    }
+  };
+
+  const handleButtonSearchPressed = () => {
+    handleSearch(searchText);
+  };
+
+  const handleButtonClearSearchPressed = () => {
+    setPaginationState({
+      ...paginationState,
+      search: '',
+    });
+    setSearchText('');
+  };
+
   return (
     <div>
       <h2 id="category-heading" data-cy="CategoryHeading">
@@ -99,6 +133,21 @@ export const Category = () => {
           ) : undefined}
         </div>
       </h2>
+      <InputGroup>
+        <Input
+          type="text"
+          onKeyDown={handlePressSearch}
+          value={searchText}
+          onChange={e => setSearchText(e.currentTarget.value)}
+          placeholder={translate('libraryApp.book.home.searchLabel')}
+        />
+        <Button onClick={handleButtonClearSearchPressed}>
+          <FontAwesomeIcon icon="xmark" />
+        </Button>
+        <Button onClick={handleButtonSearchPressed}>
+          <FontAwesomeIcon icon="search" />
+        </Button>
+      </InputGroup>
       <div className="table-responsive">
         {categoryList && categoryList.length > 0 ? (
           <Table responsive>

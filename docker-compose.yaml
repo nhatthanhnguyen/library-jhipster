@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+    library-app:
+        image: library/thanhnguyen2001:latest
+        container_name: app
+        build:
+            dockerfile: Dockerfile
+        environment:
+            - _JAVA_OPTIONS=-Xmx512m -Xms256m
+            - SPRING_PROFILES_ACTIVE=prod,api-docs
+            - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://library-postgresql:5432/library
+            - SPRING_LIQUIBASE_URL=jdbc:postgresql://library-postgresql:5432/library
+            - JHIPSTER_CACHE_REDIS_SERVER=redis://library-redis:6379
+            - JHIPSTER_CACHE_REDIS_CLUSTER=false
+            - SPRING_MAIL_HOST=smtp.mail.com
+            - SPRING_MAIL_PORT=587
+            - SPRING_MAIL_USERNAME=${USERNAME}
+            - SPRING_MAIL_PASSWORD=${PASSWORD}
+            - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true
+            - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
+            # - JHIPSTER_CACHE_REDIS_SERVER=redis://library-redis:6379
+            # - JHIPSTER_CACHE_REDIS_CLUSTER=true
+            - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
+        # If you want to expose these ports outside your dev PC,
+        # remove the "127.0.0.1:" prefix
+        ports:
+            - "8080:8080"
+    library-postgresql:
+        container_name: db
+        image: postgres:14.5
+        # volumes:
+        #   - ~/volumes/jhipster/library/postgresql/:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_USER=library
+            - POSTGRES_PASSWORD=
+            - POSTGRES_HOST_AUTH_METHOD=trust
+        # If you want to expose these ports outside your dev PC,
+        # remove the "127.0.0.1:" prefix
+        ports:
+            - "5432:5432"
+    library-redis:
+        container_name: cache
+        image: redis:6.2.7
+        # If you want to expose these ports outside your dev PC,
+        # remove the "127.0.0.1:" prefix
+        ports:
+            - "6379:6379"

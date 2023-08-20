@@ -1,4 +1,6 @@
 id;login;password_hash;first_name;last_name;email;image_url;activated;lang_key;created_by;last_modified_by
 1;admin;$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC;Administrator;Administrator;admin@localhost.com;;true;en;system;system
-2;librarian;$2a$10$BaAtny/63AKteEyCmhyzne./DjsR3MVntn0d/Q3bYqJZmXJIBHReO;Librarian;Librarian;library@localhost.com;;true;en;system;system
-3;user;$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K;User;User;user@localhost.com;;true;en;system;system
+2;librarian-1;$2a$10$hvrMpDnMa7XFIsO2zbZiyOddTpzfQU3i7BXasjUWCmcy3pPKmGHky;Bình;Hoàng Đăng;librarian-1@localhost.com;;true;en;admin;admin
+3;librarian-2;$2a$10$hvrMpDnMa7XFIsO2zbZiyOddTpzfQU3i7BXasjUWCmcy3pPKmGHky;An;Hoàng Đăng;librarian-2@localhost.com;;true;vi;admin;admin
+4;thanhnn;$2a$10$hvrMpDnMa7XFIsO2zbZiyOddTpzfQU3i7BXasjUWCmcy3pPKmGHky;Thanh;Nguyễn Nhật;nhatthanhlep2001@gmail.com;;true;en;librarian-1;librarian-1
+5;thanhnguyen;$2a$10$hvrMpDnMa7XFIsO2zbZiyOddTpzfQU3i7BXasjUWCmcy3pPKmGHky;Thành;Nguyễn Văn;nhatthanhlep10@gmail.com;;true;vi;librarian-2;librarian-2

@@ -64,7 +64,7 @@ class PublisherResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Publisher createEntity(EntityManager em) {
-        Publisher publisher = new Publisher().name(DEFAULT_NAME).isDeleted(DEFAULT_IS_DELETED);
+        Publisher publisher = new Publisher().name(DEFAULT_NAME);
         return publisher;
     }
 
@@ -75,7 +75,7 @@ class PublisherResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Publisher createUpdatedEntity(EntityManager em) {
-        Publisher publisher = new Publisher().name(UPDATED_NAME).isDeleted(UPDATED_IS_DELETED);
+        Publisher publisher = new Publisher().name(UPDATED_NAME);
         return publisher;
     }
 
@@ -99,7 +99,6 @@ class PublisherResourceIT {
         assertThat(publisherList).hasSize(databaseSizeBeforeCreate + 1);
         Publisher testPublisher = publisherList.get(publisherList.size() - 1);
         assertThat(testPublisher.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testPublisher.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
     @Test
@@ -190,7 +189,7 @@ class PublisherResourceIT {
         Publisher updatedPublisher = publisherRepository.findById(publisher.getId()).get();
         // Disconnect from session so that the updates on updatedPublisher are not directly saved in db
         em.detach(updatedPublisher);
-        updatedPublisher.name(UPDATED_NAME).isDeleted(UPDATED_IS_DELETED);
+        updatedPublisher.name(UPDATED_NAME);
         PublisherDTO publisherDTO = publisherMapper.toDto(updatedPublisher);
 
         restPublisherMockMvc
@@ -206,7 +205,6 @@ class PublisherResourceIT {
         assertThat(publisherList).hasSize(databaseSizeBeforeUpdate);
         Publisher testPublisher = publisherList.get(publisherList.size() - 1);
         assertThat(testPublisher.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testPublisher.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
     @Test
@@ -299,7 +297,6 @@ class PublisherResourceIT {
         assertThat(publisherList).hasSize(databaseSizeBeforeUpdate);
         Publisher testPublisher = publisherList.get(publisherList.size() - 1);
         assertThat(testPublisher.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testPublisher.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
     @Test
@@ -314,7 +311,7 @@ class PublisherResourceIT {
         Publisher partialUpdatedPublisher = new Publisher();
         partialUpdatedPublisher.setId(publisher.getId());
 
-        partialUpdatedPublisher.name(UPDATED_NAME).isDeleted(UPDATED_IS_DELETED);
+        partialUpdatedPublisher.name(UPDATED_NAME);
 
         restPublisherMockMvc
             .perform(
@@ -329,7 +326,6 @@ class PublisherResourceIT {
         assertThat(publisherList).hasSize(databaseSizeBeforeUpdate);
         Publisher testPublisher = publisherList.get(publisherList.size() - 1);
         assertThat(testPublisher.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testPublisher.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
     @Test

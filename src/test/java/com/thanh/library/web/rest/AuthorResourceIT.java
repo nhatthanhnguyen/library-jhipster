@@ -67,7 +67,7 @@ class AuthorResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Author createEntity(EntityManager em) {
-        Author author = new Author().firstName(DEFAULT_FIRST_NAME).lastName(DEFAULT_LAST_NAME).isDeleted(DEFAULT_IS_DELETED);
+        Author author = new Author().firstName(DEFAULT_FIRST_NAME).lastName(DEFAULT_LAST_NAME);
         return author;
     }
 
@@ -78,7 +78,7 @@ class AuthorResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Author createUpdatedEntity(EntityManager em) {
-        Author author = new Author().firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME).isDeleted(UPDATED_IS_DELETED);
+        Author author = new Author().firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME);
         return author;
     }
 
@@ -103,7 +103,6 @@ class AuthorResourceIT {
         Author testAuthor = authorList.get(authorList.size() - 1);
         assertThat(testAuthor.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
         assertThat(testAuthor.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
-        assertThat(testAuthor.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
     @Test
@@ -214,7 +213,7 @@ class AuthorResourceIT {
         Author updatedAuthor = authorRepository.findById(author.getId()).get();
         // Disconnect from session so that the updates on updatedAuthor are not directly saved in db
         em.detach(updatedAuthor);
-        updatedAuthor.firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME).isDeleted(UPDATED_IS_DELETED);
+        updatedAuthor.firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME);
         AuthorDTO authorDTO = authorMapper.toDto(updatedAuthor);
 
         restAuthorMockMvc
@@ -231,7 +230,6 @@ class AuthorResourceIT {
         Author testAuthor = authorList.get(authorList.size() - 1);
         assertThat(testAuthor.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
         assertThat(testAuthor.getLastName()).isEqualTo(UPDATED_LAST_NAME);
-        assertThat(testAuthor.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
     @Test
@@ -327,7 +325,6 @@ class AuthorResourceIT {
         Author testAuthor = authorList.get(authorList.size() - 1);
         assertThat(testAuthor.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
         assertThat(testAuthor.getLastName()).isEqualTo(UPDATED_LAST_NAME);
-        assertThat(testAuthor.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
     @Test
@@ -342,7 +339,7 @@ class AuthorResourceIT {
         Author partialUpdatedAuthor = new Author();
         partialUpdatedAuthor.setId(author.getId());
 
-        partialUpdatedAuthor.firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME).isDeleted(UPDATED_IS_DELETED);
+        partialUpdatedAuthor.firstName(UPDATED_FIRST_NAME).lastName(UPDATED_LAST_NAME);
 
         restAuthorMockMvc
             .perform(
@@ -358,7 +355,6 @@ class AuthorResourceIT {
         Author testAuthor = authorList.get(authorList.size() - 1);
         assertThat(testAuthor.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
         assertThat(testAuthor.getLastName()).isEqualTo(UPDATED_LAST_NAME);
-        assertThat(testAuthor.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
     @Test

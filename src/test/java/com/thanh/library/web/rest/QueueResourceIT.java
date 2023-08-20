@@ -120,7 +120,6 @@ class QueueResourceIT {
     @Transactional
     void createQueueWithExistingId() throws Exception {
         // Create the Queue with an existing ID
-        queue.setId(1L);
         QueueDTO queueDTO = queueMapper.toDto(queue);
 
         int databaseSizeBeforeCreate = queueRepository.findAll().size();
@@ -146,7 +145,6 @@ class QueueResourceIT {
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(queue.getId().intValue())))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())));
     }
 
@@ -178,7 +176,7 @@ class QueueResourceIT {
             .perform(get(ENTITY_API_URL_ID, queue.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(queue.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(queue.getId()))
             .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()));
     }
 
@@ -223,7 +221,6 @@ class QueueResourceIT {
     @Transactional
     void putNonExistingQueue() throws Exception {
         int databaseSizeBeforeUpdate = queueRepository.findAll().size();
-        queue.setId(count.incrementAndGet());
 
         // Create the Queue
         QueueDTO queueDTO = queueMapper.toDto(queue);
@@ -246,7 +243,6 @@ class QueueResourceIT {
     @Transactional
     void putWithIdMismatchQueue() throws Exception {
         int databaseSizeBeforeUpdate = queueRepository.findAll().size();
-        queue.setId(count.incrementAndGet());
 
         // Create the Queue
         QueueDTO queueDTO = queueMapper.toDto(queue);
@@ -269,7 +265,6 @@ class QueueResourceIT {
     @Transactional
     void putWithMissingIdPathParamQueue() throws Exception {
         int databaseSizeBeforeUpdate = queueRepository.findAll().size();
-        queue.setId(count.incrementAndGet());
 
         // Create the Queue
         QueueDTO queueDTO = queueMapper.toDto(queue);
@@ -344,7 +339,6 @@ class QueueResourceIT {
     @Transactional
     void patchNonExistingQueue() throws Exception {
         int databaseSizeBeforeUpdate = queueRepository.findAll().size();
-        queue.setId(count.incrementAndGet());
 
         // Create the Queue
         QueueDTO queueDTO = queueMapper.toDto(queue);
@@ -367,7 +361,6 @@ class QueueResourceIT {
     @Transactional
     void patchWithIdMismatchQueue() throws Exception {
         int databaseSizeBeforeUpdate = queueRepository.findAll().size();
-        queue.setId(count.incrementAndGet());
 
         // Create the Queue
         QueueDTO queueDTO = queueMapper.toDto(queue);
@@ -390,7 +383,6 @@ class QueueResourceIT {
     @Transactional
     void patchWithMissingIdPathParamQueue() throws Exception {
         int databaseSizeBeforeUpdate = queueRepository.findAll().size();
-        queue.setId(count.incrementAndGet());
 
         // Create the Queue
         QueueDTO queueDTO = queueMapper.toDto(queue);

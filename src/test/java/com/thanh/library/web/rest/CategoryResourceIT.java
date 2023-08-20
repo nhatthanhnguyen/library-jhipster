@@ -64,7 +64,7 @@ class CategoryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Category createEntity(EntityManager em) {
-        Category category = new Category().name(DEFAULT_NAME).isDeleted(DEFAULT_IS_DELETED);
+        Category category = new Category().name(DEFAULT_NAME);
         return category;
     }
 
@@ -75,7 +75,7 @@ class CategoryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Category createUpdatedEntity(EntityManager em) {
-        Category category = new Category().name(UPDATED_NAME).isDeleted(UPDATED_IS_DELETED);
+        Category category = new Category().name(UPDATED_NAME);
         return category;
     }
 
@@ -99,7 +99,6 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeCreate + 1);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testCategory.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
     @Test
@@ -190,7 +189,6 @@ class CategoryResourceIT {
         Category updatedCategory = categoryRepository.findById(category.getId()).get();
         // Disconnect from session so that the updates on updatedCategory are not directly saved in db
         em.detach(updatedCategory);
-        updatedCategory.name(UPDATED_NAME).isDeleted(UPDATED_IS_DELETED);
         CategoryDTO categoryDTO = categoryMapper.toDto(updatedCategory);
 
         restCategoryMockMvc
@@ -206,7 +204,6 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeUpdate);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testCategory.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
     @Test
@@ -301,7 +298,6 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeUpdate);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testCategory.getIsDeleted()).isEqualTo(DEFAULT_IS_DELETED);
     }
 
     @Test
@@ -316,7 +312,7 @@ class CategoryResourceIT {
         Category partialUpdatedCategory = new Category();
         partialUpdatedCategory.setId(category.getId());
 
-        partialUpdatedCategory.name(UPDATED_NAME).isDeleted(UPDATED_IS_DELETED);
+        partialUpdatedCategory.name(UPDATED_NAME);
 
         restCategoryMockMvc
             .perform(
@@ -331,7 +327,6 @@ class CategoryResourceIT {
         assertThat(categoryList).hasSize(databaseSizeBeforeUpdate);
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testCategory.getIsDeleted()).isEqualTo(UPDATED_IS_DELETED);
     }
 
     @Test

@@ -10,11 +10,7 @@ public class LibraryHeaderUtil {
     public static HttpHeaders createAlert(String applicationName, String message, String param) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-" + applicationName + "-alert", message);
-        try {
-            headers.add("X-" + applicationName + "-params", URLEncoder.encode(param, StandardCharsets.UTF_8.toString()));
-        } catch (UnsupportedEncodingException e) {
-            // StandardCharsets are supported by every Java implementation so this exception will never happen
-        }
+        headers.add("X-" + applicationName + "-params", URLEncoder.encode(param, StandardCharsets.UTF_8));
         return headers;
     }
 

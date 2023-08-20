@@ -9,7 +9,7 @@
     <!--
         Added the entity Queue.
     -->
-    <changeSet id="20230722083927-1" author="jhipster">
+    <!--<changeSet id="20230722083927-1" author="jhipster">
         <createTable tableName="queue">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -21,6 +21,21 @@
                 <constraints nullable="true" />
             </column>
             <column name="book_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            &lt;!&ndash; jhipster-needle-liquibase-add-column - JHipster will add columns here &ndash;&gt;
+        </createTable>
+        <dropDefaultValue tableName="queue" columnName="created_at" columnDataType="${datetimeType}"/>
+    </changeSet>-->
+    <changeSet id="20230722083927-1" author="jhipster">
+        <createTable tableName="queue">
+            <column name="user_id" type="bigint">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="book_id" type="bigint">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="created_at" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
